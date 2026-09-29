@@ -9,6 +9,7 @@ import Camera from './Camera.png'
 import setting from "./Settings.png"
 import TopGenre from "./Top-Genre.png"
 import Album from "./Albub.png"
+import AlbumPic from "./AlbumView.png"
 export {
     facebook,
     google,
@@ -20,5 +21,6 @@ export {
     setting,
     Camera,
     TopGenre,
-    Album
+    Album,
+    AlbumPic
 }
