@@ -39,7 +39,7 @@ export default function Signup1() {
 
     if (!emailRegex.test(trimmedEmail)) {
       setError("Please enter a valid email address.");
-      return;
+      return;trimmedEmail
     }
 
     setEmail(trimmedEmail);

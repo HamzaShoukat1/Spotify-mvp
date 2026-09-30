@@ -50,7 +50,7 @@ export default function Signup() {
         </View>
 
 
-        <TouchableOpacity className="flex items-center mt-3 pb-2">
+        <TouchableOpacity onPress={()=> router.push("/(auth)/login")} className="flex items-center mt-5 pb-2">
           <Text className="text-white font-bold text-[17px] leading-tight tracking-wide">Log in</Text>
         </TouchableOpacity>
 

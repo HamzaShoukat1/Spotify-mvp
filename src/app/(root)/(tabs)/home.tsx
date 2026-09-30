@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Bell, timer, setting } from '../../../assets/images/index'
-import { router } from 'expo-router'
+import { router, useNavigation } from 'expo-router'
 
 
 const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwxfHxzaW5nZXJ8ZW58MHx8fHwxNzkwMzUwNzgzfDA&ixlib=rb-4.1.0&fit=max&q=80'
@@ -32,9 +32,10 @@ const ARTIST_DATA = [
 ];
 
 export default function Home() {
+    const navigation = useNavigation()
 
     const renderPlaylistItem = ({ item }: any) => (
-        <TouchableOpacity onPress={() => router.push('/(root)/Album-View')}
+        <TouchableOpacity onPress={() => router.push('/(root)/(screens)/Album-View')}
 
             className="items-center mr-4 w-[110px]">
             <Image
@@ -93,6 +94,14 @@ export default function Home() {
                 className="flex-1 w-full"
             >
                 <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+                    <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center'>
+                        <TouchableOpacity onPress={()=>router.push("/(root)/(screens)/CustomDrawerContent.jsx") }>
+                            <Text className='text-white font-extrabold text-[20px] text-center'>
+                                H
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
                     {/* Header */}
                     <View className="flex-row justify-between mt-4 ml-1 items-center relative p-4">
                         <Text className="font-[700] text-[19px] text-white leading-[28px] ">

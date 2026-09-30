@@ -1,6 +1,6 @@
 import { View, Text, KeyboardAvoidingView, Platform, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { AlbumPic } from '../../assets/images/index';
+import { AlbumPic } from '../../../assets/images/index';
 import { ChevronDown, MoreHorizontal, Heart, Shuffle, SkipBack, Play, Pause, SkipForward, Repeat, Share2, ListMusic, Maximize2 } from 'lucide-react-native'
 import { router } from 'expo-router';
 
@@ -102,7 +102,7 @@ export default function TrackView() {
 
                 <View className="w-full bg-[#D8672A] rounded-xl p-4 flex-row justify-between items-center mb-1">
                     <Text className="text-white font-bold text-base">Lyrics</Text>
-                    <TouchableOpacity onPress={()=> router.push("/(root)/Track-detail")} className="bg-[#a13b1d] flex-row items-center px-3 py-1.5 rounded-full space-x-1">
+                    <TouchableOpacity onPress={()=> router.push("/(root)/(screens)/Track-detail")} className="bg-[#a13b1d] flex-row items-center px-3 py-1.5 rounded-full space-x-1">
                         <Text className="text-white text-[10px] font-bold tracking-wider uppercase mr-1">MORE</Text>
                         <Maximize2 color="#ffffff" size={10} />
                     </TouchableOpacity>

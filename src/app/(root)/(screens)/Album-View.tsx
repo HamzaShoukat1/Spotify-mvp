@@ -1,6 +1,6 @@
 import { View, Text, KeyboardAvoidingView, Platform, Image, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { AlbumPic } from '../../assets/images/index';
+import { AlbumPic } from '../../../assets/images/index';
 import { Pause, ChevronLeft, Heart, ArrowDownCircle, MoreHorizontal, Bluetooth } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -74,7 +74,7 @@ export default function AlbumView() {
                         <Text className="text-gray-400 text-[14px]" numberOfLines={1}>{track.artist}</Text>
                       </View>
                     </View>
-                    <TouchableOpacity  onPress={()=> router.push("/(root)/Album-Control")} >
+                    <TouchableOpacity  onPress={()=> router.push("/(root)/(screens)/Album-Control")} >
                       <MoreHorizontal color="#b3b3b3" size={18} />
                     </TouchableOpacity>
                   </View>
@@ -83,7 +83,7 @@ export default function AlbumView() {
             </ScrollView>
           </View>
 
-        <TouchableOpacity onPress={()=> router.push("/(root)/Track-View")}>
+        <TouchableOpacity onPress={()=> router.push("/(root)/(screens)/Track-View")}>
               <View className=" w-full  max-w-[413px] bg-orange-950 mx-2  rounded-lg p-3 flex-row items-center justify-between shadow-xl z-50">
             <View className="flex-row items-center flex-1">
               <Image source={AlbumPic} className="w-10 h-10 rounded-sm mr-3" />

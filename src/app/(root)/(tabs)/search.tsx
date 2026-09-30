@@ -36,7 +36,7 @@ export default function search() {
 
           {/* Search Input Bar */}
             <Pressable 
-            onPress={() => router.push('/(root)/search-bar')} 
+            onPress={() => router.push('/(root)/(screens)/search-bar')} 
             className="flex-row w-full items-center bg-white rounded-md px-3 py-1 mb-6"
           >
             <Search color="#777777" size={21} className="mr-2" />

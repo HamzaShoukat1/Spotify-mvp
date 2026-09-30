@@ -1,7 +1,7 @@
 import { View, Text, KeyboardAvoidingView, Platform, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import { Heart, User, Share2, ListPlus, SquarePlay, Radio } from 'lucide-react-native'
-import { AlbumPic } from '../../assets/images/index';
+import { AlbumPic } from '../../../assets/images/index';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router';
 

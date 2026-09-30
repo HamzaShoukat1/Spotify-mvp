@@ -1,7 +1,7 @@
 import { View, Text, Platform, KeyboardAvoidingView, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, X, MessageCircle, MoreHorizontal } from "lucide-react-native"
-import { AlbumPic } from '../../assets/images/index';
+import { AlbumPic } from '../../../assets/images/index';
 import { router } from 'expo-router';
 
 export default function SongShare() {

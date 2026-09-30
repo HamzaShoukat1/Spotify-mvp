@@ -1,12 +1,20 @@
+import { AuthProvider } from "@/context/Auth.Context";
+import QueryProvider from "@/providers/QueryProvider";
 import { Stack } from "expo-router";
-
 export default function RootLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        gestureEnabled:true
-      }}
-    />
+
+
+      <QueryProvider>
+
+
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            gestureEnabled: true
+          }}
+
+        />
+      </QueryProvider>
   );
 }

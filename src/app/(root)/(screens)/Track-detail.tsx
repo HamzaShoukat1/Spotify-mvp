@@ -1,7 +1,7 @@
 import { View, Text, KeyboardAvoidingView, Platform, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import { Heart, User, Share2, ListPlus, SquarePlay, Radio, GalleryThumbnails, UserSearch, Users, Moon } from 'lucide-react-native'
-import { AlbumPic } from '../../assets/images/index';
+import { AlbumPic } from '../../../assets/images/index';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router';
 
@@ -49,7 +49,7 @@ export default function AlbumControl() {
                                 <Text className="text-white text-base font-semibold">View artist</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={()=> router.push("/(root)/Song-Share")} className="flex-row items-center gap-3 py-1">
+                            <TouchableOpacity onPress={()=> router.push("/(root)/(screens)/Song-Share")} className="flex-row items-center gap-3 py-1">
                                 <Share2 strokeWidth={1.5} size={22} color="#B3B3B3" />
                                 <Text className="text-white text-base font-semibold">Share</Text>
                             </TouchableOpacity>
