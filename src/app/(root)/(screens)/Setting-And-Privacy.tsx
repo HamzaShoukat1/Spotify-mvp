@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
 import { useLogoutMutation } from '@/hooks/use-auth'
 import { router } from 'expo-router'
 
@@ -9,8 +8,8 @@ export default function SettingAndPrivacy() {
     const handleLogout = () => {
         mutate(undefined, {
             onSuccess: () => {
-                router.replace("/(auth)/login")
-            }
+                router.replace('/(auth)/login')
+            },
         })
     }
 

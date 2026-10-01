@@ -1,15 +1,19 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Slot } from 'expo-router'
 import Drawer from 'expo-router/drawer'
-import { AuthProvider } from '@/context/Auth.Context'
+import SpotifyProfileMenu from './(screens)/CustomDrawerContent.jsx'
 
-export default function _layout() {
+export default function RootLayout() {
   return (
+    <Drawer
+      drawerContent={() => <SpotifyProfileMenu />}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: { width: '90%', backgroundColor: '#121212' },
+        overlayColor: 'rgba(0, 0, 0, 0.72)',
+        swipeEnabled: true,
+        drawerType: 'slide',
 
-    <View style={{ flex: 1, backgroundColor: '#121212' }}>
-      <Slot />
-
-    </View>
+      }}
+    >
+    </Drawer>
   )
 }

@@ -1,43 +1,56 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getAccessToken } from '@/storage/secureStorage';
-import * as SecureStore from "expo-secure-store"
-const AuthContext = createContext<{
-    userToken: string | null;
-    isLoading: boolean;
-}>({
-    userToken: null,
-    isLoading: true,
-});
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+  useState,
+} from "react";
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [userToken, setUserToken] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+import { getAccessToken } from "@/storage/secureStorage";
 
-    useEffect(() => {
-        const CheckingToken = async () => {
-            let token = null;
-            try {
-                token = await SecureStore.getItemAsync("accessToken");
-
-
-            } catch (e) {
-                console.error('Failed to load token', e);
-            }
-            setUserToken(token);
-            setIsLoading(false);
-        };
-
-        CheckingToken();
-    }, []);
-
-
-
-    return (
-        
-        <AuthContext.Provider value={{ userToken, isLoading }}>
-            {children}
-        </AuthContext.Provider>
-    );
+type AuthContextType = {
+  userToken: string | null;
+  isLoading: boolean;
+  refreshAuth: () => Promise<void>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+const AuthContext = createContext<AuthContextType>({
+  userToken: null,
+  isLoading: true,
+  refreshAuth: async () => {},
+});
+
+export function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const refreshAuth = useCallback(async () => {
+    try {
+      const token = await getAccessToken();
+      setUserToken(token);
+    } catch (error) {
+      console.error("Failed to load access token:", error);
+      setUserToken(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshAuth();
+  }, [refreshAuth]);
+
+  return (
+    <AuthContext.Provider value={{ userToken, isLoading, refreshAuth }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}

@@ -4,7 +4,6 @@ import { AuthProvider } from "@/context/Auth.Context";
 
 export default function AuthLayout() {
   return (
-<AuthProvider>
 
       <SignupProvider>
         <Stack
@@ -15,6 +14,5 @@ export default function AuthLayout() {
           }}
           />
       </SignupProvider>
-          </AuthProvider>
   );
 }

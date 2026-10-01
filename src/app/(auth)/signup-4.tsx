@@ -33,34 +33,24 @@ export default function Signup4() {
 
     setName(trimmedName);
 
-    AccountCreating(
-      {
-        email: signupData.email, 
-        password: signupData.password,
-        gender: signupData.gender,
-        name: trimmedName,   
-      },
-      {
-        onSuccess: () => {
-          Alert.alert(
-            'Account created',
-            'Your account has been created successfully.',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  resetSignup();
-                  router.replace('/(onboarding)/Choose-Artist');
-                },
-              },
-            ]
-          );
-        },
-        onError: (err: any) => {
-          setError(err instanceof Error ? err.message : 'Unable to create account.');
-        },
-      }
-    );
+  AccountCreating(
+  {
+    email: signupData.email,
+    password: signupData.password,
+    gender: signupData.gender,
+    name: trimmedName,
+  },
+  {
+    onSuccess: () => {
+      resetSignup();
+      router.replace('/(onboarding)/Choose-Artist');
+    },
+    onError: (err: any) => {
+      setError(err instanceof Error ? err.message : 'Unable to create account.');
+    },
+  }
+);
+
   };
 
   return (

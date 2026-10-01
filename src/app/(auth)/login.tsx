@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Image, TextInput, ScrollView, Alert } from 'react-native';
+import { useState } from 'react';
+import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 import { google, facebook } from '../../assets/images/index';
 import { router } from 'expo-router';
 import { useLoginMutation } from '@/hooks/use-auth';
@@ -25,18 +25,7 @@ export default function Login() {
             { email: trimmedEmail },
             {
                 onSuccess: () => {
-                    Alert.alert(
-                        'Welcome Back',
-                        'Logged in successfully.',
-                        [
-                            {
-                                text: 'OK',
-                                onPress: () => {
-                                    router.replace('/(root)/(tabs)/home');
-                                },
-                            },
-                        ]
-                    );
+                    router.replace('/(root)/(tabs)/home');
                 },
                 onError: (err: any) => {
                     setError(err instanceof Error ? err.message : 'Unable to login.');

@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Bell, timer, setting } from '../../../assets/images/index'
@@ -33,6 +32,9 @@ const ARTIST_DATA = [
 
 export default function Home() {
     const navigation = useNavigation()
+    const openProfileDrawer = () => {
+        navigation.getParent()?.dispatch({ type: 'OPEN_DRAWER' })
+    }
 
     const renderPlaylistItem = ({ item }: any) => (
         <TouchableOpacity onPress={() => router.push('/(root)/(screens)/Album-View')}
@@ -95,7 +97,7 @@ export default function Home() {
             >
                 <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
                     <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center'>
-                        <TouchableOpacity onPress={()=>router.push("/(root)/(screens)/CustomDrawerContent.jsx") }>
+                        <TouchableOpacity onPress={openProfileDrawer}>
                             <Text className='text-white font-extrabold text-[20px] text-center'>
                                 H
                             </Text>
@@ -103,15 +105,11 @@ export default function Home() {
                     </View>
 
                     {/* Header */}
-                    <View className="flex-row justify-between mt-4 ml-1 items-center relative p-4">
+                    <View className="flex-row justify-between  ml-1 items-center relative p-4">
                         <Text className="font-[700] text-[19px] text-white leading-[28px] ">
                             Recently played
                         </Text>
-                        <View className="flex-row items-center gap-4">
-                            <Image source={Bell} className="w-[15px] h-[15px]" resizeMode="contain" />
-                            <Image source={timer} className="w-[16px] h-[16px]" resizeMode="contain" />
-                            <Image source={setting} className="w-[20px] h-[20px]" resizeMode="contain" />
-                        </View>
+                       
 
                     </View>
 
