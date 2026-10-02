@@ -32,7 +32,7 @@ export function AuthProvider({
     try {
       const token = await getAccessToken();
       setUserToken(token);
-    } catch (error) {
+    } catch (error) {refreshAuth
       console.error("Failed to load access token:", error);
       setUserToken(null);
     } finally {

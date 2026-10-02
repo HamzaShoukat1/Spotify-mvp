@@ -7,9 +7,14 @@
     "scheme": "spotifymvp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./src/assets/images/Logo.png"
+      "icon": "./src/assets/images/Logo.png",
+      "bundleIdentifier": "com.hamza.spotifymvp"
     },
     "android": {
+      "package": "com.hamza.spotifymvp",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./src/assets/images/Logo.png"
@@ -34,7 +39,7 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     }
   }
 }

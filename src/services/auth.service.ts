@@ -1,6 +1,6 @@
 
-// const BackendUrl = "http://192.168.100.247:9000"; 
-const BackendUrl = "http://192.168.100.159:9000"
+const BackendUrl = "http://192.168.100.247:9000"
+// const BackendUrl = "192.168.100.159:9000"
 
 
 
@@ -59,7 +59,6 @@ export async function LogoutUser() {
         {
             method: "POST",
 
-        
         }
     );
 }

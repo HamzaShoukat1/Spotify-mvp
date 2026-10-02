@@ -2,12 +2,13 @@ import { createUser, loginUser, LogoutUser } from "@/services/auth.service";
 import { clearTokens, saveTokens } from "@/storage/secureStorage";
 import { useAuth } from "@/context/Auth.Context";
 import { useMutation } from "@tanstack/react-query";
+// import { router, useNavigation } from "expo-router";
 
 
 
 
 export function useSignupMutation() {
-    // const { refreshAuth } = useAuth();
+    const { refreshAuth } = useAuth();
 
     return useMutation({
         mutationFn: createUser,
@@ -22,7 +23,7 @@ export function useSignupMutation() {
                 data.accessToken,
                 data.refreshToken
             );
-            // await refreshAuth();
+            await refreshAuth();
         },
     });
 }
@@ -50,6 +51,7 @@ export function useLoginMutation() {
 
 
 
+
 export function useLogoutMutation() {
     const { refreshAuth } = useAuth();
 
@@ -64,3 +66,4 @@ export function useLogoutMutation() {
         },
     });
 }
+
