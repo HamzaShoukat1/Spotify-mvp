@@ -9,6 +9,7 @@ export default function SettingAndPrivacy() {
         mutate(undefined, {
             onSuccess: () => {
                 router.replace('/(auth)/login')
+                return 
             },
         })
     }

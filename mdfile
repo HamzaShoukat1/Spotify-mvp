@@ -1,0 +1,90 @@
+BECOME AN ARTIST
+        ↓
+┌─────────────────────────┐
+│ Artist Profile Setup    │
+│                         │
+│ 1. Artist name          │
+│ 2. Artist type          │
+│ 3. Genre + Bio          │
+│ 4. Profile/Cover image  │
+└────────────┬────────────┘
+             ↓
+       Artist Created
+             ↓
+┌─────────────────────────┐
+│       ARTIST HUB        │
+│                         │
+│ Overview                │
+│ Music                   │
+│ Albums                  │
+│ Analytics               │
+│ Profile                 │
+└────────────┬────────────┘
+             ↓
+        Add Music
+
+
+
+        ┌─────────────────────────┐
+│ ←  Add Music             │
+│                         │
+│ Upload your track       │
+│                         │
+│ ┌─────────────────────┐ │
+│ │         +           │ │
+│ │   Choose audio      │ │
+│ │                     │ │
+│ │   MP3 • WAV • FLAC  │ │
+│ └─────────────────────┘ │
+│                         │
+│ Track.mp3               │
+│ ███████████░░░  75%     │
+│                         │
+│        Continue         │
+└─────────────────────────┘
+
+
+
+┌─────────────────────────┐
+│ ←  Track Details        │
+│                         │
+│ Song title              │
+│ [ Enter song title    ] │
+│                         │
+│ Primary artist          │
+│ [ Kashmir Beats       ] │
+│                         │
+│ Featured artists        │
+│ [ Add artist (optional)]│
+│                         │
+│ Genre                   │
+│ [ Hip-Hop            ▼] │
+│                         │
+│ Language                │
+│ [ Urdu               ▼] │
+│                         │
+│        Continue         │
+└─────────────────────────┘
+
+
+┌─────────────────────────┐
+│ ←  Review Track         │
+│                         │
+│       [ Cover ]         │
+│                         │
+│ Kashmir Nights          │
+│ Kashmir Beats           │
+│ Hip-Hop • Urdu          │
+│                         │
+│ Audio                   │
+│ ▶ Kashmir-Nights.mp3    │
+│                         │
+│ Release                 │
+│ Single                  │
+│                         │
+│ ┌─────────────────────┐ │
+│ │      Publish        │ │
+│ └─────────────────────┘ │
+│                         │
+│ Save as draft            │
+└─────────────────────────┘

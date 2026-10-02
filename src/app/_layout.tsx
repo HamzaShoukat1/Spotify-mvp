@@ -10,6 +10,8 @@ import {
 } from "@/context/Auth.Context";
 
 import QueryProvider from "@/providers/QueryProvider";
+import { ArtistProvider } from "@/context/ArtistContext";
+import { MusicProvider } from "@/context/MusicContext";
 
 function AuthNavigation() {
   const { userToken, isLoading } = useAuth();
@@ -24,7 +26,6 @@ function AuthNavigation() {
 
     const inAuthGroup = segments[0] === "(auth)";
     const inRootGroup = segments[0] === "(root)";
-
     if (!userToken && !inAuthGroup) {
       router.replace("/(auth)/login");
       return;
@@ -65,7 +66,11 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <QueryProvider>
-        <AuthNavigation />
+        <ArtistProvider>
+          <MusicProvider>
+            <AuthNavigation />
+          </MusicProvider>
+        </ArtistProvider>
       </QueryProvider>
     </AuthProvider>
   );
