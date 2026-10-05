@@ -12,6 +12,7 @@ import {
 import QueryProvider from "@/providers/QueryProvider";
 import { ArtistProvider } from "@/context/ArtistContext";
 import { MusicProvider } from "@/context/MusicContext";
+import { ProfileProvider } from "@/context/ProfileContext";
 
 function AuthNavigation() {
   const { userToken, isLoading } = useAuth();
@@ -68,7 +69,9 @@ export default function RootLayout() {
       <QueryProvider>
         <ArtistProvider>
           <MusicProvider>
-            <AuthNavigation />
+            <ProfileProvider>
+              <AuthNavigation />
+            </ProfileProvider>
           </MusicProvider>
         </ArtistProvider>
       </QueryProvider>

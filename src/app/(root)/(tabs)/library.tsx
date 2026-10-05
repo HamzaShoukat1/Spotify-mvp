@@ -86,6 +86,7 @@ export default function Library() {
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
           >
             {FILTER_TAGS.map((tag, index) => (
@@ -111,6 +112,7 @@ export default function Library() {
 
         <ScrollView 
           className="flex-1"
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24, gap: 3 }}
         >
           {LIBRARY_ITEMS.map((item) => (

@@ -65,12 +65,12 @@ export default function TabLayout() {
           name="create"
           options={{
             title: 'Create',
-            // tabBarIcon: ({ size }) =>
-            //   isModalOpen ? (
-            //     <X color="#000000" size={size - 1} />
-            //   ) : (
-            //     <Plus color="#FFFFFF" size={size - 1} />
-            //   ),
+            tabBarIcon: ({ size }) =>
+              isModalOpen ? (
+                <X color="#000000" size={size - 1} />
+              ) : (
+                <Plus color="#FFFFFF" size={size - 1} />
+              ),
             tabBarButton: () => (
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -101,7 +101,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <HomepageModal  visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }
