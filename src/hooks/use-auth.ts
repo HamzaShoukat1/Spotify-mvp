@@ -1,7 +1,7 @@
-import { createUser, loginUser, LogoutUser } from "@/services/auth.service";
+import { createUser, currectUser, loginUser, LogoutUser } from "@/services/auth.service";
 import { clearTokens, saveTokens } from "@/storage/secureStorage";
 import { useAuth } from "@/context/Auth.Context";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 // import { router, useNavigation } from "expo-router";
 
 
@@ -64,6 +64,15 @@ export function useLogoutMutation() {
                 await refreshAuth();
             }
         },
+    });
+}
+
+export function useCurrentUser() {
+    return useQuery({
+        queryKey: ['currentUser'],
+        queryFn: currectUser,
+        staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+        retry: 1,                 // Retry failed requests once
     });
 }
 

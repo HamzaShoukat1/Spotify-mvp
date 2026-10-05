@@ -95,7 +95,7 @@ export function ArtistStepLayout({
                     <Text className="text-[32px] font-black leading-[37px] tracking-tight text-white">
                         {title}
                     </Text>
-                    <Text className="mt-3 max-w-[340px] text-[15px] leading-[22px] text-[#9A9A9A]">
+                    <Text className="mt-3 max-w-[340px] text-[15px] leading-[22px] text-white">
                         {description}
                     </Text>
                     <View className="mt-8">{children}</View>

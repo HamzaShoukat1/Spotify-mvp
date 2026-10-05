@@ -49,7 +49,7 @@ export default function MusicAudio() {
       step={1}
       totalSteps={3}
       title="Upload your track"
-      description="Start with a high-quality audio file. MP3, WAV, and other audio formats are supported."
+      description="Start with a high-quality audio file. MP3, WAV, OGG, and other audio formats are supported."
       onBack={() => router.back()}
       onNext={handleNext}
     >

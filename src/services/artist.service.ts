@@ -1,5 +1,7 @@
-const BackendUrl = "http://192.168.100.247:9000"
-// const BackendUrl = "http://192.168.100.159:9000";
+const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000"
+
+// const BackendUrl = "http://192.168.100.159:9000"
+
 
 
 
@@ -34,6 +36,13 @@ export interface CreatedArtist extends Omit<ArtistData, "profileImage" | "coverI
     profileImage: CloudinaryImage;
     coverImage: CloudinaryImage;
 }
+
+export type ArtistProfile = CreatedArtist;
+
+export type UpdateArtistProfileData = Omit<ArtistData, "profileImage" | "coverImage"> & {
+    profileImage?: string;
+    coverImage?: string;
+};
 export interface CreateMusic extends Omit<MusicData, "music"> {
     music: CloudinaryImage
 }
@@ -65,18 +74,48 @@ export async function becameAnArtist(
 }
 
 
-export async function createMusic(createMusicData: MusicData): Promise<CreateMusic> {     
-    const formData = new FormData();     
-    formData.append("musicTitle", createMusicData.musicTitle);     
-    formData.append("primaryArtistName", createMusicData.primaryArtistName);     
-    formData.append("Genre", createMusicData.Genre);     
-    formData.append("Language", createMusicData.Language);      
-    
-    if (createMusicData.music) {         
-        formData.append("music",new File(createMusicData.music));     
-    }      
-    
-    return ApiClient(`${BackendUrl}/artist/music`, {         
-        method: "POST",         
-        body: formData     });
+export async function createMusic(createMusicData: MusicData): Promise<CreateMusic> {
+    const formData = new FormData();
+    formData.append("musicTitle", createMusicData.musicTitle);
+    formData.append("primaryArtistName", createMusicData.primaryArtistName);
+    formData.append("Genre", createMusicData.Genre);
+    formData.append("Language", createMusicData.Language);
+
+    if (createMusicData.music) {
+        formData.append("music", new File(createMusicData.music));
+    }
+
+    return ApiClient(`${BackendUrl}/artist/music`, {
+        method: "POST",
+        body: formData
+    });
+}
+
+export async function getArtistProfile(): Promise<ArtistProfile> {
+    return ApiClient(`${BackendUrl}/artist/profile`, {
+        method: "GET",
+    });
+}
+
+export async function updateArtistProfile(
+    profileData: UpdateArtistProfileData,
+): Promise<ArtistProfile> {
+    const formData = new FormData();
+    formData.append("name", profileData.name);
+    formData.append("artistType", profileData.artistType);
+    formData.append("genres", profileData.genres);
+    formData.append("bio", profileData.bio);
+
+    if (profileData.profileImage && !profileData.profileImage.startsWith("http")) {
+        formData.append("profileImage", new File(profileData.profileImage));
+    }
+
+    if (profileData.coverImage && !profileData.coverImage.startsWith("http")) {
+        formData.append("coverImage", new File(profileData.coverImage));
+    }
+
+    return ApiClient(`${BackendUrl}/artist/profile`, {
+        method: "PATCH",
+        body: formData,
+    });
 }
