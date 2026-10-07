@@ -7,6 +7,7 @@ export type MusicDraft = {
   genre: string;
   language: string;
   fileName: string;
+  coverPhoto: string
 };
 
 type MusicContextValue = {
@@ -22,6 +23,8 @@ const initialMusicDraft: MusicDraft = {
   genre: '',
   language: '',
   fileName: '',
+  coverPhoto: '',
+
 };
 
 const MusicContext = createContext<MusicContextValue | undefined>(undefined);

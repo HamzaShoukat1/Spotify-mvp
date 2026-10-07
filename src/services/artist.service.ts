@@ -17,20 +17,18 @@ export interface ArtistData {
     profileImage: string;
     coverImage: string;
 }
-export interface MusicData {
-    musicTitle: string,
-    primaryArtistName: string,
-    Genre: string,
-    Language: string,
-    music: string
 
-
-}
 
 export interface CloudinaryImage {
     url: string;
     publicId: string;
 }
+export type ArtistMusic = {
+    _id: string;
+    musicTitle: string;
+    coverPhoto?: Pick<CloudinaryImage, "url">;
+    music: Pick<CloudinaryImage, "url">;
+}[];
 
 export interface CreatedArtist extends Omit<ArtistData, "profileImage" | "coverImage"> {
     profileImage: CloudinaryImage;
@@ -38,14 +36,26 @@ export interface CreatedArtist extends Omit<ArtistData, "profileImage" | "coverI
 }
 
 export type ArtistProfile = CreatedArtist;
+export type publicArtist = {
+    _id: string;
+    user: string;
+    name: string;
+    artistType: string;
+    genres: string;
+    bio: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    artistmusic: ArtistMusic;
+    profileImage: CloudinaryImage;
+    coverImage: CloudinaryImage;
+}
 
 export type UpdateArtistProfileData = Omit<ArtistData, "profileImage" | "coverImage"> & {
     profileImage?: string;
     coverImage?: string;
 };
-export interface CreateMusic extends Omit<MusicData, "music"> {
-    music: CloudinaryImage
-}
+
 
 export async function becameAnArtist(
     artistData: ArtistData,
@@ -74,23 +84,6 @@ export async function becameAnArtist(
 }
 
 
-export async function createMusic(createMusicData: MusicData): Promise<CreateMusic> {
-    const formData = new FormData();
-    formData.append("musicTitle", createMusicData.musicTitle);
-    formData.append("primaryArtistName", createMusicData.primaryArtistName);
-    formData.append("Genre", createMusicData.Genre);
-    formData.append("Language", createMusicData.Language);
-
-    if (createMusicData.music) {
-        formData.append("music", new File(createMusicData.music));
-    }
-
-    return ApiClient(`${BackendUrl}/artist/music`, {
-        method: "POST",
-        body: formData
-    });
-}
-
 export async function getArtistProfile(): Promise<ArtistProfile> {
     return ApiClient(`${BackendUrl}/artist/profile`, {
         method: "GET",
@@ -117,5 +110,17 @@ export async function updateArtistProfile(
     return ApiClient(`${BackendUrl}/artist/profile`, {
         method: "PATCH",
         body: formData,
+    });
+}
+
+export async function getArtistdetailforpubluc(artistId: string): Promise<publicArtist> {
+    return ApiClient(`${BackendUrl}/artist/profileforuser/${artistId}`, {
+        method: "GET",
+    });
+}
+
+export async function getPublicArtists(): Promise<publicArtist[]> {
+    return ApiClient(`${BackendUrl}/artist/public`, {
+        method: "GET",
     });
 }

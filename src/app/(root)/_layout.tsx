@@ -22,8 +22,9 @@ export default function RootLayout() {
           swipeEnabled: true,
           drawerType: 'slide',
         }}
-      />
 
+      />
+    
     </>
   );
 }

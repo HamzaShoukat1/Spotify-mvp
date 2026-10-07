@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { router } from "expo-router";
 import { Alert, Text, View } from "react-native";
-import { Check, FileMusic, Globe2, Mic2, Music2 } from "lucide-react-native";
+import { Check, FileImage, FileMusic, Globe2, Mic2, Music2 } from "lucide-react-native";
 import { ArtistStepLayout } from "@/components/ArtistStepLayout";
 import { useMusicContext } from "@/context/MusicContext";
-import { useCreateMusic } from "@/hooks/useArtist";
+import { useCreateMusic } from "@/hooks/use-music";
 
 export default function MusicReview() {
   const { musicDraft, resetMusic } = useMusicContext();
@@ -20,6 +20,9 @@ export default function MusicReview() {
         primaryArtistName: musicDraft.artistName,
         Genre: musicDraft.genre,
         Language: musicDraft.language,
+        coverPhoto: musicDraft.coverPhoto
+
+
       });
       resetMusic();
       router.replace("/(root)/(screens)/Artist-hub");
@@ -30,19 +33,19 @@ export default function MusicReview() {
           ? publishError.message
           : "Please try again.",
       );
-    } 
+    }
   };
 
 
   return (
     <ArtistStepLayout
-      step={3}
-      totalSteps={3}
+      step={4}
+      totalSteps={4}
       title="Review your track"
       description="Make sure everything looks right before publishing."
       onBack={() => router.back()}
       onNext={publishTrack}
-    
+
     >
       <View className="mb-6 items-center rounded-2xl border border-[#285B38] bg-[#142719] px-5 py-7">
         <View className="mb-4 rounded-full bg-[#1ED760] p-4">
@@ -108,7 +111,33 @@ export default function MusicReview() {
               {musicDraft.fileName}
             </Text>
           </View>
+
+
+
+
         </View>
+
+        <View className="flex-row items-center px-4 py-4">
+          <View className="mr-3 rounded-full bg-[#303030] p-2">
+            <FileImage size={18} color="#1ED760" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-xs uppercase tracking-[1px] text-[#777777]">
+              Cover FILE
+            </Text>
+            <Text
+              className="mt-1 text-base font-bold text-white"
+              numberOfLines={1}
+            >
+              {musicDraft.coverPhoto}
+            </Text>
+          </View>
+
+
+
+
+        </View>
+
       </View>
       {error ? (
         <Text className="mt-4 text-center text-sm text-[#FF6B6B]">

@@ -2,14 +2,9 @@
 import { router } from 'expo-router'
 import { Plus, BarChart2, Clock, Settings, Music, Palette } from 'lucide-react-native'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
-import { useArtistProfile } from '@/hooks/useArtist'
 import { useCurrentUser } from '@/hooks/use-auth'
 export default function SpotifyProfileMenu() {
-  // const { data: artistProfile, isLoading } = useArtistProfile()
   const {data:UserDetails,isLoading}= useCurrentUser()
-  const isArtist = UserDetails?.role === "artist"
-  console.log("as",isArtist)
-  // const isArtist = Boolean(artistProfile)
 
   return (
     <>
@@ -43,7 +38,7 @@ export default function SpotifyProfileMenu() {
             <Text className="text-white text-[17px] ml-4">Recents</Text>
           </TouchableOpacity>
 
-        {isArtist && (
+        { !isLoading && UserDetails?.role === 'artist' && (
             <TouchableOpacity onPress={() => router.push("/(root)/(screens)/Artist-hub")} className="flex-row items-center py-4">
             <Palette color="#FFFFFF" size={28} strokeWidth={2} />
             <Text className="text-white text-[17px] ml-4">Artist hub</Text>
@@ -58,7 +53,7 @@ export default function SpotifyProfileMenu() {
             <Text className="text-white text-[17px] ml-4">Settings and privacy</Text>
           </TouchableOpacity>
 
-          {!isLoading && !isArtist ? (
+          {!isLoading && UserDetails?.role === 'user' && (
             <TouchableOpacity
               className="flex-row items-center py-4"
               onPress={() => router.push('/(root)/(artist)/artist-profile')}
@@ -66,7 +61,7 @@ export default function SpotifyProfileMenu() {
               <Music color="#FFFFFF" size={28} strokeWidth={2} />
               <Text className="text-white text-[17px] ml-4">Become An Artist Now</Text>
             </TouchableOpacity>
-          ) : null}
+          )}
           {/* 
         <TouchableOpacity
           className="flex-row items-center py-4"

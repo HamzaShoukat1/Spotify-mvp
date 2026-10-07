@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "scheme": "spotifymvp",
     "userInterfaceStyle": "automatic",
+    
     "ios": {
       "icon": "./src/assets/images/Logo.png",
       "bundleIdentifier": "com.hamza.spotifymvp"
@@ -35,11 +36,28 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      
+      "expo-secure-store",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.1.20",
+            "kspVersion": "2.1.20-1.0.29",
+            "compilerExtensionVersion": "1.5.14",
+            "kotlinCompilerArgs": [
+              "-Xno-call-assertions",
+              "-Xno-receiver-assertions",
+              "-Xno-param-assertions"
+            ]
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": false
     }
   }
+  
 }

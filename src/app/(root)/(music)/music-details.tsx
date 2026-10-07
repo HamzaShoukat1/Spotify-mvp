@@ -27,13 +27,13 @@ export default function MusicDetails() {
       genre,
       language,
     });
-    router.push("/(root)/(music)/music-review");
+    router.push("/(root)/(music)/music-cover");
   };
 
   return (
     <ArtistStepLayout
       step={2}
-      totalSteps={3}
+      totalSteps={4}
       title="Track details"
       description="Give your track the details listeners need to find it."
       onBack={() => router.back()}

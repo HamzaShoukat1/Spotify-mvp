@@ -1,7 +1,8 @@
 import {
     becameAnArtist,
-    createMusic,
+    getArtistdetailforpubluc,
     getArtistProfile,
+    getPublicArtists,
     updateArtistProfile,
 } from '@/services/artist.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,16 +13,12 @@ export function usebecameArtist() {
         mutationFn: becameAnArtist,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['artist-profile'] });
+            queryClient.invalidateQueries({ queryKey: ['public-artists'] });
         },
     });
 }
 
 
-export function useCreateMusic() {
-    return useMutation({
-        mutationFn: createMusic
-    })
-}
 
 export const artistProfileQueryKey = ['artist-profile'];
 
@@ -40,5 +37,22 @@ export function useUpdateArtistProfile() {
         onSuccess: (profile) => {
             queryClient.setQueryData(artistProfileQueryKey, profile);
         },
+    });
+}
+
+
+
+export function useArtistDetailForPublic(artistId: string) {
+    return useQuery({
+        queryKey: ['artistDetail', artistId],
+        queryFn: () => getArtistdetailforpubluc(artistId),
+        enabled: !!artistId,
+    });
+}
+
+export function usePublicArtists() {
+    return useQuery({
+        queryKey: ['public-artists'],
+        queryFn: getPublicArtists,
     });
 }
