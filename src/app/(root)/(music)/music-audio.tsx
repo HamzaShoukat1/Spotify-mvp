@@ -40,6 +40,7 @@ export default function MusicAudio() {
       setError("Choose an audio file before continuing.");
       return;
     }
+    
 
     router.push("/(root)/(music)/music-details");
   };
@@ -47,7 +48,7 @@ export default function MusicAudio() {
   return (
     <ArtistStepLayout
       step={1}
-      totalSteps={3}
+      totalSteps={4}
       title="Upload your track"
       description="Start with a high-quality audio file. MP3, WAV, OGG, and other audio formats are supported."
       onBack={() => router.back()}

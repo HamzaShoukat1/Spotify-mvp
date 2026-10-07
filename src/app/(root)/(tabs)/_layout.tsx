@@ -2,8 +2,9 @@ import { HomepageModal } from '@/models/BecameArtistModel';
 import { Tabs } from 'expo-router';
 import { Home, Library, Search, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { MotiView } from 'moti';
+import { MediaPlayerBar } from '@/components/Media-Player-bar';
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -101,7 +102,10 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <HomepageModal  visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <View className="absolute bottom-[49px] left-0 right-0 ">
+        <MediaPlayerBar />
+      </View>
     </>
   );
 }

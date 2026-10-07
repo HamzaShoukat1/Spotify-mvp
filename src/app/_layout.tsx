@@ -59,7 +59,15 @@ function AuthNavigation() {
         headerShown: false,
         gestureEnabled: true,
       }}
-    />
+    >
+      <Stack.Screen
+        name="(root)/(screens)/TrackView"
+        options={{
+          presentation: 'modal',
+        }}
+      />
+    </Stack>
+
   );
 }
 

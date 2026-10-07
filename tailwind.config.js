@@ -1,10 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./src/app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./src/app/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
+  ],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
       colors: {
+        "gradient-start": "#962419",
+        "gradient-middle": "#661710",
+        "gradient-end": "#430E09",
         primary: "#2ECC71",
         background: "#0F1115",
         surface: "#1A1D23",
@@ -25,5 +31,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
-
+};

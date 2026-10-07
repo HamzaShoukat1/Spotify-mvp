@@ -6,6 +6,7 @@ import React from 'react'
 export default function index() {
   return (
     <View>
+      
       {/* <Signup /> */}
       {/* <Signup1 /> */}
       {/* <Artist /> */}
