@@ -2,7 +2,7 @@ import "../../global.css";
 
 import { View, ActivityIndicator } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   AuthProvider,
@@ -14,8 +14,13 @@ import { ArtistProvider } from "@/context/ArtistContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 
+
+
+
 function AuthNavigation() {
-  const { userToken, isLoading } = useAuth();
+  const { userToken, onboarding, isLoading } = useAuth();
+
+  console.log(userToken, onboarding, isLoading);
 
   const segments = useSegments();
   const router = useRouter();
@@ -27,16 +32,26 @@ function AuthNavigation() {
 
     const inAuthGroup = segments[0] === "(auth)";
     const inRootGroup = segments[0] === "(root)";
+    const inOnboardingGroup = segments[0] === "(onboarding)";
+
     if (!userToken && !inAuthGroup) {
       router.replace("/(auth)/login");
       return;
     }
 
-    if (userToken && !inRootGroup) {
+    if (userToken && !onboarding && !inOnboardingGroup) {
+      router.replace("/(onboarding)/Choose-Artist");
+      return;
+    }
+
+    if (userToken && onboarding && !inRootGroup) {
       router.replace("/(root)/(tabs)/home");
       return;
     }
-  }, [userToken, isLoading, segments, router]);
+
+
+  }, [userToken, onboarding, isLoading, segments, router]);
+
 
   if (isLoading) {
     return (
@@ -53,20 +68,16 @@ function AuthNavigation() {
     );
   }
 
+
+
   return (
     <Stack
       screenOptions={{
         headerShown: false,
         gestureEnabled: true,
       }}
-    >
-      <Stack.Screen
-        name="(root)/(screens)/TrackView"
-        options={{
-          presentation: 'modal',
-        }}
-      />
-    </Stack>
+    />
+
 
   );
 }

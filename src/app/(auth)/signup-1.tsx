@@ -39,7 +39,7 @@ export default function Signup1() {
 
     if (!emailRegex.test(trimmedEmail)) {
       setError("Please enter a valid email address.");
-      return;trimmedEmail
+      return
     }
 
     setEmail(trimmedEmail);
@@ -90,11 +90,10 @@ export default function Signup1() {
               setEmailLocal(value);
               setError("");
             }}
-            className={`bg-[#777777] text-white h-14 rounded-[5px] w-full max-w-[365px] px-4 text-base mb-2 ${
-              error
+            className={`bg-[#777777] text-white h-14 rounded-[5px] w-full max-w-[365px] px-4 text-base mb-2 ${error
                 ? "border border-red-500"
                 : ""
-            }`}
+              }`}
             placeholderTextColor="#a3a3a3"
             keyboardType="email-address"
             autoCapitalize="none"

@@ -60,6 +60,15 @@ export async function currectUser() {
     );
 }
 
+export async function completeOnboarding() {
+    return ApiClient(
+        `${BackendUrl}/auth/onboarding`,
+        {
+            method: "PATCH",
+        }
+    );
+}
+
 
 export async function LogoutUser() {
     return ApiClient(
