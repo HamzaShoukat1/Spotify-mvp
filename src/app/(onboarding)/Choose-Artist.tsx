@@ -1,8 +1,9 @@
 import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ChevronLeft, Search, Check } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { useAuth } from '@/context/Auth.Context';
 
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = (width - 48) / 3;
@@ -26,6 +27,7 @@ const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d282
 
 export default function Artist() {
     const [selectedArtists, setSelectedArtists] = useState<string[]>([]);
+    const { finishOnboarding } = useAuth();
 
     const toggleArtistSelection = (id: string) => {
         if (selectedArtists.includes(id)) {
@@ -106,11 +108,15 @@ export default function Artist() {
                     {selectedArtists.length >= 3 && (
                         <View className="absolute bottom-6 left-4 right-4 bg-transparent">
                             <TouchableOpacity
-                                onPress={() => router.push("/(onboarding)/Choose-Podcast")}
+                                onPress={async () => {
+                                    await finishOnboarding();
+                                    router.replace("/(root)/(tabs)/home");
+                                }}
+
                                 className="bg-white rounded-full py-3.5 items-center justify-center shadow-lg"
                             >
                                 <Text className="text-black font-bold text-base">
-                                    Next ({selectedArtists.length} selected)
+                                    {selectedArtists.length} selected
                                 </Text>
                             </TouchableOpacity>
                         </View>

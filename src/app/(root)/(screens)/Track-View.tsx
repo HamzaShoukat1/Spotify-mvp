@@ -7,29 +7,31 @@ import { useGetMusicTrack } from '@/hooks/use-music';
 import { useEffect } from 'react';
 import TrackPlayer, { usePlaybackState, useProgress, State, useActiveTrack } from 'react-native-track-player';
 import { formatTime, setupPlayer } from '@/services/player';
-import { MediaPlayerBar } from '@/components/Media-Player-bar';
 
 export default function TrackView() {
     const { musicId } = useLocalSearchParams<{ musicId: string }>();
     const { data: musicData, isLoading, isError, } = useGetMusicTrack(musicId);
-    const playbackState = usePlaybackState();
-    const { duration, position } = useProgress(250);
-    const isPlaying = playbackState.state === State.Playing
+    const activeTrack = useActiveTrack();
 
-    const MusicCover = musicData?.coverPhoto?.url
-    const MusicTitle = musicData?.musicTitle
-    const ArtistName = musicData?.primaryArtistName
-    const music = musicData?.music.url
+    const playbackState = usePlaybackState();
+    const { duration, position } = useProgress(300);
+    const isPlaying = playbackState.state === State.Playing;
+
+    const MusicCover = musicData?.coverPhoto?.url || activeTrack?.artwork;
+    const MusicTitle = musicData?.musicTitle || activeTrack?.title;
+    const ArtistName = musicData?.primaryArtistName || activeTrack?.artist;
+    const music = musicData?.music.url || activeTrack?.url;
 
     useEffect(() => {
         async function setupTrack() {
-            if (!music) return;
+            if (!music || !musicId || activeTrack?.id === musicId) return;
+
             try {
                 await setupPlayer();
                 await TrackPlayer.reset();
 
                 await TrackPlayer.add({
-                    id: musicId || 'track',
+                    id: musicId,
                     url: music,
                     title: MusicTitle,
                     artist: ArtistName,
@@ -43,9 +45,7 @@ export default function TrackView() {
         }
 
         setupTrack();
-
-    }, [music, musicId]);
-
+    }, [music, musicId, activeTrack?.id]);
     const togglePlayback = async () => {
         try {
             if (isPlaying) {
@@ -58,7 +58,7 @@ export default function TrackView() {
         }
     };
 
- 
+
     if (isLoading) {
         return (
             <View
@@ -77,7 +77,7 @@ export default function TrackView() {
         );
     }
 
-    if (isError || !musicData) {
+    if (isError) {
         return (
             <SafeAreaView className="flex-1 items-center justify-center bg-black px-6">
                 <Text className="text-center text-white">
@@ -210,7 +210,7 @@ export default function TrackView() {
                         <Text className="text-white text-[10px] font-bold tracking-wider uppercase mr-1">MORE</Text>
                         <Maximize2 color="#ffffff" size={10} />
                     </TouchableOpacity>
-                
+
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>

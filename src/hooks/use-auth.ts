@@ -2,6 +2,7 @@ import { createUser, currectUser, loginUser, LogoutUser } from "@/services/auth.
 import { clearTokens, saveTokens } from "@/storage/secureStorage";
 import { useAuth } from "@/context/Auth.Context";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
 // import { router, useNavigation } from "expo-router";
 
 
@@ -63,6 +64,11 @@ export function useLogoutMutation() {
                 console.log('Local tokens cleared after logout.');
                 await refreshAuth();
             }
+
+
+        },
+        onError: (err: any) => {
+            console.log(err instanceof Error ? err.message : 'logout failed.');
         },
     });
 }
@@ -74,5 +80,5 @@ export function useCurrentUser() {
         staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
         retry: 1,                 // Retry failed requests once
     });
-}
+};
 

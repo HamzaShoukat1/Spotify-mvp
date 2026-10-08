@@ -94,7 +94,6 @@ export default function TabLayout() {
                     <X color="#000000" size={22} />
                   ) : (
                     <Plus color="#B3B3B3" size={22} />
-
                   )}
                 </MotiView>
               </TouchableOpacity>
@@ -102,8 +101,14 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <View className="absolute bottom-[49px] left-0 right-0 ">
+
+      {isModalOpen && (
+        <View className="absolute inset-x-0 bottom-[114px] z-50 justify-end">
+          <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        </View>
+      )}
+
+      <View className="absolute bottom-[49px] left-0 right-0 z-50">
         <MediaPlayerBar />
       </View>
     </>

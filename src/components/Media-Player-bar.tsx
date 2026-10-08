@@ -13,7 +13,7 @@ export const MediaPlayerBar = () => {
     const activeTrack = useActiveTrack();
     const playbackState = usePlaybackState();
 
-    const { position, duration } = useProgress(200);
+    const { position, duration } = useProgress(300);
 
     if (!activeTrack) return null;
 

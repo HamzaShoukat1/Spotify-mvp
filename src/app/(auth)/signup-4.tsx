@@ -18,7 +18,7 @@ import { useSignupMutation } from '@/hooks/use-auth';
 export default function Signup4() {
   const { mutate: AccountCreating, isPending } = useSignupMutation();
   const { signupData, setName, resetSignup } = useSignup();
-  
+
   const [name, setNameLocal] = useState(signupData.name || '');
   const [error, setError] = useState('');
   const [newsOffers, setNewsOffers] = useState(false);
@@ -33,23 +33,23 @@ export default function Signup4() {
 
     setName(trimmedName);
 
-  AccountCreating(
-  {
-    email: signupData.email,
-    password: signupData.password,
-    gender: signupData.gender,
-    name: trimmedName,
-  },
-  {
-    onSuccess: () => {
-      resetSignup();
-      router.replace('/(onboarding)/Choose-Artist');
-    },
-    onError: (err: any) => {
-      setError(err instanceof Error ? err.message : 'Unable to create account.');
-    },
-  }
-);
+    AccountCreating(
+      {
+        email: signupData.email,
+        password: signupData.password,
+        gender: signupData.gender,
+        name: trimmedName,
+      },
+      {
+        onSuccess: () => {
+          resetSignup();
+          router.replace('/(onboarding)/Choose-Artist');
+        },
+        onError: (err: any) => {
+          setError(err instanceof Error ? err.message : 'Unable to create account.');
+        },
+      }
+    );
 
   };
 
@@ -136,9 +136,8 @@ export default function Signup4() {
               Please send me news and offers from Spotify.
             </Text>
             <View
-              className={`w-5 h-5 rounded-full border items-center justify-center mr-3 ${
-                newsOffers ? 'border-white' : 'border-[#777777]'
-              }`}
+              className={`w-5 h-5 rounded-full border items-center justify-center mr-3 ${newsOffers ? 'border-white' : 'border-[#777777]'
+                }`}
             >
               {newsOffers ? <View className="w-2.5 h-2.5 rounded-full bg-white" /> : null}
             </View>
@@ -154,9 +153,8 @@ export default function Signup4() {
               Share my registration data with Spotify's content providers for marketing purposes.
             </Text>
             <View
-              className={`w-5 h-5 rounded-full border items-center justify-center mr-3 ${
-                shareData ? 'border-white' : 'border-[#777777]'
-              }`}
+              className={`w-5 h-5 rounded-full border items-center justify-center mr-3 ${shareData ? 'border-white' : 'border-[#777777]'
+                }`}
             >
               {shareData ? <View className="w-2.5 h-2.5 rounded-full bg-white" /> : null}
             </View>

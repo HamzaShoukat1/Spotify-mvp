@@ -32,7 +32,7 @@ export function HomepageModal({
                 {/* Bottom Sheet */}
                 <View className="w-full bg-[#121212] rounded-t-[32px] px-6  pb-10    border-t border-zinc-800">
 
-                     <View className="mb-7">
+                    <View className="mb-7">
                         {/* <Text className="text-white text-2xl font-bold">
                             Create
                         </Text>
@@ -79,7 +79,7 @@ export function HomepageModal({
                         </View>
                     </TouchableOpacity>
 
-                     <TouchableOpacity
+                    <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={onClose}
                         className="h-14 rounded-full bg-[#282828] items-center justify-center mt-2"
@@ -87,7 +87,7 @@ export function HomepageModal({
                         <Text className="text-white text-base font-semibold">
                             Cancel
                         </Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity>
 
                 </View>
             </View>
