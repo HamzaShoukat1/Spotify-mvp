@@ -1,8 +1,7 @@
 import "../../global.css";
 
 import { View, ActivityIndicator } from "react-native";
-import { Stack, useRouter, useSegments } from "expo-router";
-import { useEffect, useState } from "react";
+import { Stack, Redirect, useSegments } from "expo-router";
 
 import {
   AuthProvider,
@@ -14,44 +13,9 @@ import { ArtistProvider } from "@/context/ArtistContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 
-
-
-
 function AuthNavigation() {
   const { userToken, onboarding, isLoading } = useAuth();
-
-  console.log(userToken, onboarding, isLoading);
-
   const segments = useSegments();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-
-    const inAuthGroup = segments[0] === "(auth)";
-    const inRootGroup = segments[0] === "(root)";
-    const inOnboardingGroup = segments[0] === "(onboarding)";
-
-    if (!userToken && !inAuthGroup) {
-      router.replace("/(auth)/login");
-      return;
-    }
-
-    if (userToken && !onboarding && !inOnboardingGroup) {
-      router.replace("/(onboarding)/Choose-Artist");
-      return;
-    }
-
-    if (userToken && onboarding && !inRootGroup) {
-      router.replace("/(root)/(tabs)/home");
-      return;
-    }
-
-
-  }, [userToken, onboarding, isLoading, segments, router]);
-
 
   if (isLoading) {
     return (
@@ -68,7 +32,21 @@ function AuthNavigation() {
     );
   }
 
+  const inAuthGroup = segments[0] === "(auth)";
+  const inRootGroup = segments[0] === "(root)";
+  const inOnboardingGroup = segments[0] === "(onboarding)";
 
+  if (!userToken && !inAuthGroup) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
+  if (userToken && !onboarding && !inOnboardingGroup) {
+    return <Redirect href="/(onboarding)/Choose-Artist" />;
+  }
+
+  if (userToken && onboarding && !inRootGroup) {
+    return <Redirect href="/(root)/(tabs)/home" />;
+  }
 
   return (
     <Stack
@@ -77,8 +55,6 @@ function AuthNavigation() {
         gestureEnabled: true,
       }}
     />
-
-
   );
 }
 

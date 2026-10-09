@@ -60,11 +60,12 @@ export async function currectUser() {
     );
 }
 
-export async function completeOnboarding() {
+export async function completeOnboarding(favoriteArtists: string[]) {
     return ApiClient(
         `${BackendUrl}/auth/onboarding`,
         {
             method: "PATCH",
+            body: JSON.stringify({ favoriteArtists }),
         }
     );
 }
