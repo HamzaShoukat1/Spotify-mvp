@@ -5,9 +5,13 @@ import { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { MotiView } from 'moti';
 import { MediaPlayerBar } from '@/components/Media-Player-bar';
+import { useAuth } from '@/context/Auth.Context';
+import { Image } from 'react-native';
+import { Logo } from "../../../assets/images/index"
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { userToken } = useAuth()
 
   return (
     <>
@@ -20,8 +24,8 @@ export default function TabLayout() {
             elevation: 0,
             shadowOpacity: 0,
             height: 65,
-            paddingBottom: 10,
-            paddingTop: 8,
+            paddingBottom: 9,
+            paddingTop: 16,
           },
           sceneStyle: {
             backgroundColor: '#121212',
@@ -59,6 +63,18 @@ export default function TabLayout() {
             title: 'Your Library',
             tabBarIcon: ({ color, size }) => (
               <Library color={color} size={size - 2} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="premium"
+          options={{
+            title: 'Premium',
+            tabBarIcon: ({ size }) => (
+              <Image
+                source={Logo}
+                style={{ width: size - 2, height: size - 2, resizeMode: 'contain', }}
+              />
             ),
           }}
         />
@@ -110,6 +126,8 @@ export default function TabLayout() {
 
       <View className="absolute bottom-[49px] left-0 right-0 z-50">
         <MediaPlayerBar />
+
+
       </View>
     </>
   );

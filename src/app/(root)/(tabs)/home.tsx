@@ -1,24 +1,30 @@
-import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useNavigation } from 'expo-router'
 import { usePublicArtists } from '@/hooks/useArtist';
 import { useMusicDetailforhome } from '@/hooks/use-music';
-import { MediaPlayerBar } from '@/components/Media-Player-bar';
+import { RefreshControl } from 'react-native'; 
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwxfHxzaW5nZXJ8ZW58MHx8fHwxNzkwMzUwNzgzfDA&ixlib=rb-4.1.0&fit=max&q=80';
 
-const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwxfHxzaW5nZXJ8ZW58MHx8fHwxNzkwMzUwNzgzfDA&ixlib=rb-4.1.0&fit=max&q=80'
-const PLACEHOLDER_IMAGE1 = 'https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
 const RECENTLY_PLAYED_DATA = [
     { id: '1', name: '1Remastered', isArtist: false, image: PLACEHOLDER_IMAGE },
-    { id: '4', name: 'Lana Del Rey', isArtist: true, image: PLACEHOLDER_IMAGE1 },
+    { id: '4', name: 'Lana Del Rey', isArtist: true, image: PLACEHOLDER_IMAGE },
     { id: '13', name: 'Marvin Gaye', isArtist: true, image: PLACEHOLDER_IMAGE },
     { id: '14', name: 'Indie Pop', isArtist: false, image: PLACEHOLDER_IMAGE },
 ];
 
 
 export default function Home() {
-    const { data: artistsList = [] } = usePublicArtists();
-    const { data: Musicdetailforhome = [] } = useMusicDetailforhome()
+    const { data: artistsList = [], refetch: refetchartist, isRefetching: artistrefetching, isLoading: artistloading } = usePublicArtists();
+    const { data: Musicdetailforhome = [], refetch: refetchMusic, isRefetching: musicRefching, isLoading: musicLoading } = useMusicDetailforhome()
+
+    const onRefresh = () => {
+        refetchMusic(),
+            refetchartist()
+    }
+    // const isLoading = artistloading || musicLoading
+    const refreshing = artistrefetching || musicRefching
 
     const navigation = useNavigation()
     const openProfileDrawer = () => {
@@ -101,7 +107,22 @@ export default function Home() {
             </TouchableOpacity>
         );
     };
-   
+
+    // if (isLoading) {
+    //     return (
+    //         <View
+    //             style={{
+    //                 flex: 1,
+    //                 backgroundColor: "#000000",
+    //                 justifyContent: "center",
+    //                 alignItems: "center",
+    //             }}
+    //         >
+    //             <ActivityIndicator size="large" color="#1DB954" />
+    //         </View>
+    //     );
+    // }
+
     return (
         <SafeAreaView className="flex-1 bg-black">
             <KeyboardAvoidingView
@@ -112,6 +133,9 @@ export default function Home() {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ flexGrow: 1 }}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                     >
                         <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center'>
                             <TouchableOpacity onPress={openProfileDrawer}>
@@ -169,5 +193,5 @@ export default function Home() {
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
-    )
+    );
 }

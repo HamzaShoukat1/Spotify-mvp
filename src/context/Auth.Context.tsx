@@ -8,13 +8,15 @@ import React, {
 
 import { getAccessToken } from "@/storage/secureStorage";
 import { completeOnboarding, currectUser } from "@/services/auth.service";
+
 type AuthContextType = {
   userToken: string | null;
   onboarding: boolean;
   isLoading: boolean;
   refreshAuth: () => Promise<void>;
-  finishOnboarding: () => Promise<void>;
+  finishOnboarding: (favoriteArtists: string[]) => Promise<void>;
 };
+
 const AuthContext = createContext<AuthContextType>({
   userToken: null,
   onboarding: true,
@@ -29,17 +31,18 @@ export function AuthProvider({
   children: React.ReactNode;
 }) {
   const [userToken, setUserToken] = useState<string | null>(null);
-  const [onboarding, setOnboarding] = useState(true);
+  const [onboarding, setOnboarding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshAuth = useCallback(async () => {
     try {
       const token = await getAccessToken();
-      setUserToken(token);
       if (token) {
         const user = await currectUser();
+        setUserToken(token);
         setOnboarding(Boolean(user?.onboarding));
       } else {
+        setUserToken(null);
         setOnboarding(false);
       }
     } catch (error) {
@@ -51,8 +54,8 @@ export function AuthProvider({
     }
   }, []);
 
-  const finishOnboarding = useCallback(async () => {
-    const user = await completeOnboarding();
+  const finishOnboarding = useCallback(async (favoriteArtists: string[]) => {
+    const user = await completeOnboarding(favoriteArtists);
     setOnboarding(Boolean(user?.onboarding));
   }, []);
 

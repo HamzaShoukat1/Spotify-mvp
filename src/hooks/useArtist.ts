@@ -14,6 +14,7 @@ export function usebecameArtist() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['artist-profile'] });
             queryClient.invalidateQueries({ queryKey: ['public-artists'] });
+            queryClient.invalidateQueries({ queryKey: ['currentUser'] })
         },
     });
 }
