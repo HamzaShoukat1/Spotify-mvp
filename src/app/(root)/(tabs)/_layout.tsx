@@ -5,13 +5,11 @@ import { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { MotiView } from 'moti';
 import { MediaPlayerBar } from '@/components/Media-Player-bar';
-import { useAuth } from '@/context/Auth.Context';
 import { Image } from 'react-native';
 import { Logo } from "../../../assets/images/index"
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { userToken } = useAuth()
 
   return (
     <>
@@ -41,6 +39,7 @@ export default function TabLayout() {
       >
         <Tabs.Screen
           name="home"
+          listeners={{ tabPress: () => setIsModalOpen(false) }}
           options={{
             title: 'Home',
             tabBarIcon: ({ color, size }) => (
@@ -50,6 +49,7 @@ export default function TabLayout() {
         />
         <Tabs.Screen
           name="search"
+          listeners={{ tabPress: () => setIsModalOpen(false) }}
           options={{
             title: 'Search',
             tabBarIcon: ({ color, size }) => (
@@ -59,6 +59,7 @@ export default function TabLayout() {
         />
         <Tabs.Screen
           name="library"
+          listeners={{ tabPress: () => setIsModalOpen(false) }}
           options={{
             title: 'Your Library',
             tabBarIcon: ({ color, size }) => (
@@ -68,6 +69,7 @@ export default function TabLayout() {
         />
         <Tabs.Screen
           name="premium"
+          listeners={{ tabPress: () => setIsModalOpen(false) }}
           options={{
             title: 'Premium',
             tabBarIcon: ({ size }) => (
@@ -119,7 +121,7 @@ export default function TabLayout() {
       </Tabs>
 
       {isModalOpen && (
-        <View className="absolute inset-x-0 bottom-[114px] z-50 justify-end">
+        <View className="absolute inset-x-0 bottom-[65px] top-0 z-[60] ">
           <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </View>
       )}
