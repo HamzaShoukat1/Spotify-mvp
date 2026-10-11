@@ -115,12 +115,14 @@ export default function SearchBar() {
                             onChangeText={setSearch}
                             placeholder="What do you want to listen to?"
                             placeholderTextColor="#777777"
+                            placeholderClassName=''
                             autoFocus={true}
                             clearButtonMode="never"
                             autoCapitalize="none"
                             autoCorrect={false}
-                            className="flex-1 text-white text-base p-0 m-0"
+                            className="flex-1 text-white  placeholder:text-sm p-0 m-0"
                         />
+
                         {search.length > 0 && (
                             <TouchableOpacity onPress={() => setSearch("")} className="ml-2">
                                 <X color="#ffffff" size={18} />

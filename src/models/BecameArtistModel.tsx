@@ -1,96 +1,67 @@
 import {
-    Modal,
     Text,
     View,
     TouchableOpacity,
     Pressable,
 } from 'react-native';
 
-import { Music, ChevronRight } from 'lucide-react-native';
+import { BlurView } from 'expo-blur';
+import { Music } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 export function HomepageModal({
-    visible,
     onClose,
 }: {
     visible: boolean;
     onClose: () => void;
 }) {
     return (
-        <Modal
-            visible={visible}
-            transparent
-            animationType="slide"
-            onRequestClose={onClose}
-        >
-            <View className="flex-1     justify-end bg-black/60">
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+            <BlurView
+                intensity={50}
+                tint="dark"
+                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+            />
+            <Pressable
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                }}
+                onPress={onClose}
+            />
+            <View
+                style={{
+                    width: '95%',
+                    alignSelf: 'center',
+                    borderRadius: 12,
+                    backgroundColor: '#1C1C1E',
 
-                <Pressable
-                    className="absolute inset-0"
-                    onPress={onClose}
-                />
-                {/* Bottom Sheet */}
-                <View className="w-full bg-[#121212] rounded-t-[32px] px-6  pb-10    border-t border-zinc-800">
-
-                    <View className="mb-7">
-                        {/* <Text className="text-white text-2xl font-bold">
-                            Create
-                        </Text>
-
-                        <Text className="text-white text-sm mt-1">
-                            Add something new for your community
-                        </Text> */}
+                    paddingHorizontal: 24,
+                    paddingTop: 20,
+                    paddingBottom: 20,
+                }}
+            >
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                        onClose();
+                        router.push('/(root)/(music)/music-audio');
+                    }}
+                    className="flex-row items-center py-2"
+                >
+                    <View className="h-14 w-14 items-center justify-center rounded-full bg-[#3b3b3b]">
+                        <Music size={26} color="#FFFFFF" strokeWidth={2} />
                     </View>
-
-                    {/* Add Music */}
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() => {
-                            onClose();
-
-                            router.push(
-                                '/(root)/(music)/music-audio'
-                            );
-                        }}
-                        className="flex-row items-center bg-[#1c1c1c] rounded-2xl  px-4 py-4 mb-4 border border-zinc-800"
-                    >
-                        {/* Icon */}
-                        <View className="w-16 h-16 rounded-xl bg-[#282828] items-center justify-center">
-                            <Music
-                                size={30}
-                                color="#fff"
-                                strokeWidth={2}
-                            />
-                        </View>
-
-                        {/* Text */}
-                        <View className="flex-1 ml-4">
-                            <Text className="text-white text-lg font-bold">
-                                Add Music
-                            </Text>
-                        </View>
-
-                        {/* Arrow */}
-                        <View>
-                            <ChevronRight
-                                size={24}
-                                color="#a1a1a1"
-                            />
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={onClose}
-                        className="h-14 rounded-full bg-[#282828] items-center justify-center mt-2"
-                    >
-                        <Text className="text-white text-base font-semibold">
-                            Cancel
-                        </Text>
-                    </TouchableOpacity>
-
-                </View>
+                    <View className="ml-4 flex-1">
+                        <Text className="text-[17px] font-bold text-white">Add music</Text>
+                        <Text className="mt-0.5 text-[13.5px] text-white">Upload a song to your library</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
-        </Modal>
+        </View>
     );
 }

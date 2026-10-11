@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useNavigation } from 'expo-router'
 import { usePublicArtists } from '@/hooks/useArtist';
 import { useMusicDetailforhome } from '@/hooks/use-music';
-import { RefreshControl } from 'react-native'; 
+import { RefreshControl } from 'react-native';
 const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwxfHxzaW5nZXJ8ZW58MHx8fHwxNzkwMzUwNzgzfDA&ixlib=rb-4.1.0&fit=max&q=80';
 
 

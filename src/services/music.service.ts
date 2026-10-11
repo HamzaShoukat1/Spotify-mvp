@@ -2,7 +2,9 @@ import { ApiClient } from "@/api/ApiClient";
 import { CloudinaryImage } from "./artist.service";
 import { File } from "expo-file-system";
 
-const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000"
+// const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000"
+const BackendUrl = "http://192.168.100.159:9000"
+
 
 
 export interface MusicData {
@@ -14,6 +16,26 @@ export interface MusicData {
     coverPhoto: string
 
 
+}
+
+export interface TrackArtist {
+    name: string;
+    artistType: string;
+    genres: string;
+    bio: string;
+    profileImage?: CloudinaryImage;
+    coverImage?: CloudinaryImage;
+}
+
+export interface MusicTrack {
+    _id: string;
+    musicTitle: string;
+    primaryArtistName: string;
+    Genre: string;
+    Language: string;
+    music: CloudinaryImage;
+    coverPhoto: CloudinaryImage;
+    artist: TrackArtist | null;
 }
 export interface CreateMusic extends Omit<MusicData, "music" | "coverPhoto"> {
     music: CloudinaryImage
@@ -49,7 +71,7 @@ export async function getMusicDetail() {
 
 
 
-export async function getMusicTrack(musicId: string) {
+export async function getMusicTrack(musicId: string): Promise<MusicTrack> {
     return ApiClient(`${BackendUrl}/music/track/${musicId}`, {
         method: "GET",
     });
