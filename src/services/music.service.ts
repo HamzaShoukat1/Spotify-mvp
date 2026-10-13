@@ -2,8 +2,8 @@ import { ApiClient } from "@/api/ApiClient";
 import { CloudinaryImage } from "./artist.service";
 import { File } from "expo-file-system";
 
-// const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000"
-const BackendUrl = "http://192.168.100.159:9000"
+const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000"
+// const BackendUrl = "http://192.168.100.159:9000"
 
 
 
@@ -27,6 +27,9 @@ export interface TrackArtist {
     coverImage?: CloudinaryImage;
 }
 
+type user = {
+    _id:string
+}
 export interface MusicTrack {
     _id: string;
     musicTitle: string;

@@ -1,6 +1,8 @@
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Plus, ArrowUpDown, LayoutGrid, Heart, Bell, Pin } from "lucide-react-native"
+import { useLikesPostDetails } from '@/hooks/use-like';
+import { useRouter } from 'expo-router'; // Added router import for navigation
 
 const PLACEHOLDER_IMAGE1 = 'https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
@@ -12,6 +14,7 @@ const LIBRARY_ITEMS = [
     type: 'playlist',
     isPinned: true,
     customIcon: 'heart',
+    route: "UserlikedArtistdetails"
   },
   {
     id: '2',
@@ -62,6 +65,8 @@ const LIBRARY_ITEMS = [
 const FILTER_TAGS = ['Playlists', 'Artists', 'Albums', 'Podcasts & shows'];
 
 export default function Library() {
+  const router = useRouter(); 
+
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">
       <KeyboardAvoidingView
@@ -92,7 +97,7 @@ export default function Library() {
             {FILTER_TAGS.map((tag, index) => (
               <TouchableOpacity 
                 key={index} 
-                className="bg-[#121212] px-4  rounded-[45px] py-2  border-[0.6px] border-neutral-700"
+                className="bg-[#121212] px-4 rounded-[45px] py-2 border-[0.6px] border-neutral-700"
               >
                 <Text className="text-white text-xs font-semibold">{tag}</Text>
               </TouchableOpacity>
@@ -120,10 +125,15 @@ export default function Library() {
               key={item.id} 
               className="flex-row items-center mt-6"
               activeOpacity={0.6}
+              onPress={() => {
+                if (item.route) {
+                  router.push(item.route as any);
+                }
+              }} 
             >
               <View className="mr-3">
                 {item.customIcon === 'heart' ? (
-                  <View className="w-16 h-16 rounded bg-gradient-to-br from-[#450ffd] to-[#adc0c7] items-center justify-center bg-[#3c2bc1]">
+                  <View className="w-16 h-16 rounded items-center justify-center bg-[#3c2bc1]">
                     <Heart color="#ffffff" size={28} fill="#ffffff" />
                   </View>
                 ) : item.customIcon === 'bell' ? (
@@ -141,7 +151,7 @@ export default function Library() {
               </View>
 
               <View className="flex-1 justify-center">
-                <Text className="text-white text-[15px]  font-semibold">
+                <Text className="text-white text-[15px] font-semibold">
                   {item.title}
                 </Text>
                 

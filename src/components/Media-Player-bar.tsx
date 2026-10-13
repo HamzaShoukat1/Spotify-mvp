@@ -1,6 +1,5 @@
-import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { Play, Pause, Bluetooth } from 'lucide-react-native';
+import { Play, Pause } from 'lucide-react-native';
 import TrackPlayer, {
     useActiveTrack,
     usePlaybackState,
@@ -46,8 +45,10 @@ export const MediaPlayerBar = () => {
         <TouchableOpacity
             activeOpacity={0.9}
             onPress={handlePressBar}
-            className="flex-row items-center justify-between bg-[#430E09] w-full h-14 px-3"
-            style={{ position: 'relative', overflow: 'hidden' }}
+            className="flex-row items-center justify-between w-full h-14 px-3"
+            style={{
+                backgroundColor: '#B84A2A',
+            }}
         >
             <View className="flex-row items-center flex-1 ">
                 {/* Album Cover */}

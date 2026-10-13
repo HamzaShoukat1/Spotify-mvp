@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -33,15 +33,34 @@ import TrackPlayer, {
 } from "react-native-track-player";
 import { useGetMusicTrack } from "@/hooks/use-music";
 import { formatTime, setupPlayer } from "@/services/player";
+import { useAddTrackDataToAnalytics } from "@/hooks/use-analytics";
+import { useToggleLike } from "@/hooks/use-like";
 
 export default function TrackView() {
-  const { musicId } = useLocalSearchParams<{ musicId: string }>();
+  const { musicId } = useLocalSearchParams<{
+    musicId: string;
+  }>();
+
   const { data: musicData, isLoading, isError } = useGetMusicTrack(musicId);
+  const { mutate: toggleLike, isPending, isError: errorintoggle } = useToggleLike()
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  if (isError) {
+    console.log("sassa")
+  }
+
+
+
+  const { mutateAsync: adduserdetailstodbforstreamtracking } =
+    useAddTrackDataToAnalytics();
+
+  const trackedMusicIdRef = useRef<string | null>(null);
+
   const activeTrack = useActiveTrack();
   const playbackState = usePlaybackState();
   const { duration, position } = useProgress(300);
-  const isPlaying = playbackState.state === State.Playing;
 
+  const isPlaying = playbackState.state === State.Playing;
   const musicCover = musicData?.coverPhoto?.url || activeTrack?.artwork;
   const musicTitle =
     musicData?.musicTitle || activeTrack?.title || "Unknown title";
@@ -52,11 +71,20 @@ export default function TrackView() {
   const artistImage = artist?.profileImage?.url;
 
   useEffect(() => {
+    let cancelled = false;
+
     async function startTrack() {
-      if (!musicUrl || !musicId || activeTrack?.id === musicId) return;
+      if (!musicUrl || !musicId) return;
+
+      if (activeTrack?.id === musicId) return;
+
       try {
         await setupPlayer();
+
+        if (cancelled) return;
+
         await TrackPlayer.reset();
+
         await TrackPlayer.add({
           id: musicId,
           url: musicUrl,
@@ -64,13 +92,47 @@ export default function TrackView() {
           artist: artistName,
           artwork: musicCover,
         });
+
+        if (cancelled) return;
+
         await TrackPlayer.play();
       } catch (error) {
         console.error("Error initializing track playback:", error);
       }
     }
+
     startTrack();
-  }, [activeTrack?.id, artistName, musicCover, musicId, musicTitle, musicUrl]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [musicId, musicUrl, musicTitle, artistName, musicCover]);
+
+  useEffect(() => {
+    if (
+      playbackState.state === State.Ended ||
+      playbackState.state === State.Stopped
+    ) {
+      trackedMusicIdRef.current = null;
+      return;
+    }
+
+    if (!musicId || activeTrack?.id !== musicId || playbackState.state !== State.Playing || trackedMusicIdRef.current === musicId) {
+      return;
+    }
+
+    trackedMusicIdRef.current = musicId;
+
+    adduserdetailstodbforstreamtracking({ musicId }).catch((error) => {
+      trackedMusicIdRef.current = null;
+      console.error("Analytics tracking failed:", error);
+    });
+  }, [
+    activeTrack?.id,
+    adduserdetailstodbforstreamtracking,
+    musicId,
+    playbackState.state,
+  ]);
 
   const togglePlayback = async () => {
     if (isPlaying) await TrackPlayer.pause();
@@ -126,7 +188,6 @@ export default function TrackView() {
               <MoreHorizontal color="white" size={25} />
             </TouchableOpacity>
           </View>
-
           <View className="mt-7 items-center">
             {musicCover ? (
               <Image
@@ -137,7 +198,6 @@ export default function TrackView() {
               <View className="aspect-square w-full max-w-[390px] rounded-md bg-[#282828]" />
             )}
           </View>
-
           <View className="mt-8 flex-row items-center justify-between">
             <View className="flex-1 pr-5">
               <Text
@@ -153,11 +213,30 @@ export default function TrackView() {
                 {artistName}
               </Text>
             </View>
-            <TouchableOpacity hitSlop={10}>
-              <Heart color="white" size={26} />
-            </TouchableOpacity>
-          </View>
+            <TouchableOpacity
+              onPress={() => {
+                toggleLike(musicId);
+                setIsLiked(!isLiked);
+              }}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              {isPending ? (
+                <Heart color={isLiked ? '#FF2D55' : '#FFFFFF'}
+                  fill={isLiked ? '#FF2D55' : 'transparent'}
+                  size={26} />
+              ) : (
+                <Heart
+                  color={isLiked ? '#FF2D55' : '#FFFFFF'}
+                  fill={isLiked ? '#FF2D55' : 'transparent'}
+                  size={26}
+                />
+              )}
 
+
+            </TouchableOpacity>
+
+
+          </View>
           <View className="mt-5">
             <Slider
               minimumValue={0}
@@ -177,7 +256,6 @@ export default function TrackView() {
               </Text>
             </View>
           </View>
-
           <View className="mt-5 flex-row items-center justify-between px-2">
             <Shuffle color="#b3b3b3" size={20} />
             <SkipBack color="white" fill="white" size={26} />
@@ -209,8 +287,7 @@ export default function TrackView() {
               {artistImage ? (
                 <Image
                   source={{ uri: artistImage }}
-                  className="h-[220px] w-full"
-                  resizeMode="cover"
+                  className="h-[220px] w-full resizeMode=cover"
                 />
               ) : (
                 <View className="h-[220px] w-full bg-[#3d3d3d]" />
@@ -220,9 +297,6 @@ export default function TrackView() {
                   <Text className="text-[24px] font-bold text-white">
                     {artist.name || artistName}
                   </Text>
-                  {/* <View className="ml-2 h-4 w-4 items-center justify-center rounded-full bg-[#1ed760]">
-                    <Text className="text-[10px] font-bold text-black">✓</Text>
-                  </View> */}
                 </View>
                 {!!artist.artistType && (
                   <Text className="mt-1 text-sm text-[#b3b3b3]">
