@@ -58,6 +58,7 @@ export function ArtistStepLayout({
                 style={{ backgroundColor: '#0B0B0B' }}
             >
                 <View className="px-6 pt-2">
+                    {/* Header Navigation */}
                     <View className="flex-row items-center justify-between">
                         <Pressable
                             onPress={onBack}
@@ -72,14 +73,30 @@ export function ArtistStepLayout({
                         <View className="h-10 w-10" />
                     </View>
 
-                    <View className="mt-7 flex-row gap-2">
-                            {Array.from({ length: totalSteps }, (_, index) => index + 1).map((item) => (
+                    {/* Segmented Progress Line with Gaps directly above Step text */}
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            width: '100%',
+                            height: 6,
+                            marginTop: 24,
+                        }}
+                    >
+                        {Array.from({ length: totalSteps }, (_, index) => index + 1).map((item) => (
                             <View
                                 key={item}
-                                className={`h-1 flex-1 rounded-full ${item <= step ? 'bg-[#1ED760]' : 'bg-[#292929]'}`}
+                                style={{
+                                    flex: 1,
+                                    height: 6,
+                                    marginRight: item === totalSteps ? 0 : 8,
+                                    borderRadius: 999,
+                                    backgroundColor: item <= step ? '#1ED760' : '#292929',
+                                }}
                             />
                         ))}
                     </View>
+
+                    {/* Step Label */}
                     <Text className="mt-3 text-[11px] font-bold uppercase tracking-[1.5px] text-[#1ED760]">
                         Step {step} of {totalSteps}
                     </Text>
@@ -106,7 +123,7 @@ export function ArtistStepLayout({
                         <Pressable
                             onPress={handleNext}
                             disabled={isLoading}
-                            className="h-14 mb-2 flex-row items-center justify-center rounded-full bg-[#1ED760] active:bg-[#1BC653] disabled:opacity-60"
+                            className="mb-2 h-14 flex-row items-center justify-center rounded-full bg-[#1ED760] active:bg-[#1BC653] disabled:opacity-60"
                         >
                             {isLoading ? (
                                 <ActivityIndicator color="#000000" />

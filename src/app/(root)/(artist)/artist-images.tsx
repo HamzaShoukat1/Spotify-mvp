@@ -43,6 +43,7 @@ export default function ArtistImages() {
       description="Choose images that make your artist profile unmistakably you."
       onBack={() => router.back()}
       onNext={handleNext}
+      
     >
       <Text className="mb-3 text-xs font-bold uppercase tracking-[1px] text-[#B3B3B3]">
         Profile image

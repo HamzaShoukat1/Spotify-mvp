@@ -26,6 +26,7 @@ export default function ArtistSound() {
       description="Help new listeners understand what makes your music yours."
       onBack={() => router.back()}
       onNext={handleNext}
+      
     >
       <Text className="mb-2 text-xs font-bold uppercase tracking-[1px] text-[#B3B3B3]">
         Genres

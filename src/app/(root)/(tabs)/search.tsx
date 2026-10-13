@@ -41,7 +41,7 @@ export default function search() {
           >
             <Search color="#777777" size={21} className="mr-2" />
             <TextInput 
-              placeholder="Artists, songs, or podcasts" 
+              placeholder="Artists, songs" 
               placeholderTextColor="#757575" 
               className="flex-1 text-black text-base  "
               editable={false} 

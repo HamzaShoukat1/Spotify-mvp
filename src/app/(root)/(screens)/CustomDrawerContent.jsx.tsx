@@ -1,10 +1,13 @@
 // import { BecameArtistModel } from '@/models/BecameArtistModel'
 import { router } from 'expo-router'
 import { Plus, BarChart2, Clock, Settings, Music, Palette } from 'lucide-react-native'
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import { useCurrentUser } from '@/hooks/use-auth'
 export default function SpotifyProfileMenu() {
   const {data:UserDetails,isLoading}= useCurrentUser()
+  const userName = UserDetails?.name?.trim() || 'User'
+  const userInitial = userName.charAt(0).toUpperCase()
+  // const userImage = UserDetails?.profileImage?.url || UserDetails?.avatar?.url || UserDetails?.avatar
 
   return (
     <>
@@ -13,12 +16,16 @@ export default function SpotifyProfileMenu() {
         showsVerticalScrollIndicator={false}
       >
         <TouchableOpacity className="flex-row items-center px-5 pt-12 py-4 border-b border-[#282828]">
-          <View className="w-14 h-14 rounded-full bg-[#1DB954] items-center justify-center mr-4">
-            <Text className="text-black text-2xl font-bold">H</Text>
+          <View className="w-14 h-14 rounded-full bg-[#1DB954] items-center justify-center mr-4 overflow-hidden">
+            {/* {userInitial ? (
+              <Image source={{ uri: userInitial }} className="h-full w-full" resizeMode="cover" />
+            ) : ( */}
+              <Text className="text-black text-2xl font-bold">{userInitial}</Text>
+            {/* )} */}
           </View>
           <View>
-            <Text className="text-white text-xl font-bold">Hamzaali</Text>
-            <Text className="text-[#A7A7A7] text-sm mt-0.5">View profile</Text>
+            <Text className="text-white text-xl font-bold">{userName}</Text>
+            {/* <Text className="text-[#A7A7A7] text-sm mt-0.5">View profile</Text> */}
           </View>
         </TouchableOpacity>
 

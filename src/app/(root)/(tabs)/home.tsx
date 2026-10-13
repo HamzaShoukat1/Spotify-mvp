@@ -2,6 +2,7 @@ import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableO
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useNavigation } from 'expo-router'
 import { usePublicArtists } from '@/hooks/useArtist';
+import { useCurrentUser } from '@/hooks/use-auth';
 import { useMusicDetailforhome } from '@/hooks/use-music';
 import { RefreshControl } from 'react-native';
 const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwxfHxzaW5nZXJ8ZW58MHx8fHwxNzkwMzUwNzgzfDA&ixlib=rb-4.1.0&fit=max&q=80';
@@ -18,6 +19,10 @@ const RECENTLY_PLAYED_DATA = [
 export default function Home() {
     const { data: artistsList = [], refetch: refetchartist, isRefetching: artistrefetching, isLoading: artistloading } = usePublicArtists();
     const { data: Musicdetailforhome = [], refetch: refetchMusic, isRefetching: musicRefching, isLoading: musicLoading } = useMusicDetailforhome()
+    const { data: currentUser } = useCurrentUser();
+    const userName = currentUser?.name?.trim() || 'User';
+    const userInitial = userName.charAt(0).toUpperCase();
+    // const userImage = currentUser?.profileImage?.url || currentUser?.avatar?.url || currentUser?.avatar;
 
     const onRefresh = () => {
         refetchMusic(),
@@ -137,11 +142,15 @@ export default function Home() {
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                         }
                     >
-                        <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center'>
-                            <TouchableOpacity onPress={openProfileDrawer}>
-                                <Text className='text-white font-extrabold text-[20px] text-center'>
-                                    H
-                                </Text>
+                        <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center overflow-hidden'>
+                            <TouchableOpacity onPress={openProfileDrawer} className="h-full w-full items-center justify-center">
+                                {/* {userInitial ? (
+                                    <Image source={{ uri: userInitial }} className="h-full w-full" resizeMode="cover" />
+                                ) : ( */}
+                                    <Text className='text-white font-extrabold text-[20px] text-center'>
+                                        {userInitial}
+                                    </Text>
+                                {/* )} */}
                             </TouchableOpacity>
                         </View>
 

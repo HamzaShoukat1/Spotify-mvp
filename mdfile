@@ -88,3 +88,47 @@ BECOME AN ARTIST
 │                         │
 │ Save as draft            │
 └─────────────────────────┘
+
+
+
+
+
+
+
+
+
+const trackStream = asynchandler(async (req, res) => {
+    const { musicId, artistId: requestedArtistId } = req.body;
+    const listenerId = req.user?._id;
+
+    if (!musicId || !mongoose.Types.ObjectId.isValid(musicId)) {
+        throw new Apierror(400, 'A valid musicId is required');
+    }
+
+    if (!listenerId) {
+        throw new Apierror(401, 'Unauthorized request');
+    }
+
+    const music = await Music.findById(musicId).select('uploadedBy').lean();
+    if (!music) {
+        throw new Apierror(404, 'Music not found');
+    }
+
+    let artistId: mongoose.Types.ObjectId;
+    if (requestedArtistId && mongoose.Types.ObjectId.isValid(requestedArtistId)) {
+        artistId = new mongoose.Types.ObjectId(requestedArtistId);
+    } else {
+        const artist = await Artist.findOne({ user: music.uploadedBy }).select('_id').lean();
+        if (!artist) {
+            throw new Apierror(404, 'Artist profile not found for this music');
+        }
+        artistId = new mongoose.Types.ObjectId(
+            (artist as { _id: mongoose.Types.ObjectId })._id
+        );
+    }
+
+    const newStream = new Stream({ musicId, artistId, listenerId });
+    await newStream.save();
+
+    return res.status(201).json(new Apiresponse(201, newStream, 'Stream metric saved successfully'));
+});

@@ -140,7 +140,7 @@ export default function Artisthub() {
             title: 'Analytics',
             subtitle: 'See how your music performs',
             icon: BarChart3,
-            route: null,
+            route: "Analytics",
         },
         {
             title: 'Edit Profile',

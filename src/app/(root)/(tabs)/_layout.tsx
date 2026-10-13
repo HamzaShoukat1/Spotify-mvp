@@ -121,12 +121,12 @@ export default function TabLayout() {
       </Tabs>
 
       {isModalOpen && (
-        <View className="absolute inset-x-0 bottom-[65px] top-0 z-[60] ">
+        <View className="absolute inset-x-0 bottom-[65px] top-0 z-[70]">
           <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </View>
       )}
 
-      <View className="absolute bottom-[49px] left-0 right-0 z-50">
+      <View className="absolute bottom-[65px] left-0 right-0 z-[50]">
         <MediaPlayerBar />
 
 
