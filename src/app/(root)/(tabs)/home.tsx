@@ -1,37 +1,29 @@
-import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useNavigation } from 'expo-router'
 import { usePublicArtists } from '@/hooks/useArtist';
 import { useCurrentUser } from '@/hooks/use-auth';
-import { useMusicDetailforhome } from '@/hooks/use-music';
+import { useMusicDetailforhome, useRecentSongPlaying } from '@/hooks/use-music';
 import { RefreshControl } from 'react-native';
-const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1517230878791-4d28214057c2?ixid=M3w4MjcwNjd8MHwxfHNlYXJjaHwxfHxzaW5nZXJ8ZW58MHx8fHwxNzkwMzUwNzgzfDA&ixlib=rb-4.1.0&fit=max&q=80';
-
-
-const RECENTLY_PLAYED_DATA = [
-    { id: '1', name: '1Remastered', isArtist: false, image: PLACEHOLDER_IMAGE },
-    { id: '4', name: 'Lana Del Rey', isArtist: true, image: PLACEHOLDER_IMAGE },
-    { id: '13', name: 'Marvin Gaye', isArtist: true, image: PLACEHOLDER_IMAGE },
-    { id: '14', name: 'Indie Pop', isArtist: false, image: PLACEHOLDER_IMAGE },
-];
-
 
 export default function Home() {
-    const { data: artistsList = [], refetch: refetchartist, isRefetching: artistrefetching, isLoading: artistloading } = usePublicArtists();
-    const { data: Musicdetailforhome = [], refetch: refetchMusic, isRefetching: musicRefching, isLoading: musicLoading } = useMusicDetailforhome()
+    const { data: artistsList = [], refetch: refetchartist, isRefetching: artistrefetching } = usePublicArtists();
+    const { data: Musicdetailforhome = [], refetch: refetchMusic, isRefetching: musicRefching } = useMusicDetailforhome()
+    const { data: recentSongs = [], refetch: refetchrecentsongplaying, isLoading: recentloading } = useRecentSongPlaying()
     const { data: currentUser } = useCurrentUser();
+    
     const userName = currentUser?.name?.trim() || 'User';
     const userInitial = userName.charAt(0).toUpperCase();
-    // const userImage = currentUser?.profileImage?.url || currentUser?.avatar?.url || currentUser?.avatar;
 
     const onRefresh = () => {
         refetchMusic(),
-            refetchartist()
+        refetchartist(),
+        refetchrecentsongplaying()
     }
-    // const isLoading = artistloading || musicLoading
-    const refreshing = artistrefetching || musicRefching
-
+    
+    const refreshing = artistrefetching || musicRefching || recentloading
     const navigation = useNavigation()
+    
     const openProfileDrawer = () => {
         navigation.getParent()?.dispatch({ type: 'OPEN_DRAWER' })
     }
@@ -39,21 +31,21 @@ export default function Home() {
     const renderPlaylistItem = ({ item }: any) => (
         <TouchableOpacity
             onPress={() => router.push({
-                pathname: '/(root)/(screens)/Album-View',
-                params: { artistId: item.id }
+                pathname: '/(root)/(screens)/Track-View',
+                params: { musicId: item._id }
             })}
             className="items-center mr-4 w-[110px]"
         >
             <Image
-                source={{ uri: item.image }}
-                className={`w-full max-w-[105px] h-[105px] bg-neutral-800 ${item.isArtist ? 'rounded-full' : 'rounded-md'}`}
+                source={{ uri: item.coverPhotoUrl }}
+                className="w-full max-w-[105px] h-[105px] bg-neutral-800 rounded-md"
                 resizeMode="cover"
             />
             <Text
                 numberOfLines={1}
                 className="text-neutral-400 font-medium text-[11.5px] leading-[17px] mt-2 text-center w-full"
             >
-                {item.name}
+                {item.musicTitle}
             </Text>
         </TouchableOpacity>
     );
@@ -67,8 +59,7 @@ export default function Home() {
                 onPress={() => router.push({
                     pathname: "/(root)/(screens)/Track-View",
                     params: { musicId: targetId }
-
-                })}
+                 })}
                 className="mr-4 w-[140px]">
                 <Image
                     source={{ uri: imageUrl }}
@@ -86,7 +77,6 @@ export default function Home() {
     }
 
     const renderArtists = ({ item }: any) => {
-
         const imageUrl = item.profileImage?.url
         const targetId = item._id
 
@@ -97,12 +87,12 @@ export default function Home() {
                     params: { artistId: targetId }
                 })}
                 className="items-center w-[120px]"
-            ><Image
+            >
+                <Image
                     source={{ uri: imageUrl }}
                     className="w-[115px] h-[115px] rounded-full bg-neutral-800"
                     resizeMode="cover"
                 />
-
                 <Text
                     numberOfLines={1}
                     className="text-neutral-400 font-medium text-[13.5px] leading-[17px] mt-2 text-center w-full"
@@ -112,21 +102,6 @@ export default function Home() {
             </TouchableOpacity>
         );
     };
-
-    // if (isLoading) {
-    //     return (
-    //         <View
-    //             style={{
-    //                 flex: 1,
-    //                 backgroundColor: "#000000",
-    //                 justifyContent: "center",
-    //                 alignItems: "center",
-    //             }}
-    //         >
-    //             <ActivityIndicator size="large" color="#1DB954" />
-    //         </View>
-    //     );
-    // }
 
     return (
         <SafeAreaView className="flex-1 bg-black">
@@ -144,33 +119,33 @@ export default function Home() {
                     >
                         <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center overflow-hidden'>
                             <TouchableOpacity onPress={openProfileDrawer} className="h-full w-full items-center justify-center">
-                                {/* {userInitial ? (
-                                    <Image source={{ uri: userInitial }} className="h-full w-full" resizeMode="cover" />
-                                ) : ( */}
-                                    <Text className='text-white font-extrabold text-[20px] text-center'>
-                                        {userInitial}
-                                    </Text>
-                                {/* )} */}
+                                <Text className='text-white font-extrabold text-[20px] text-center'>
+                                    {userInitial}
+                                </Text>
                             </TouchableOpacity>
                         </View>
 
-                        {/* Header */}
-                        <View className="flex-row justify-between ml-1 items-center relative p-4">
-                            <Text className="font-[700] text-[19px] text-white leading-[28px] ">
-                                Recently played
-                            </Text>
-                        </View>
+                        {recentSongs && recentSongs.length > 0 && (
+                            <>
+                                {/* Header */}
+                                <View className="flex-row justify-between ml-1 items-center relative p-4">
+                                    <Text className="font-[700] text-[19px] text-white leading-[28px] ">
+                                        Recently played
+                                    </Text>
+                                </View>
 
-                        {/* Recently Played List */}
-                        <View className="w-full max-w-[530px] px-4 mt-2">
-                            <FlatList
-                                data={RECENTLY_PLAYED_DATA}
-                                renderItem={renderPlaylistItem}
-                                keyExtractor={(item) => item.id}
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                            />
-                        </View>
+                                {/* Recently Played List */}
+                                <View className="w-full max-w-[530px] px-4 mt-2">
+                                    <FlatList
+                                        data={recentSongs}
+                                        renderItem={renderPlaylistItem}
+                                        keyExtractor={(item) => item._id}
+                                        horizontal
+                                        showsHorizontalScrollIndicator={false}
+                                    />
+                                </View>
+                            </>
+                        )}
 
                         {/* Editor Pick Section */}
                         <View className="w-full max-w-[550px] px-4 mt-8 mb-6">
@@ -186,6 +161,7 @@ export default function Home() {
                             />
                         </View>
 
+                        {/* Popular Artists Section */}
                         <View className='w-full max-w-[530px] px-4 mt-2 mb-[80px]'>
                             <Text className="font-[700] text-[19px] mb-4 ml-1 text-white leading-[28px] ">
                                 Popular Artists

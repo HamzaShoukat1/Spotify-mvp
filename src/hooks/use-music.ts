@@ -1,4 +1,4 @@
-import { createMusic, getMusicDetail, getMusicTrack } from "@/services/music.service";
+import { createMusic, getMusicDetail, getMusicTrack, getrecentsongplaying } from "@/services/music.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
@@ -16,7 +16,7 @@ export function useCreateMusic() {
     })
 }
 
-const querykey = ["music-detail-for-home"]
+const querykey = ["music-detail-for-home",]
 export function useMusicDetailforhome() {
     return useQuery({
         queryKey: querykey,
@@ -27,7 +27,7 @@ export function useMusicDetailforhome() {
 
 export function useGetMusicTrack(musicId: string) {
     return useQuery({
-        queryKey: ['musicTrack', musicId],
+        queryKey: ['musicTrack', musicId,],
         queryFn: () => getMusicTrack(musicId),
         enabled: !!musicId,
         staleTime: 5 * 60 * 1000,
@@ -36,3 +36,10 @@ export function useGetMusicTrack(musicId: string) {
     });
 }
 
+
+export function useRecentSongPlaying() {
+    return useQuery({
+        queryKey: ['recentSongPlaying'],
+        queryFn: getrecentsongplaying,
+    });
+}

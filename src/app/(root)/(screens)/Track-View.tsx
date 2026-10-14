@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -12,7 +12,6 @@ import Slider from "@react-native-community/slider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ChevronDown,
-  Heart,
   ListMusic,
   Maximize2,
   MoreHorizontal,
@@ -34,7 +33,7 @@ import TrackPlayer, {
 import { useGetMusicTrack } from "@/hooks/use-music";
 import { formatTime, setupPlayer } from "@/services/player";
 import { useAddTrackDataToAnalytics } from "@/hooks/use-analytics";
-import { useToggleLike } from "@/hooks/use-like";
+import { LikeButton } from "@/components/LikeButton";
 
 export default function TrackView() {
   const { musicId } = useLocalSearchParams<{
@@ -42,8 +41,6 @@ export default function TrackView() {
   }>();
 
   const { data: musicData, isLoading, isError } = useGetMusicTrack(musicId);
-  const { mutate: toggleLike, isPending, isError: errorintoggle } = useToggleLike()
-  const [isLiked, setIsLiked] = useState<boolean>(false);
 
   if (isError) {
     console.log("sassa")
@@ -213,27 +210,7 @@ export default function TrackView() {
                 {artistName}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                toggleLike(musicId);
-                setIsLiked(!isLiked);
-              }}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              {isPending ? (
-                <Heart color={isLiked ? '#FF2D55' : '#FFFFFF'}
-                  fill={isLiked ? '#FF2D55' : 'transparent'}
-                  size={26} />
-              ) : (
-                <Heart
-                  color={isLiked ? '#FF2D55' : '#FFFFFF'}
-                  fill={isLiked ? '#FF2D55' : 'transparent'}
-                  size={26}
-                />
-              )}
-
-
-            </TouchableOpacity>
+            <LikeButton musicId={musicId} />
 
 
           </View>

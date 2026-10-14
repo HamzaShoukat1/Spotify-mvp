@@ -28,7 +28,7 @@ export interface TrackArtist {
 }
 
 type user = {
-    _id:string
+    _id: string
 }
 export interface MusicTrack {
     _id: string;
@@ -79,3 +79,11 @@ export async function getMusicTrack(musicId: string): Promise<MusicTrack> {
         method: "GET",
     });
 }
+
+
+export async function getrecentsongplaying() {
+    return ApiClient(`${BackendUrl}/music/getrecentPlayingSong`, {
+        method: "GET",
+    });
+}
+
