@@ -12,6 +12,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import { ArtistProvider } from "@/context/ArtistContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ProfileProvider } from "@/context/ProfileContext";
+import Toast from 'react-native-toast-message';
 
 function AuthNavigation() {
   const { userToken, onboarding, isLoading } = useAuth();
@@ -60,16 +61,24 @@ function AuthNavigation() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <QueryProvider>
-        <ArtistProvider>
-          <MusicProvider>
-            <ProfileProvider>
-              <AuthNavigation />
-            </ProfileProvider>
-          </MusicProvider>
-        </ArtistProvider>
-      </QueryProvider>
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <QueryProvider>
+          <ArtistProvider>
+            <MusicProvider>
+              <ProfileProvider>
+                <AuthNavigation />
+              </ProfileProvider>
+            </MusicProvider>
+          </ArtistProvider>
+        </QueryProvider>
+      </AuthProvider>
+      <Toast
+        position="bottom"
+        visibilityTime={1000}
+        autoHide
+      />
+
+    </>
   );
 }

@@ -1,8 +1,8 @@
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Plus, ArrowUpDown, LayoutGrid, Heart, Bell, Pin } from "lucide-react-native"
-import { useLikesPostDetails } from '@/hooks/use-like';
 import { useRouter } from 'expo-router'; // Added router import for navigation
+import { useLikedSongs } from '@/hooks/use-like';
 
 const PLACEHOLDER_IMAGE1 = 'https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
@@ -12,7 +12,7 @@ const LIBRARY_ITEMS = [
     title: 'Liked Songs',
     subtitle: 'Playlist • 58 songs',
     type: 'playlist',
-    isPinned: true,
+    isPinned: false,
     customIcon: 'heart',
     route: "UserlikedArtistdetails"
   },
@@ -66,6 +66,8 @@ const FILTER_TAGS = ['Playlists', 'Artists', 'Albums', 'Podcasts & shows'];
 
 export default function Library() {
   const router = useRouter(); 
+  const { data: likedSongs } = useLikedSongs();
+  const likedSongsCount = likedSongs?.length ?? 0;
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]">
@@ -169,7 +171,9 @@ export default function Library() {
                   )}
 
                   <Text className="text-[#a7a7a7] text-xs">
-                    {item.subtitle}
+                    {item.id === '1'
+                      ? ` ${likedSongsCount} ${likedSongsCount === 1 ? 'song' : 'songs'}`
+                      : item.subtitle}
                   </Text>
                 </View>
               </View>

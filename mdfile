@@ -132,3 +132,5 @@ const trackStream = asynchandler(async (req, res) => {
 
     return res.status(201).json(new Apiresponse(201, newStream, 'Stream metric saved successfully'));
 });
+
+likedSongSchema.index({ user: 1, createdAt: -1 });
