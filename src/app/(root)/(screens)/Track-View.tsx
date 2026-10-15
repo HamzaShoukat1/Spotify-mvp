@@ -43,10 +43,8 @@ export default function TrackView() {
   const { data: musicData, isLoading, isError } = useGetMusicTrack(musicId);
 
   if (isError) {
-    console.log("sassa")
+    console.log("sassa");
   }
-
-
 
   const { mutateAsync: adduserdetailstodbforstreamtracking } =
     useAddTrackDataToAnalytics();
@@ -114,7 +112,13 @@ export default function TrackView() {
       return;
     }
 
-    if (!musicId || activeTrack?.id !== musicId || playbackState.state !== State.Playing || trackedMusicIdRef.current === musicId) {
+    if (
+      !musicId ||
+      activeTrack?.id !== musicId ||
+      playbackState.state !== State.Playing ||
+      position < 20 ||
+      trackedMusicIdRef.current === musicId
+    ) {
       return;
     }
 
@@ -129,6 +133,7 @@ export default function TrackView() {
     adduserdetailstodbforstreamtracking,
     musicId,
     playbackState.state,
+    position,
   ]);
 
   const togglePlayback = async () => {
@@ -211,8 +216,6 @@ export default function TrackView() {
               </Text>
             </View>
             <LikeButton musicId={musicId} />
-
-
           </View>
           <View className="mt-5">
             <Slider

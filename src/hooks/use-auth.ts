@@ -1,7 +1,7 @@
-import { createUser, currectUser, loginUser, LogoutUser } from "@/services/auth.service";
+import { ChangeUsername, createUser, currectUser, loginUser, LogoutUser } from "@/services/auth.service";
 import { clearTokens, saveTokens } from "@/storage/secureStorage";
 import { useAuth } from "@/context/Auth.Context";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import TrackPlayer from "react-native-track-player";
 // import { router, useNavigation } from "expo-router";
@@ -83,4 +83,21 @@ export function useCurrentUser() {
         // retry: 1,                 // Retry failed requests once
     });
 };
+
+
+
+export function useChangeUsername() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (name: string) => ChangeUsername(name),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+
+        },
+        onError: (error) => {
+            console.error('Failed to change username:', error);
+        }
+    });
+}
 

@@ -81,3 +81,12 @@ export async function LogoutUser() {
     );
 }
 
+export async function ChangeUsername(name: string) {
+    return ApiClient(
+        `${BackendUrl}/auth/changeusername`,
+        {
+            method: "PATCH",
+            body: JSON.stringify({name})
+        }
+    );
+}
