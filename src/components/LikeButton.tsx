@@ -22,16 +22,14 @@ export function LikeButton({ musicId, size = 25 }: LikeButtonProps) {
             hitSlop={10}
             onPress={(event) => {
                 event.stopPropagation();
-                // const nextLikedState = !isLiked;
+                const nextLikedState = !isLiked;
 
                 toggleLike({ musicId, isLiked: !isLiked });
 
-                // Toast.show({
-                //     type: 'info',
-                //     position: 'bottom',
-                //     visibilityTime: 1800,
-                //     text1: `${nextLikedState ? 'Added to' : 'Removed from'} Liked Songs`
-                // });
+                Toast.show({
+                    position: 'bottom',
+                    text1: `${nextLikedState ? 'Added to' : 'Removed from'} Liked Songs`
+                });
 
             }}
             className={`h-10 w-10 items-center justify-center rounded-full ${isLiked ? 'bg-[#1DB954]' : 'bg-transparent'

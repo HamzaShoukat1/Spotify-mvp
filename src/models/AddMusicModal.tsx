@@ -9,7 +9,7 @@ import { BlurView } from 'expo-blur';
 import { Music } from 'lucide-react-native';
 import { router } from 'expo-router';
 
-export function HomepageModal({
+export function AddMusicModal({
     onClose,
 }: {
     visible: boolean;

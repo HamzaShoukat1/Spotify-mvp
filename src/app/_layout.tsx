@@ -13,6 +13,7 @@ import { ArtistProvider } from "@/context/ArtistContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 import Toast from 'react-native-toast-message';
+import { toastConfig } from "@/utils";
 
 function AuthNavigation() {
   const { userToken, onboarding, isLoading } = useAuth();
@@ -74,9 +75,9 @@ export default function RootLayout() {
         </QueryProvider>
       </AuthProvider>
       <Toast
-        position="bottom"
+        config={toastConfig}
         visibilityTime={1000}
-        autoHide
+        autoHide={true}
       />
 
     </>

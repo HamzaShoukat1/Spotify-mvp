@@ -1,4 +1,4 @@
-import { HomepageModal } from '@/models/BecameArtistModel';
+import { AddMusicModal } from '@/models/AddMusicModal';
 import { Tabs } from 'expo-router';
 import { Home, Library, Search, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
@@ -122,7 +122,7 @@ export default function TabLayout() {
 
       {isModalOpen && (
         <View className="absolute inset-x-0 bottom-[65px] top-0 z-[70]">
-          <HomepageModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+          <AddMusicModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </View>
       )}
 
