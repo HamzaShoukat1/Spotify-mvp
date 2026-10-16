@@ -90,3 +90,37 @@ export async function ChangeUsername(name: string) {
         }
     );
 }
+
+export async function requestCurrentEmailOtp() {
+    return ApiClient(`${BackendUrl}/auth/email-change/current/request`, {
+        method: "POST",
+    });
+}
+
+export async function verifyCurrentEmailOtp(otp: string) {
+    return ApiClient(`${BackendUrl}/auth/email-change/current/verify`, {
+        method: "POST",
+        body: JSON.stringify({ otp }),
+    });
+}
+
+export async function requestNewEmailOtp(
+    newEmail: string,
+    verificationToken: string
+) {
+    return ApiClient(`${BackendUrl}/auth/email-change/new/request`, {
+        method: "POST",
+        body: JSON.stringify({ newEmail, verificationToken }),
+    });
+}
+
+export async function confirmEmailChange(
+    newEmail: string,
+    otp: string,
+    verificationToken: string
+) {
+    return ApiClient(`${BackendUrl}/auth/email-change/new/verify`, {
+        method: "POST",
+        body: JSON.stringify({ newEmail, otp, verificationToken }),
+    });
+}

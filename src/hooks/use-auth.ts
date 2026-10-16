@@ -1,8 +1,7 @@
-import { ChangeUsername, createUser, currectUser, loginUser, LogoutUser } from "@/services/auth.service";
+import { ChangeUsername, confirmEmailChange, createUser, currectUser, loginUser, LogoutUser, requestCurrentEmailOtp, requestNewEmailOtp, verifyCurrentEmailOtp } from "@/services/auth.service";
 import { clearTokens, saveTokens } from "@/storage/secureStorage";
 import { useAuth } from "@/context/Auth.Context";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { router } from "expo-router";
 import TrackPlayer from "react-native-track-player";
 // import { router, useNavigation } from "expo-router";
 
@@ -99,5 +98,29 @@ export function useChangeUsername() {
             console.error('Failed to change username:', error);
         }
     });
+}
+
+export function useEmailChange() {
+    const queryClient = useQueryClient();
+
+    const requestCurrentOtp = useMutation({
+        mutationFn: requestCurrentEmailOtp,
+    });
+    const verifyCurrentOtp = useMutation({
+        mutationFn: verifyCurrentEmailOtp,
+    });
+    const requestNewOtp = useMutation({
+        mutationFn: ({ newEmail, verificationToken }: { newEmail: string; verificationToken: string }) =>
+            requestNewEmailOtp(newEmail, verificationToken),
+    });
+    const confirmChange = useMutation({
+        mutationFn: ({ newEmail, otp, verificationToken }: { newEmail: string; otp: string; verificationToken: string }) =>
+            confirmEmailChange(newEmail, otp, verificationToken),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+        },
+    });
+
+    return { requestCurrentOtp, verifyCurrentOtp, requestNewOtp, confirmChange };
 }
 
