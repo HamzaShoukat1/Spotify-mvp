@@ -1,30 +1,35 @@
-import { Drawer } from 'expo-router/drawer';
+import { useEffect } from "react";
+import { Drawer } from "expo-router/drawer";
+import SpotifyProfileMenu from "./(screens)/CustomDrawerContent.jsx";
+import { router } from "expo-router";
+import { useAuth } from "@/context/Auth.Context";
 
-import SpotifyProfileMenu from './(screens)/CustomDrawerContent.jsx';
+export default function RootGroupLayout() {
+  const { userToken, onboarding, isLoading } = useAuth();
 
-export default function RootLayout() {
+  useEffect(() => {
+    if (isLoading) return;
 
+    if (!userToken) {
+      router.replace("/(auth)/login");
+    } else if (!onboarding) {
+      router.replace("/(onboarding)/Choose-Artist");
+    }
+  }, [userToken, onboarding, isLoading]);
 
   return (
-    <>
-      <Drawer
-        drawerContent={() => (
-          <SpotifyProfileMenu
-          />
-        )}
-        screenOptions={{
-          headerShown: false,
-          drawerStyle: {
-            width: '90%',
-            backgroundColor: '#121212',
-          },
-          overlayColor: 'rgba(0, 0, 0, 0.72)',
-          swipeEnabled: true,
-          drawerType: 'slide',
-        }}
-
-      />
-
-    </>
+    <Drawer
+      drawerContent={() => <SpotifyProfileMenu />}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          width: "90%",
+          backgroundColor: "#121212",
+        },
+        overlayColor: "rgba(0, 0, 0, 0.72)",
+        swipeEnabled: true,
+        drawerType: "slide",
+      }}
+    />
   );
 }

@@ -1,179 +1,123 @@
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Plus, ArrowUpDown, LayoutGrid, Heart, Bell, Pin } from "lucide-react-native"
-import { useRouter } from 'expo-router'; // Added router import for navigation
+import { Heart } from "lucide-react-native"
+import { useRouter } from 'expo-router';
 import { useLikedSongs } from '@/hooks/use-like';
-
-const PLACEHOLDER_IMAGE1 = 'https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+import { useCurrentUser } from '@/hooks/use-auth';
 
 const LIBRARY_ITEMS = [
   {
     id: '1',
     title: 'Liked Songs',
-    subtitle: 'Playlist • 58 songs',
-    type: 'playlist',
-    isPinned: false,
     customIcon: 'heart',
     route: "UserlikedArtistdetails"
-  },
-  {
-    id: '2',
-    title: 'New Episodes',
-    subtitle: 'Updated 2 days ago',
-    type: 'playlist',
-    isPinned: true,
-    customIcon: 'bell',
-  },
-  {
-    id: '3',
-    title: 'Lolo Zouaï',
-    subtitle: 'Artist',
-    type: 'artist',
-    isPinned: false,
-  },
-  {
-    id: '4',
-    title: 'Lana Del Rey',
-    subtitle: 'Artist',
-    type: 'artist',
-    isPinned: false,
-  },
-  {
-    id: '5',
-    title: 'Front Left',
-    subtitle: 'Playlist • Spotify',
-    type: 'playlist',
-    isPinned: false,
-  },
-  {
-    id: '6',
-    title: 'Marvin Gaye',
-    subtitle: 'Artist',
-    type: 'artist',
-    isPinned: false,
-  },
-  {
-    id: '7',
-    title: 'Les',
-    subtitle: 'Song • Childish Gambino',
-    type: 'song',
-    isPinned: false,
-    isExplicit: true,
-  },
+  }
 ];
 
-const FILTER_TAGS = ['Playlists', 'Artists', 'Albums', 'Podcasts & shows'];
+const FILTER_TAGS = ["Artists"];
 
 export default function Library() {
-  const router = useRouter(); 
-  const { data: likedSongs } = useLikedSongs();
+  const { data: UserDetails, isLoading: isUserLoading, refetch: refetchUser, isRefetching: isUserRefetching } = useCurrentUser()
+  const router = useRouter()
+  const userName = UserDetails?.name?.trim() || 'U'
+  const userInitial = userName.charAt(0).toUpperCase()
+  const { data: likedSongs, isLoading: isSongsLoading, refetch: refetchSongs, isRefetching: isSongsRefetching } = useLikedSongs();
   const likedSongsCount = likedSongs?.length ?? 0;
 
+  const isLoading = isUserLoading || isSongsLoading;
+
   return (
-    <SafeAreaView className="flex-1 bg-[#121212]">
+    <SafeAreaView className="flex-1 bg-[#121212]" edges={['top']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 w-full"
       >
-        {/* Header Section */}
-        <View className="flex-row items-center justify-between px-4 mt-10">
-          <View className="flex-row items-center space-x-3">
-            <Image 
-              source={{ uri: PLACEHOLDER_IMAGE1 }} 
-              className="w-9 h-9 rounded-full bg-neutral-700" 
-            />
-            <Text className="text-white text-2xl font-bold tracking-tight">Your Library</Text>
+        <View className="flex-row items-center justify-between px-4 pt-4">
+          <View className="flex-row items-center gap-3">
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => router.push('/(root)/(screens)/Edit-Profile')}
+              className="w-9 h-9 items-center justify-center rounded-full bg-[#1DB954]"
+            >
+              <Text className="text-black text-[15px] font-bold uppercase">
+                {userInitial}
+              </Text>
+            </TouchableOpacity>
+
+            <Text className="text-white text-2xl font-bold tracking-tight">
+              Your Library
+            </Text>
           </View>
-          <TouchableOpacity activeOpacity={0.7} className="p-1">
-            <Plus color="#ffffff" size={28} strokeWidth={2} />
-          </TouchableOpacity>
         </View>
 
-        <View className="my-6">
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            showsVerticalScrollIndicator={false}
+        <View className="mt-5 mb-4">
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
           >
             {FILTER_TAGS.map((tag, index) => (
-              <TouchableOpacity 
-                key={index} 
-                className="bg-[#121212] px-4 rounded-[45px] py-2 border-[0.6px] border-neutral-700"
+              <TouchableOpacity
+                key={index}
+                className="bg-[#2a2a2a] px-4 py-2 rounded-full"
+                activeOpacity={0.8}
               >
-                <Text className="text-white text-xs font-semibold">{tag}</Text>
+                <Text className="text-white text-[13px] font-medium">{tag}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
 
-        <View className="flex-row items-center justify-between px-4 ">
-          <TouchableOpacity className="flex-row items-center space-x-2">
-            <ArrowUpDown color="#FFFFFF" size={12} />
-            <Text className="text-[#FFFFFF] text-xs font-[600] ">Recently played</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <LayoutGrid color="#FBFBFB" size={18} />
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView 
+        <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24, gap: 3 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isUserRefetching || isSongsRefetching}
+              onRefresh={() => {
+                refetchUser();
+                refetchSongs();
+              }}
+              tintColor="#1DB954"
+              colors={["#1DB954"]}
+              progressBackgroundColor="#282828"
+            />
+          }
         >
           {LIBRARY_ITEMS.map((item) => (
-            <TouchableOpacity 
-              key={item.id} 
-              className="flex-row items-center mt-6"
+            <TouchableOpacity
+              key={item.id}
+              className="flex-row items-center py-2"
               activeOpacity={0.6}
               onPress={() => {
                 if (item.route) {
                   router.push(item.route as any);
                 }
-              }} 
+              }}
             >
-              <View className="mr-3">
+              <View className="mr-4">
                 {item.customIcon === 'heart' ? (
-                  <View className="w-16 h-16 rounded items-center justify-center bg-[#3c2bc1]">
-                    <Heart color="#ffffff" size={28} fill="#ffffff" />
-                  </View>
-                ) : item.customIcon === 'bell' ? (
-                  <View className="w-16 h-16 rounded bg-[#281a42] items-center justify-center">
-                    <View className="bg-[#1ed760] p-2 rounded-full">
-                      <Bell color="#121212" size={20} fill="#121212" />
-                    </View>
+                  <View className="w-[64px] h-[64px] rounded bg-gradient-to-br from-[#450e74] to-[#5b3bb4] items-center justify-center bg-[#3c2bc1]">
+                    <Heart color="#ffffff" size={24} fill="#ffffff" />
                   </View>
                 ) : (
-                  <Image
-                    source={{ uri: PLACEHOLDER_IMAGE1 }}
-                    className={`w-16 h-16 bg-neutral-800 ${item.type === 'artist' ? 'rounded-full' : 'rounded'}`}
-                  />
+                  <View className="w-[64px] h-[64px] bg-[#282828] items-center justify-center rounded">
+                    <Heart color="#a7a7a7" size={22} />
+                  </View>
                 )}
               </View>
 
               <View className="flex-1 justify-center">
-                <Text className="text-white text-[15px] font-semibold">
+                <Text className="text-white text-[16px] font-semibold tracking-wide">
                   {item.title}
                 </Text>
-                
-                <View className="flex-row items-center mt-1 space-x-1">
-                  {item.isPinned && (
-                    <View className="mr-1 transform rotate-45">
-                      <Pin color="#1ed760" size={12} fill="#1ed760" />
-                    </View>
-                  )}
-                  
-                  {item.isExplicit && (
-                    <View className="bg-[#b3b3b3] rounded px-1 mr-1 justify-center items-center h-4 w-4">
-                      <Text className="text-[#121212] text-[9px] font-bold">E</Text>
-                    </View>
-                  )}
 
-                  <Text className="text-[#a7a7a7] text-xs">
+                <View className="flex-row items-center mt-0.5">
+                  <Text className="text-[#a7a7a7] text-[13px] font-medium">
                     {item.id === '1'
-                      ? ` ${likedSongsCount} ${likedSongsCount === 1 ? 'song' : 'songs'}`
-                      : item.subtitle}
+                      ? `${isLoading ? '—' : `${likedSongsCount} ${likedSongsCount === 1 ? 'song' : 'songs'}`}`
+                      : ""}
                   </Text>
                 </View>
               </View>

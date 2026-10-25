@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform, TextInput, ScrollView, Pressable } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, TextInput, ScrollView, Pressable, TouchableOpacity } from 'react-native'
 import { TopGenre, Album, Camera } from "../../../assets/images"
 import { Search } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -17,69 +17,75 @@ const BROWSE_ALL = [
   { id: '4', name: 'Charts', image: Album, color: 'bg-[#8768A7]' },
 ];
 
-export default function search() {
+export default function SearchScreen() {
   return (
-    <SafeAreaView className="flex-1 bg-black">
+    <SafeAreaView className="flex-1 bg-[#121212]" edges={['top']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 w-full"
       >
-        <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-
-          {/* Header */}
-          <View className="flex-row justify-between mt-4 items-center relative py-4">
-            <Text className="font-bold text-[24px] text-white leading-[28px]">
+        <ScrollView 
+          className="flex-1 px-4" 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        >
+          {/* Header Section */}
+          <View className="flex-row justify-between items-center pt-4 pb-5">
+            <Text className="font-black text-[25px] text-white tracking-tight">
               Search
             </Text>
-            <Image source={Camera} className="w-[29px] h-[29px]" resizeMode="contain" />
+
           </View>
 
-          {/* Search Input Bar */}
-            <Pressable 
+          <Pressable 
             onPress={() => router.push('/(root)/(screens)/search-bar')} 
-            className="flex-row w-full items-center bg-white rounded-md px-3 py-1 mb-6"
+            className="flex-row w-full items-center bg-white rounded-md px-3.5 py-3 mb-6 shadow-sm"
           >
-            <Search color="#777777" size={21} className="mr-2" />
+            <Search color="#121212" size={20} strokeWidth={2.5} className="mr-3" />
             <TextInput 
-              placeholder="Artists, songs" 
-              placeholderTextColor="#757575" 
-              className="flex-1 text-black text-base  "
+              placeholder="What do you want to listen to?" 
+              placeholderTextColor="#535353" 
+              className="flex-1 text-black text-[15px] font-bold"
               editable={false} 
               pointerEvents="none" 
             />
           </Pressable>
 
-          {/* Top Genres Grid */}
-          <Text className="text-white font-bold text-lg mb-3">Your top genres</Text>
-          <View className="flex-row flex-wrap justify-between mb-4 w-full max-w-[428px]">
+          {/* Top Genres Grid Container */}
+          <Text className="text-white font-bold text-[18px] tracking-tight mb-4">Your top genres</Text>
+          <View className="flex-row flex-wrap justify-between w-full">
             {TOP_GENRE.map((item) => (
               <View
                 key={item.id}
-                className={`w-full max-w-[160px] h-24   ${item.color} rounded-md p-3 relative overflow-hidden mb-4`}
+                className={`w-[48.5%] h-24 ${item.color} rounded-md p-3.5 relative overflow-hidden mb-3.5`}
               >
-                <Text className="text-white font-bold text-base ">{item.name}</Text>
+                <Text className="text-white font-bold text-[16px] tracking-tight leading-5 w-[70%]">
+                  {item.name}
+                </Text>
                 <Image
                   source={item.image}
-                  className=" absolute -bottom-2  w-full max-w-[66.97px] -right-2 rotate-[6deg]"
-                  resizeMode="contain"
+                  className="absolute bottom-0 right-0 w-16 h-16 translate-x-2 translate-y-1 rotate-[25deg]"
+                  resizeMode="cover"
                 />
               </View>
             ))}
           </View>
 
-          {/* Browse All Grid */}
-          <Text className="text-white font-bold text-lg mb-3">Browse all</Text>
-          <View className="flex-row flex-wrap justify-between  pb-10 w-full max-w-[428px]">
+          {/* Browse All Grid Container */}
+          <Text className="text-white font-bold text-[18px] tracking-tight mt-4 mb-4">Browse all</Text>
+          <View className="flex-row flex-wrap justify-between w-full">
             {BROWSE_ALL.map((item) => (
               <View
                 key={item.id}
-                className={`w-full max-w-[160px] h-24 ${item.color} rounded-md p-3 relative overflow-hidden mb-4`}
+                className={`w-[48.5%] h-24 ${item.color} rounded-md p-3.5 relative overflow-hidden mb-3.5`}
               >
-                <Text className="text-white font-bold text-base ">{item.name}</Text>
+                <Text className="text-white font-bold text-[16px] tracking-tight leading-5 w-[70%]">
+                  {item.name}
+                </Text>
                 <Image
                   source={item.image}
-                  className="w-full max-w-[66.97px] absolute -bottom-2 -right-1 rotate-[6deg]"
-                  resizeMode="contain"
+                  className="absolute bottom-0 right-0 w-16 h-16 translate-x-2 translate-y-1 rotate-[25deg]"
+                  resizeMode="cover"
                 />
               </View>
             ))}

@@ -6,6 +6,7 @@
     "@expo/ui": "~57.0.20",
     "@react-native-community/slider": "5.2.0",
     "@react-navigation/drawer": "^7.14.3",
+    "@stripe/stripe-react-native": "0.64.0",
     "@tanstack/react-query": "^5.104.0",
     "expo": "~57.0.25",
     "expo-blur": "~57.0.3",

@@ -23,6 +23,40 @@ export async function AddTrackDataToAnalytics(
     });
 }
 
+export interface ListeningAccess {
+    allowed: boolean;
+    isPremium: boolean;
+    sessionId: string | null;
+    remaining: number | null;
+    dailyLimit: number | null;
+}
+
+export async function startListening(musicId: string) {
+    return ApiClient(`${BackendUrl}/stream/start`, {
+        method: "POST",
+        body: JSON.stringify({ musicId }),
+    }) as Promise<ListeningAccess>;
+}
+
+export interface ListeningCompletion {
+  counted: boolean;
+  listenCount?: number;
+  remaining?: number;
+  dailyLimit?: number;
+  thresholdReached?: boolean;
+  isPremium?: boolean;
+}
+
+export async function completeListening(
+  sessionId: string,
+  isCompleted: boolean = false
+): Promise<ListeningCompletion> {
+  return ApiClient(`${BackendUrl}/stream/complete`, {
+    method: "POST",
+    body: JSON.stringify({ sessionId, isCompleted }),
+  });
+}
+
 export async function getAnalyticsForDashboard(range: AnalyticsRange) {
     return ApiClient(
         `${BackendUrl}/stream/analytics?range=${range}`,

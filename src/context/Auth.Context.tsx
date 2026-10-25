@@ -9,8 +9,23 @@ import React, {
 import { getAccessToken } from "@/storage/secureStorage";
 import { completeOnboarding, currectUser } from "@/services/auth.service";
 
-type AuthContextType = {
+export interface AuthUser {
+  _id: string;
+  name: string;
+  email: string;
+  gender?: string;
+  role: "user" | "artist" | "admin";
+  onboarding: boolean;
+  stripeCustomerId?: string | null;
+  planTier: "free" | "premium";
+  favoriteArtists?: string[];
+}
+
+export type AuthContextType = {
   userToken: string | null;
+  user: AuthUser | null;
+  isPremium: boolean;
+  planTier: "free" | "premium";
   onboarding: boolean;
   isLoading: boolean;
   refreshAuth: () => Promise<void>;
@@ -19,10 +34,13 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   userToken: null,
+  user: null,
+  isPremium: false,
+  planTier: "free",
   onboarding: true,
   isLoading: true,
-  refreshAuth: async () => { },
-  finishOnboarding: async () => { },
+  refreshAuth: async () => {},
+  finishOnboarding: async () => {},
 });
 
 export function AuthProvider({
@@ -31,32 +49,39 @@ export function AuthProvider({
   children: React.ReactNode;
 }) {
   const [userToken, setUserToken] = useState<string | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [onboarding, setOnboarding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const isPremium = user?.planTier === "premium";
+  const planTier = user?.planTier === "premium" ? "premium" : "free";
 
   const refreshAuth = useCallback(async () => {
     try {
       const token = await getAccessToken();
       if (token) {
-        const user = await currectUser();
         setUserToken(token);
-        setOnboarding(Boolean(user?.onboarding));
+        const currentUser = await currectUser();
+        if (currentUser) {
+          setUser(currentUser);
+          setOnboarding(Boolean(currentUser.onboarding));
+        }
       } else {
         setUserToken(null);
+        setUser(null);
         setOnboarding(false);
       }
     } catch (error) {
-      console.error("Failed to load access token:", error);
-      setUserToken(null);
-      setOnboarding(false);
+      console.error("Failed to refresh user auth state:", error);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   const finishOnboarding = useCallback(async (favoriteArtists: string[]) => {
-    const user = await completeOnboarding(favoriteArtists);
-    setOnboarding(Boolean(user?.onboarding));
+    const updatedUser = await completeOnboarding(favoriteArtists);
+    setUser((prev) => (prev ? { ...prev, ...updatedUser } : updatedUser));
+    setOnboarding(Boolean(updatedUser?.onboarding));
   }, []);
 
   useEffect(() => {
@@ -64,7 +89,18 @@ export function AuthProvider({
   }, [refreshAuth]);
 
   return (
-    <AuthContext.Provider value={{ userToken, onboarding, isLoading, refreshAuth, finishOnboarding }}>
+    <AuthContext.Provider
+      value={{
+        userToken,
+        user,
+        isPremium,
+        planTier,
+        onboarding,
+        isLoading,
+        refreshAuth,
+        finishOnboarding,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

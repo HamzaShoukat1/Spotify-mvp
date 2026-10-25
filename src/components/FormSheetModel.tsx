@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
   KeyboardAvoidingView,
   Modal,
@@ -30,10 +29,10 @@ export function FormSheetModal({
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1 justify-center items-center bg-black/75 px-6"
+        className="flex-1 justify-center items-center bg-black/80 px-6"
       >
-        <View className="bg-[#121212] rounded-3xl p-6 w-full max-w-sm border border-white/5 shadow-2xl">
-          <Text className="text-white text-xl font-black text-center tracking-tight mt-2 mb-6">
+        <View className="bg-[#181818] rounded-3xl p-6 w-full max-w-sm border border-[#282828] shadow-2xl items-center">
+          <Text className="text-white text-xl font-extrabold text-center tracking-tight mt-1 mb-4">
             {title}
           </Text>
 
@@ -41,15 +40,15 @@ export function FormSheetModal({
             {children}
           </View>
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             onPress={onClose}
-            activeOpacity={0.6}
-            className="py-3 items-center mt-2"
+            activeOpacity={0.7}
+            className="py-3 items-center mt-3"
           >
-            <Text className="text-[#A7A7A7] text-sm font-bold tracking-wider uppercase">
+            <Text className="text-[#A7A7A7] text-xs font-bold tracking-widest uppercase">
               Cancel
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </Modal>

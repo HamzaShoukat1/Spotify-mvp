@@ -22,18 +22,19 @@ export default function TabLayout() {
             elevation: 0,
             shadowOpacity: 0,
             height: 65,
-            paddingBottom: 9,
-            paddingTop: 16,
+            paddingBottom: 8,
+            paddingTop: 10,
           },
           sceneStyle: {
             backgroundColor: '#121212',
           },
           tabBarActiveTintColor: '#FFFFFF',
-          tabBarInactiveTintColor: '#B3B3B3',
+          tabBarInactiveTintColor: '#737373', 
           tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: '500',
+            fontSize: 10,
+            fontWeight: '600',
             marginTop: 2,
+            letterSpacing: -0.2,
           },
         }}
       >
@@ -43,7 +44,7 @@ export default function TabLayout() {
           options={{
             title: 'Home',
             tabBarIcon: ({ color, size }) => (
-              <Home color={color} size={size - 2} />
+              <Home color={color} size={size - 2} strokeWidth={2.2} />
             ),
           }}
         />
@@ -53,7 +54,7 @@ export default function TabLayout() {
           options={{
             title: 'Search',
             tabBarIcon: ({ color, size }) => (
-              <Search color={color} size={size - 2} />
+              <Search color={color} size={size - 2} strokeWidth={2.2} />
             ),
           }}
         />
@@ -63,7 +64,7 @@ export default function TabLayout() {
           options={{
             title: 'Your Library',
             tabBarIcon: ({ color, size }) => (
-              <Library color={color} size={size - 2} />
+              <Library color={color} size={size - 2} strokeWidth={2.2} />
             ),
           }}
         />
@@ -72,10 +73,15 @@ export default function TabLayout() {
           listeners={{ tabPress: () => setIsModalOpen(false) }}
           options={{
             title: 'Premium',
-            tabBarIcon: ({ size }) => (
+            tabBarIcon: ({ color, size }) => (
               <Image
                 source={Logo}
-                style={{ width: size - 2, height: size - 2, resizeMode: 'contain', }}
+                style={{ 
+                  width: size - 2, 
+                  height: size - 2, 
+                  resizeMode: 'contain', 
+                  tintColor: color 
+                }}
               />
             ),
           }}
@@ -86,15 +92,15 @@ export default function TabLayout() {
             title: 'Create',
             tabBarIcon: ({ size }) =>
               isModalOpen ? (
-                <X color="#000000" size={size - 1} />
+                <X color="#000000" size={size - 1} strokeWidth={2.5} />
               ) : (
-                <Plus color="#FFFFFF" size={size - 1} />
+                <Plus color="#FFFFFF" size={size - 1} strokeWidth={2.5} />
               ),
             tabBarButton: () => (
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => setIsModalOpen(!isModalOpen)}
-                className="flex-1 items-center justify-center"
+                className="flex-1 items-center justify-center pt-1"
               >
                 <MotiView
                   animate={{
@@ -106,12 +112,12 @@ export default function TabLayout() {
                     type: 'timing',
                     duration: 250,
                   }}
-                  className="p-2 items-center justify-center"
+                  className="w-10 h-10 items-center justify-center rounded-full"
                 >
                   {isModalOpen ? (
-                    <X color="#000000" size={22} />
+                    <X color="#000000" size={20} strokeWidth={2.8} />
                   ) : (
-                    <Plus color="#B3B3B3" size={22} />
+                    <Plus color="#B3B3B3" size={22} strokeWidth={2.2} />
                   )}
                 </MotiView>
               </TouchableOpacity>
@@ -120,17 +126,15 @@ export default function TabLayout() {
         />
       </Tabs>
 
+      <View className="absolute bottom-[65px] left-0 right-0 z-[50]">
+        <MediaPlayerBar />
+      </View>
+
       {isModalOpen && (
         <View className="absolute inset-x-0 bottom-[65px] top-0 z-[70]">
           <AddMusicModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </View>
       )}
-
-      <View className="absolute bottom-[65px] left-0 right-0 z-[50]">
-        <MediaPlayerBar />
-
-
-      </View>
     </>
   );
 }

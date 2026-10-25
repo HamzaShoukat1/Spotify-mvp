@@ -28,7 +28,6 @@ export function useSignupMutation() {
         },
     });
 }
-
 export function useLoginMutation() {
     const { refreshAuth } = useAuth();
 
@@ -36,40 +35,34 @@ export function useLoginMutation() {
         mutationFn: loginUser,
         onSuccess: async (data) => {
             if (!data?.accessToken || !data?.refreshToken) {
-                throw new Error(
-                    "Login succeeded but authentication tokens were not received."
-                );
+                throw new Error("Login succeeded but authentication tokens were not received.");
             }
 
-            await saveTokens(
-                data.accessToken,
-                data.refreshToken
-            );
+            await saveTokens(data.accessToken, data.refreshToken);
+
             await refreshAuth();
         },
     });
 }
 
-
-
-
 export function useLogoutMutation() {
     const { refreshAuth } = useAuth();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: LogoutUser,
         onSuccess: async () => {
+            queryClient.clear();
+            await TrackPlayer.reset().catch(() => null);
             const success = await clearTokens();
-            await TrackPlayer.reset()
             if (success) {
-                console.log('Local tokens cleared after logout.');
                 await refreshAuth();
             }
-
-
         },
         onError: (err: any) => {
-            console.log(err instanceof Error ? err.message : 'logout failed.');
+            console.error('Server logout request failed:', err?.message || err);
+            queryClient.clear();
+            clearTokens().then(() => refreshAuth());
         },
     });
 }
@@ -78,11 +71,8 @@ export function useCurrentUser() {
     return useQuery({
         queryKey: ['currentUser'],
         queryFn: currectUser,
-        // staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-        // retry: 1,                 // Retry failed requests once
     });
-};
-
+}
 
 
 export function useChangeUsername() {

@@ -1,12 +1,15 @@
 // import { BecameArtistModel } from '@/models/BecameArtistModel'
-import { router, useNavigation, useRouter } from 'expo-router'
 import { Plus, BarChart2, Clock, Settings, Music, Palette } from 'lucide-react-native'
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { useCurrentUser } from '@/hooks/use-auth'
+import {router} from "expo-router"
+// import { SubscriptionBadge } from '@/components/SubscriptionBadge'
 export default function SpotifyProfileMenu() {
 
   const { data: UserDetails, isLoading } = useCurrentUser()
-  const router = useRouter()
+
+
+  // const router = useRouter()
   const userName = UserDetails?.name?.trim() || 'User'
   const userInitial = userName.charAt(0).toUpperCase()
   // const userImage = UserDetails?.profileImage?.url || UserDetails?.avatar?.url || UserDetails?.avatar
@@ -28,6 +31,9 @@ export default function SpotifyProfileMenu() {
           </View>
           <View>
             <Text className="text-white text-xl font-bold">{userName}</Text>
+            <View className="mt-2">
+              {/* <SubscriptionBadge /> */}
+            </View>
             <TouchableOpacity
               className="text-[#A7A7A7] text-sm mt-0.5"
               onPress={() => router.push('/(root)/(screens)/Edit-Profile')}

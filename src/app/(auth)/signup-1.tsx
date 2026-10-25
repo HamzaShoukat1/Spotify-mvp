@@ -9,13 +9,13 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ChevronLeft } from "lucide-react-native";
 
 import { router } from "expo-router";
 
 import { useSignup } from "../../context/SignupContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Signup1() {
   const { signupData, setEmail } = useSignup();

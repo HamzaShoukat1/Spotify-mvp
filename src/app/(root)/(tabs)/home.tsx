@@ -5,25 +5,26 @@ import { usePublicArtists } from '@/hooks/useArtist';
 import { useCurrentUser } from '@/hooks/use-auth';
 import { useMusicDetailforhome, useRecentSongPlaying } from '@/hooks/use-music';
 import { RefreshControl } from 'react-native';
+import {SubscriptionBadge} from '@/components/SubscriptionBadge';
 
 export default function Home() {
     const { data: artistsList = [], refetch: refetchartist, isRefetching: artistrefetching } = usePublicArtists();
     const { data: Musicdetailforhome = [], refetch: refetchMusic, isRefetching: musicRefching } = useMusicDetailforhome()
     const { data: recentSongs = [], refetch: refetchrecentsongplaying, isLoading: recentloading } = useRecentSongPlaying()
     const { data: currentUser } = useCurrentUser();
-    
+
     const userName = currentUser?.name?.trim() || 'User';
     const userInitial = userName.charAt(0).toUpperCase();
 
     const onRefresh = () => {
         refetchMusic(),
-        refetchartist(),
-        refetchrecentsongplaying()
+            refetchartist(),
+            refetchrecentsongplaying()
     }
-    
+
     const refreshing = artistrefetching || musicRefching || recentloading
     const navigation = useNavigation()
-    
+
     const openProfileDrawer = () => {
         navigation.getParent()?.dispatch({ type: 'OPEN_DRAWER' })
     }
@@ -59,7 +60,7 @@ export default function Home() {
                 onPress={() => router.push({
                     pathname: "/(root)/(screens)/Track-View",
                     params: { musicId: targetId }
-                 })}
+                })}
                 className="mr-4 w-[140px]">
                 <Image
                     source={{ uri: imageUrl }}
@@ -104,79 +105,94 @@ export default function Home() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-black">
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1 w-full"
+       <SafeAreaView className="flex-1 bg-[#121212]" edges={['top']}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1 w-full"
+      >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 110 }} 
+          refreshControl={
+            <RefreshControl 
+              refreshing={refreshing} 
+              onRefresh={onRefresh}
+              tintColor="#1DB954"
+              colors={["#1DB954"]}
+              progressBackgroundColor="#282828"
+            />
+          }
+        >
+          <View className="flex-row items-center justify-between px-4 pt-3 pb-4">
+            <TouchableOpacity 
+              onPress={openProfileDrawer} 
+              activeOpacity={0.7}
+              className="w-9 h-9 rounded-full bg-[#1DB954] items-center justify-center shadow-md"
             >
-                <View className="flex-1 relative">
-                    <ScrollView
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ flexGrow: 1 }}
-                        refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                        }
-                    >
-                        <View className='w-10 h-10 m-3 rounded-full bg-green-600 flex items-center justify-center overflow-hidden'>
-                            <TouchableOpacity onPress={openProfileDrawer} className="h-full w-full items-center justify-center">
-                                <Text className='text-white font-extrabold text-[20px] text-center'>
-                                    {userInitial}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+              <Text className="text-black font-bold text-[15px] tracking-wider uppercase">
+                {userInitial}
+              </Text>
+            </TouchableOpacity>
+            
+            <SubscriptionBadge />
+          </View>
 
-                        {recentSongs && recentSongs.length > 0 && (
-                            <>
-                                {/* Header */}
-                                <View className="flex-row justify-between ml-1 items-center relative p-4">
-                                    <Text className="font-[700] text-[19px] text-white leading-[28px] ">
-                                        Recently played
-                                    </Text>
-                                </View>
+          {/* Section 1: Recently Played */}
+          {recentSongs && recentSongs.length > 0 && (
+            <View className="mt-2">
+              <View className="px-4 pb-3">
+                <Text className="font-bold text-[22px] text-white tracking-tight">
+                  Recently played
+                </Text>
+              </View>
 
-                                {/* Recently Played List */}
-                                <View className="w-full max-w-[530px] px-4 mt-2">
-                                    <FlatList
-                                        data={recentSongs}
-                                        renderItem={renderPlaylistItem}
-                                        keyExtractor={(item) => item._id}
-                                        horizontal
-                                        showsHorizontalScrollIndicator={false}
-                                    />
-                                </View>
-                            </>
-                        )}
+              {/* Enhanced Scroll Container: Snap alignments flush to screen edge */}
+              <FlatList
+                data={recentSongs}
+                renderItem={renderPlaylistItem}
+                keyExtractor={(item) => item._id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 16, gap: 14 }}
+              />
+            </View>
+          )}
 
-                        {/* Editor Pick Section */}
-                        <View className="w-full max-w-[550px] px-4 mt-8 mb-6">
-                            <Text className="font-[700] text-[19px] ml-1 text-white leading-[28px] mb-4">
-                                Top Songs
-                            </Text>
-                            <FlatList
-                                data={Musicdetailforhome}
-                                renderItem={renderMusic}
-                                keyExtractor={(item) => item._id}
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                            />
-                        </View>
+          <View className="mt-8">
+            <View className="px-4 pb-3">
+              <Text className="font-bold text-[22px] text-white tracking-tight">
+                Top Songs
+              </Text>
+            </View>
+            
+            <FlatList
+              data={Musicdetailforhome}
+              renderItem={renderMusic}
+              keyExtractor={(item) => item._id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16, gap: 14 }}
+            />
+          </View>
 
-                        {/* Popular Artists Section */}
-                        <View className='w-full max-w-[530px] px-4 mt-2 mb-[80px]'>
-                            <Text className="font-[700] text-[19px] mb-4 ml-1 text-white leading-[28px] ">
-                                Popular Artists
-                            </Text>
-                            <FlatList
-                                data={artistsList}
-                                renderItem={renderArtists}
-                                keyExtractor={(item) => item._id}
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                            />
-                        </View>
-                    </ScrollView>
-                </View>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+          <View className="mt-8">
+            <View className="px-4 pb-3">
+              <Text className="font-bold text-[22px] text-white tracking-tight">
+                Popular Artists
+              </Text>
+            </View>
+            
+            <FlatList
+              data={artistsList}
+              renderItem={renderArtists}
+              keyExtractor={(item) => item._id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16, gap: 14 }}
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
     );
 }

@@ -5,9 +5,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "spotifymvp",
-     "jsEngine": "hermes",
+    "jsEngine": "hermes",
     "userInterfaceStyle": "automatic",
-    
     "ios": {
       "icon": "./src/assets/images/Logo.png",
       "bundleIdentifier": "com.hamza.spotifymvp"
@@ -28,6 +27,15 @@
       "favicon": "./src/assets/images/Logo.png"
     },
     "plugins": [
+        [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.yourcompany.app", 
+          "ios": {
+            "merchantIdentifier": "merchant.com.yourcompany.app"
+          }
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -37,7 +45,6 @@
           "imageWidth": 76
         }
       ],
-      
       "expo-secure-store",
       [
         "expo-build-properties",
@@ -53,12 +60,12 @@
             ]
           }
         }
-      ]
+      ],
+      "@stripe/stripe-react-native"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": false
     }
   }
-  
 }

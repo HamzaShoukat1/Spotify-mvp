@@ -21,6 +21,7 @@ export function useLikedSongs() {
         queryKey: likedSongsQueryKey,
         queryFn: getLikedSongs as () => Promise<LikeRecord[]>,
         staleTime: 30_000,
+        
     });
 }
 
