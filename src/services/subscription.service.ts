@@ -60,7 +60,6 @@ export async function createSubscriptionSetup(
 }
 
 export async function cancelSubscription(payload?: {
-  subscriptionId?: string;
   cancelImmediately?: boolean;
 }): Promise<CancelSubscriptionResponse> {
   return ApiClient(`${BackendUrl}/subscription/cancel`, {

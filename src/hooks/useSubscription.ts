@@ -125,7 +125,7 @@ export function useCancelSubscriptionMutation() {
   return useMutation<
     CancelSubscriptionResponse,
     Error,
-    { subscriptionId?: string; cancelImmediately?: boolean }
+    { cancelImmediately?: boolean }
   >({
     mutationFn: async (payload) => {
       return cancelSubscription(payload || {});

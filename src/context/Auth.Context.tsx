@@ -39,8 +39,8 @@ const AuthContext = createContext<AuthContextType>({
   planTier: "free",
   onboarding: true,
   isLoading: true,
-  refreshAuth: async () => {},
-  finishOnboarding: async () => {},
+  refreshAuth: async () => { },
+  finishOnboarding: async () => { },
 });
 
 export function AuthProvider({
