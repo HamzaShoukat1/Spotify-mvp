@@ -61,6 +61,22 @@ export function AddMusicModal({
                         <Text className="mt-0.5 text-[13.5px] text-white">Upload a song to your library</Text>
                     </View>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                        onClose();
+                        router.push('/(root)/(music)/music-audio');
+                    }}
+                    className="flex-row items-center py-2"
+                >
+                    <View className="h-14 w-14 items-center justify-center rounded-full bg-[#3b3b3b]">
+                        <Music size={26} color="#FFFFFF" strokeWidth={2} />
+                    </View>
+                    <View className="ml-4 flex-1">
+                        <Text className="text-[17px] font-bold text-white">Playlist</Text>
+                        <Text className="mt-0.5 text-[13.5px] text-white">Create a Playlist with musics</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         </View>
     );

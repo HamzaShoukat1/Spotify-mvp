@@ -7,6 +7,7 @@ import {
     ScrollView,
     ImageBackground,
     Image,
+    RefreshControl,
 } from 'react-native';
 
 import {
@@ -26,6 +27,7 @@ import { useEffect, useState } from 'react';
 import {
     useArtistProfile,
     useUpdateArtistProfile,
+    useUploadedSongCount,
 } from '@/hooks/useArtist';
 
 import { useProfileContext } from '@/context/ProfileContext';
@@ -36,8 +38,9 @@ import type { UpdateArtistProfileData } from '@/services/artist.service';
 
 export default function Artisthub() {
     const { profile, setProfile } = useProfileContext();
+    const { data: songCount, isLoading, isError, refetch: Countrefetch, isFetching: Countrefetching } = useUploadedSongCount();
 
-    const profileQuery = useArtistProfile();
+    const { data: profileQuery, refetch: artistretch, isRefetching: artistrefetching } = useArtistProfile();
     const updateProfile = useUpdateArtistProfile();
 
     const [isEditing, setIsEditing] = useState(false);
@@ -45,10 +48,10 @@ export default function Artisthub() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (profileQuery.data) {
-            setProfile(profileQuery.data);
+        if (profileQuery) {
+            setProfile(profileQuery);
         }
-    }, [profileQuery.data, setProfile]);
+    }, [profileQuery, setProfile]);
 
 
     const artist = {
@@ -156,6 +159,15 @@ export default function Artisthub() {
         .map((genre) => genre.trim())
         .filter(Boolean);
 
+
+
+    const onRefresh = () => {
+        Countrefetch(),
+            artistretch()
+    };
+
+    const refreshing = Countrefetching || artistrefetching
+
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
             <KeyboardAvoidingView
@@ -171,6 +183,15 @@ export default function Artisthub() {
                     contentContainerStyle={{
                         paddingBottom: 40,
                     }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#1DB954"
+                            colors={["#1DB954"]}
+                            progressBackgroundColor="#282828"
+                        />
+                    }
                 >
                     {/* Header */}
 
@@ -298,7 +319,7 @@ export default function Artisthub() {
                                 <View className="flex-row mt-6 border-t border-[#2A2A2A] pt-5">
                                     <View className="flex-1 items-center">
                                         <Text className="text-white text-xl font-bold">
-                                            0
+                                            {songCount}
                                         </Text>
 
                                         <Text className="text-[#A7A7A7] text-xs mt-1">

@@ -3,6 +3,7 @@ import {
     getArtistdetailforpubluc,
     getArtistProfile,
     getPublicArtists,
+    getUploadedSongCount,
     updateArtistProfile,
 } from '@/services/artist.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -55,5 +56,13 @@ export function usePublicArtists() {
     return useQuery({
         queryKey: ['public-artists'],
         queryFn: getPublicArtists,
+    });
+}
+
+
+export function useUploadedSongCount() {
+    return useQuery({
+        queryKey: ['uploadedSongCount'],
+        queryFn: getUploadedSongCount,
     });
 }

@@ -24,7 +24,16 @@ export default function RootLayout() {
           <ArtistProvider>
             <MusicProvider>
               <ProfileProvider>
-                <Stack screenOptions={{ headerShown: false }} />
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen
+                    name="Track-View"
+                    options={{
+                      presentation: 'transparentModal',
+                      animation: 'fade',
+                      headerShown: false,
+                    }}
+                  />
+                </Stack>
               </ProfileProvider>
             </MusicProvider>
           </ArtistProvider>
@@ -32,5 +41,6 @@ export default function RootLayout() {
       </AuthProvider>
       <Toast config={toastConfig} visibilityTime={2000} autoHide={true} />
     </StripeProvider>
+
   );
 }

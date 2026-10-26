@@ -104,7 +104,7 @@ export function EditProfileModal({
                 animationType="slide"
                 onRequestClose={onClose}
             >
-                <View className=" flex-1  bg-black/70">
+                <View className=" flex-1  bg-black/70 " >
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
@@ -311,30 +311,19 @@ export function EditProfileModal({
 
                                         {/* Buttons */}
 
-                                        <View className="flex-row gap-3">
-                                            <TouchableOpacity
-                                                onPress={onClose}
-                                                disabled={isPending}
-                                                className="h-14 flex-1 items-center justify-center rounded-full bg-[#292929]"
-                                            >
-                                                <Text className="font-semibold text-white">
-                                                    Cancel
-                                                </Text>
-                                            </TouchableOpacity>
-
-                                            <TouchableOpacity
-                                                onPress={handleSave}
-                                                disabled={isPending}
-                                                className="h-14 flex-1 items-center justify-center rounded-full bg-[#1ED760]"
-                                            >
-                                                {isPending ? (
-                                                    <ActivityIndicator color="#000000" />
-                                                ) : (
-                                                    <Text className="font-bold text-black">
-                                                        Save
-                                                    </Text>
-                                                )}
-                                            </TouchableOpacity>
+                                        <View className="">
+                                          
+                                    <TouchableOpacity
+                                        onPress={handleSave}
+                                        disabled={isPending}
+                                        className="w-full bg-[#1ED760] py-3 rounded-full items-center justify-center "
+                                    >
+                                        {isPending ? (
+                                            <ActivityIndicator color="#000000" />
+                                        ) : (
+                                            <Text className="text-black font-bold text-base">Save Profile</Text>
+                                        )}
+                                    </TouchableOpacity>
                                         </View>
                                     </>
                                 )}

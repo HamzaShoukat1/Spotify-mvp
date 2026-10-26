@@ -27,7 +27,7 @@ export const MediaPlayerBar = () => {
     };
 
     const handlePressBar = () => {
-        router.push({
+        router.replace({
             pathname: '/(root)/(screens)/Track-View',
             params: { musicId: activeTrack.id }
         });

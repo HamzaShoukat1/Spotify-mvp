@@ -320,7 +320,7 @@ export default function PremiumScreen() {
           </View>
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           activeOpacity={0.85}
           disabled={cancelMutation.isPending}
           onPress={() => setShowCancelModal(false)}
@@ -329,7 +329,7 @@ export default function PremiumScreen() {
           <Text className="text-black text-sm font-black tracking-widest uppercase">
             KEEP PREMIUM
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           activeOpacity={0.7}

@@ -118,6 +118,12 @@ export async function getArtistdetailforpubluc(artistId: string): Promise<public
         method: "GET",
     });
 }
+export async function getUploadedSongCount() {
+    return ApiClient(`${BackendUrl}/artist/getuploadedsongnumber`, {
+        method: "GET",
+    });
+}
+
 
 export async function getPublicArtists(): Promise<publicArtist[]> {
     return ApiClient(`${BackendUrl}/artist/public`, {

@@ -16,8 +16,8 @@ export interface PaymentSheetResult {
 
 export function useStripePayment() {
   const { initPaymentSheet, presentPaymentSheet: stripePresentPaymentSheet } = useStripe();
-  const [isInitializing, setIsInitializing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isInitializing, setIsInitializing] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initializePaymentSheet = useCallback(
     async ({
@@ -26,7 +26,7 @@ export function useStripePayment() {
       customerId,
       merchantDisplayName = "Spotify Premium",
     }: InitPaymentSheetParams): Promise<{ success: boolean; error?: string }> => {
-      setIsInitializing(true);
+      // setIsInitializing(true);
       try {
         const { error } = await initPaymentSheet({
           merchantDisplayName,
@@ -78,7 +78,7 @@ export function useStripePayment() {
         const message = err instanceof Error ? err.message : "Failed to initialize payment sheet";
         return { success: false, error: message };
       } finally {
-        setIsInitializing(false);
+        // setIsInitializing(false);
       }
     },
     [initPaymentSheet]
@@ -86,7 +86,7 @@ export function useStripePayment() {
 
 
   const presentPaymentSheet = useCallback(async (): Promise<PaymentSheetResult> => {
-    setIsSubmitting(true);
+    // setIsSubmitting(true);
     try {
       const { error } = await stripePresentPaymentSheet();
 
@@ -117,16 +117,16 @@ export function useStripePayment() {
         error: message,
       };
     } finally {
-      setIsSubmitting(false);
+      // setIsSubmitting(false);
     }
   }, [stripePresentPaymentSheet]);
 
   return {
     initializePaymentSheet,
     presentPaymentSheet,
-    isInitializing,
-    isSubmitting,
-    isLoading: isInitializing || isSubmitting,
+    // isInitializing,
+    // isSubmitting,
+    // isLoading: isInitializing || isSubmitting,
   };
 }
 

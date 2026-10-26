@@ -108,7 +108,7 @@ export function useSubscribeMutation() {
           queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
         ]);
 
-     
+
         await refreshAuth().catch(() => null);
       }
     },
