@@ -1,42 +1,69 @@
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, RefreshControl } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Heart } from "lucide-react-native"
-import { useRouter } from 'expo-router';
-import { useLikedSongs } from '@/hooks/use-like';
-import { useCurrentUser } from '@/hooks/use-auth';
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  Image,
+  Alert,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Heart, MoreHorizontal, Plus } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { useLikedSongs } from "@/hooks/use-like";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { useDeletePlaylist, useUserPlaylists } from "@/hooks/use-playlist";
 
 const LIBRARY_ITEMS = [
   {
-    id: '1',
-    title: 'Liked Songs',
-    customIcon: 'heart',
-    route: "UserlikedArtistdetails"
-  }
+    id: "1",
+    title: "Liked Songs",
+    customIcon: "heart",
+    route: "UserlikedArtistdetails",
+  },
 ];
 
 const FILTER_TAGS = ["Artists"];
 
 export default function Library() {
-  const { data: UserDetails, isLoading: isUserLoading, refetch: refetchUser, isRefetching: isUserRefetching } = useCurrentUser()
-  const router = useRouter()
-  const userName = UserDetails?.name?.trim() || 'U'
-  const userInitial = userName.charAt(0).toUpperCase()
-  const { data: likedSongs, isLoading: isSongsLoading, refetch: refetchSongs, isRefetching: isSongsRefetching } = useLikedSongs();
+  const {
+    data: UserDetails,
+    isLoading: isUserLoading,
+    refetch: refetchUser,
+    isRefetching: isUserRefetching,
+  } = useCurrentUser();
+  const router = useRouter();
+  const userName = UserDetails?.name?.trim() || "U";
+  const userInitial = userName.charAt(0).toUpperCase();
+  const {
+    data: likedSongs,
+    isLoading: isSongsLoading,
+    refetch: refetchSongs,
+    isRefetching: isSongsRefetching,
+  } = useLikedSongs();
   const likedSongsCount = likedSongs?.length ?? 0;
+  const {
+    data: playlists = [],
+    refetch: refetchPlaylists,
+    isRefetching: isPlaylistsRefetching,
+  } = useUserPlaylists();
+  const deletePlaylist = useDeletePlaylist();
 
   const isLoading = isUserLoading || isSongsLoading;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#121212]" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-[#121212]" edges={["top"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1 w-full"
       >
         <View className="flex-row items-center justify-between px-4 pt-4">
           <View className="flex-row items-center gap-3">
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => router.push('/(root)/(screens)/Edit-Profile')}
+              onPress={() => router.push("/(root)/(screens)/Edit-Profile")}
               className="w-9 h-9 items-center justify-center rounded-full bg-[#1DB954]"
             >
               <Text className="text-black text-[15px] font-bold uppercase">
@@ -62,7 +89,9 @@ export default function Library() {
                 className="bg-[#2a2a2a] px-4 py-2 rounded-full"
                 activeOpacity={0.8}
               >
-                <Text className="text-white text-[13px] font-medium">{tag}</Text>
+                <Text className="text-white text-[13px] font-medium">
+                  {tag}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -74,10 +103,13 @@ export default function Library() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           refreshControl={
             <RefreshControl
-              refreshing={isUserRefetching || isSongsRefetching}
+              refreshing={
+                isUserRefetching || isSongsRefetching || isPlaylistsRefetching
+              }
               onRefresh={() => {
                 refetchUser();
                 refetchSongs();
+                refetchPlaylists();
               }}
               tintColor="#1DB954"
               colors={["#1DB954"]}
@@ -97,7 +129,7 @@ export default function Library() {
               }}
             >
               <View className="mr-4">
-                {item.customIcon === 'heart' ? (
+                {item.customIcon === "heart" ? (
                   <View className="w-[64px] h-[64px] rounded bg-gradient-to-br from-[#450e74] to-[#5b3bb4] items-center justify-center bg-[#3c2bc1]">
                     <Heart color="#ffffff" size={24} fill="#ffffff" />
                   </View>
@@ -115,16 +147,107 @@ export default function Library() {
 
                 <View className="flex-row items-center mt-0.5">
                   <Text className="text-[#a7a7a7] text-[13px] font-medium">
-                    {item.id === '1'
-                      ? `${isLoading ? '—' : `${likedSongsCount} ${likedSongsCount === 1 ? 'song' : 'songs'}`}`
+                    {item.id === "1"
+                      ? `${isLoading ? "—" : `${likedSongsCount} ${likedSongsCount === 1 ? "song" : "songs"}`}`
                       : ""}
                   </Text>
                 </View>
               </View>
             </TouchableOpacity>
           ))}
+          <View className="mb-3 mt-7 flex-row items-center justify-between">
+            <Text className="text-xl font-bold text-white">Your playlists</Text>
+            <TouchableOpacity
+              onPress={() => router.push("/(root)/(screens)/Create-Playlist")}
+            >
+              <Plus color="#fff" size={23} />
+            </TouchableOpacity>
+          </View>
+          {playlists.length === 0 ? (
+            <Text className="py-4 text-sm text-[#a7a7a7]">
+              Your playlists will show up here.
+            </Text>
+          ) : (
+            playlists.map((playlist) => {
+              const cover = playlist.songs?.[0]?.coverPhoto?.url;
+              return (
+                <View key={playlist._id} className="mb-2 flex-row items-center">
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center py-2"
+                    activeOpacity={0.7}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(root)/(screens)/Playlist-Detail",
+                        params: { id: playlist._id },
+                      })
+                    }
+                  >
+                    {cover ? (
+                      <Image
+                        source={{ uri: cover }}
+                        className="h-14 w-14 rounded bg-[#282828]"
+                      />
+                    ) : (
+                      <View className="h-14 w-14 items-center justify-center rounded bg-[#282828]">
+                        <Text className="text-2xl text-[#aaa]">♫</Text>
+                      </View>
+                    )}
+                    <View className="ml-4 flex-1">
+                      <Text
+                        numberOfLines={1}
+                        className="font-semibold text-white"
+                      >
+                        {playlist.name}
+                      </Text>
+                      <Text className="mt-1 text-xs text-white">
+                        Playlist · {playlist.songs.length}{" "}
+                        {playlist.songs.length === 1 ? "song" : "songs"}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className="p-3"
+                    onPress={() =>
+                      Alert.alert(playlist.name, undefined, [
+                        {
+                          text: "Open playlist",
+                          onPress: () =>
+                            router.push({
+                              pathname: "/(root)/(screens)/Playlist-Detail",
+                              params: { id: playlist._id },
+                            }),
+                        },
+                        {
+                          text: "Delete playlist",
+                          style: "destructive",
+                          onPress: () =>
+                            Alert.alert(
+                              "Delete playlist?",
+                              "This playlist will be deleted.",
+                              [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                  text: "Delete",
+                                  style: "destructive",
+                                  onPress: () =>
+                                    deletePlaylist.mutate(playlist._id),
+                                },
+                                
+                              ],
+                            ),
+                        },
+                        { text: "Cancel", style: "cancel" },
+                      ])
+                    }
+                  >
+                    <MoreHorizontal color="#aaa" size={22} />
+                  </TouchableOpacity>
+                </View>
+              );
+            })
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  )
+  );
 }

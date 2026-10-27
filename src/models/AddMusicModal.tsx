@@ -65,7 +65,7 @@ export function AddMusicModal({
                     activeOpacity={0.7}
                     onPress={() => {
                         onClose();
-                        router.push('/(root)/(music)/music-audio');
+                        router.push('/(root)/(screens)/Create-Playlist');
                     }}
                     className="flex-row items-center py-2"
                 >
@@ -73,8 +73,8 @@ export function AddMusicModal({
                         <Music size={26} color="#FFFFFF" strokeWidth={2} />
                     </View>
                     <View className="ml-4 flex-1">
-                        <Text className="text-[17px] font-bold text-white">Playlist</Text>
-                        <Text className="mt-0.5 text-[13.5px] text-white">Create a Playlist with musics</Text>
+                        <Text className="text-[17px] font-bold text-white">Create playlist</Text>
+                        <Text className="mt-0.5 text-[13.5px] text-white">Make a playlist for your music</Text>
                     </View>
                 </TouchableOpacity>
             </View>

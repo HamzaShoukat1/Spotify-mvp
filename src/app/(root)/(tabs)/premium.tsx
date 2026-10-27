@@ -74,7 +74,7 @@ export default function PremiumScreen() {
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const handleSubscribe = async () => {
-    
+
 
     try {
       const result = await subscribeMutation.mutateAsync({ priceId: selectedPlanId });
@@ -107,7 +107,7 @@ export default function PremiumScreen() {
         text1: "Subscription Cancelled",
         text2: "Your subscription has been cancelled immediately.",
         position: "top"
-      
+
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to cancel subscription";

@@ -382,7 +382,6 @@ export default function TrackView() {
   onClose={() => setShowLimitModal(false)}
 >
   <View className="items-center mb-5">
-    {/* Glowing Spotify Green Badge */}
     <View className="w-16 h-16 rounded-full bg-[#1DB954]/20 items-center justify-center border border-[#1DB954]/40 shadow-lg shadow-[#1DB954]/20">
       <Zap size={32} color="#1DB954" fill="#1DB954" />
     </View>
@@ -392,7 +391,6 @@ export default function TrackView() {
     You’ve listened to your <Text className="text-white font-bold">3 free songs</Text> for today. Upgrade to Premium to keep the music playing without interruption.
   </Text>
 
-  {/* Quick Feature Perks */}
   <View className="bg-[#242424] rounded-2xl p-3.5 mb-6 gap-2 border border-white/5">
     <View className="flex-row items-center gap-2.5">
       <Check size={15} color="#1DB954" strokeWidth={3} />
