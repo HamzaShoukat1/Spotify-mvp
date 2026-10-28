@@ -6,8 +6,6 @@ import {
   Platform,
   TouchableOpacity,
   ScrollView,
-  Alert,
-  Image,
 } from "react-native";
 
 import {
@@ -16,7 +14,6 @@ import {
   ChevronRight,
   ArrowLeft,
   ShieldCheck,
-  MoreHorizontal,
 } from "lucide-react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,7 +22,6 @@ import { useChangeUsername, useCurrentUser } from "@/hooks/use-auth";
 import { ChangeUserNameModal } from "@/models/ChangeUsernameModal";
 import Toast from "react-native-toast-message";
 import { ChangeEmailModal } from "@/models/ChangeEmailModal";
-import { useDeletePlaylist, useUserPlaylists } from "@/hooks/use-playlist";
 
 export default function EditProfile() {
   const { data: UserDetails } = useCurrentUser();
@@ -38,8 +34,6 @@ export default function EditProfile() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-  const { data: playlists = [] } = useUserPlaylists();
-  const deletePlaylist = useDeletePlaylist();
 
   const HandleUsernameChange = (newUserName: string) => {
     mutate(newUserName, {

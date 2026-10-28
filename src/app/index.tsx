@@ -3,7 +3,7 @@ import { useAuth } from "@/context/Auth.Context";
 import { View, ActivityIndicator } from "react-native";
 
 export default function Index() {
-  const { userToken, onboarding, isLoading } = useAuth();
+  const { userToken, user, onboarding, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -22,6 +22,21 @@ export default function Index() {
 
   if (!userToken) {
     return <Redirect href="/(auth)/login" />;
+  }
+
+  if (!user) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#000000",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#1DB954" />
+      </View>
+    );
   }
 
   if (!onboarding) {

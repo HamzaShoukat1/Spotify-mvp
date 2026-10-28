@@ -83,7 +83,7 @@ export default function AlbumView() {
             </ScrollView>
           </View>
 
-        <TouchableOpacity onPress={()=> router.push("/(root)/(screens)/Track-View")}>
+        <TouchableOpacity onPress={()=> router.push("/Track-View")}>
               <View className=" w-full  max-w-[413px] bg-orange-950 mx-2  rounded-lg p-3 flex-row items-center justify-between shadow-xl z-50">
             <View className="flex-row items-center flex-1">
               <Image source={AlbumPic} className="w-10 h-10 rounded-sm mr-3" />

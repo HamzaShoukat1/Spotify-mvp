@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import  { useState, useMemo } from 'react';
 import {
     View,
     Text,
@@ -66,8 +66,8 @@ export default function SearchBar() {
             });
         } else if (item.type === 'music') {
             router.push({
-                pathname: "/(root)/(screens)/Track-View",
-                params: { musicId: item._id }
+                pathname: "/Track-View",
+                params: { musicId: item._id },
             });
         }
     };

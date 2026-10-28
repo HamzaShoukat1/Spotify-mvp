@@ -1,15 +1,16 @@
 import { AddMusicModal } from '@/models/AddMusicModal';
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
 import { Home, Library, Search, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { MotiView } from 'moti';
-import { MediaPlayerBar } from '@/components/Media-Player-bar';
 import { Image } from 'react-native';
 import { Logo } from "../../../assets/images/index"
+import { MediaPlayerBar } from '@/components/Media-Player-bar';
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isTrackViewOpen = usePathname().endsWith('/Track-View');
 
   return (
     <>
@@ -126,9 +127,11 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      <View className="absolute bottom-[65px] left-0 right-0 z-[50]">
-        <MediaPlayerBar />
-      </View>
+      {!isTrackViewOpen && (
+        <View className="absolute bottom-[65px] left-0 right-0 z-[50]">
+          <MediaPlayerBar />
+        </View>
+      )}
 
       {isModalOpen && (
         <View className="absolute inset-x-0 bottom-[65px] top-0 z-[70]">

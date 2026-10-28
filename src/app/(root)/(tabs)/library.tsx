@@ -7,14 +7,17 @@ import {
   TouchableOpacity,
   RefreshControl,
   Image,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Heart, MoreHorizontal, Plus } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useLikedSongs } from "@/hooks/use-like";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { useDeletePlaylist, useUserPlaylists } from "@/hooks/use-playlist";
+import { FormSheetModal } from "@/components/FormSheetModel";
+import type { Playlist } from "@/services/playlist.service";
 
 const LIBRARY_ITEMS = [
   {
@@ -50,6 +53,16 @@ export default function Library() {
     isRefetching: isPlaylistsRefetching,
   } = useUserPlaylists();
   const deletePlaylist = useDeletePlaylist();
+  const [playlistToManage, setPlaylistToManage] = useState<Playlist | null>(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [deletePlaylistError, setDeletePlaylistError] = useState("");
+
+  const closePlaylistSheets = () => {
+    if (deletePlaylist.isPending) return;
+    setPlaylistToManage(null);
+    setShowDeleteConfirmation(false);
+    setDeletePlaylistError("");
+  };
 
   const isLoading = isUserLoading || isSongsLoading;
 
@@ -207,38 +220,10 @@ export default function Library() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     className="p-3"
-                    onPress={() =>
-                      Alert.alert(playlist.name, undefined, [
-                        {
-                          text: "Open playlist",
-                          onPress: () =>
-                            router.push({
-                              pathname: "/(root)/(screens)/Playlist-Detail",
-                              params: { id: playlist._id },
-                            }),
-                        },
-                        {
-                          text: "Delete playlist",
-                          style: "destructive",
-                          onPress: () =>
-                            Alert.alert(
-                              "Delete playlist?",
-                              "This playlist will be deleted.",
-                              [
-                                { text: "Cancel", style: "cancel" },
-                                {
-                                  text: "Delete",
-                                  style: "destructive",
-                                  onPress: () =>
-                                    deletePlaylist.mutate(playlist._id),
-                                },
-                                
-                              ],
-                            ),
-                        },
-                        { text: "Cancel", style: "cancel" },
-                      ])
-                    }
+                    onPress={() => {
+                      setPlaylistToManage(playlist);
+                      setDeletePlaylistError("");
+                    }}
                   >
                     <MoreHorizontal color="#aaa" size={22} />
                   </TouchableOpacity>
@@ -248,6 +233,75 @@ export default function Library() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <FormSheetModal
+        visible={!!playlistToManage && !showDeleteConfirmation}
+        title="Playlist options"
+        onClose={closePlaylistSheets}
+      >
+        <Text className="mb-5 text-center text-sm text-neutral-400" numberOfLines={2}>
+          {playlistToManage?.name}
+        </Text>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => {
+            if (!playlistToManage) return;
+            const id = playlistToManage._id;
+            closePlaylistSheets();
+            router.push({ pathname: "/(root)/(screens)/Playlist-Detail", params: { id } });
+          }}
+          className="mb-3 w-full items-center rounded-full bg-[#2a2a2a] py-4"
+        >
+          <Text className="font-bold text-white">Open playlist</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => {
+            setDeletePlaylistError("");
+            setShowDeleteConfirmation(true);
+          }}
+          className="w-full items-center rounded-full bg-red-600 py-4"
+        >
+          <Text className="font-bold text-white">Delete playlist</Text>
+        </TouchableOpacity>
+      </FormSheetModal>
+
+      <FormSheetModal
+        visible={!!playlistToManage && showDeleteConfirmation}
+        title="Delete playlist?"
+        onClose={closePlaylistSheets}
+      >
+        <Text className="mb-5 text-center text-sm leading-5 text-neutral-400">
+          “{playlistToManage?.name}” will be deleted
+        </Text>
+        {deletePlaylistError ? (
+          <Text accessibilityRole="alert" className="mb-4 text-center text-sm text-red-400">
+            {deletePlaylistError}
+          </Text>
+        ) : null}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          disabled={deletePlaylist.isPending || !playlistToManage}
+          onPress={() => {
+            if (!playlistToManage || deletePlaylist.isPending) return;
+            deletePlaylist.mutate(playlistToManage._id, {
+              onSuccess: () => {
+                setPlaylistToManage(null);
+                setShowDeleteConfirmation(false);
+                setDeletePlaylistError("");
+              },
+              onError: (error) => setDeletePlaylistError(error.message),
+            });
+          }}
+          className="w-full items-center justify-center rounded-full bg-red-600 py-4"
+        >
+          {deletePlaylist.isPending ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text className="font-bold text-white">Delete playlist</Text>
+          )}
+        </TouchableOpacity>
+      </FormSheetModal>
     </SafeAreaView>
   );
 }

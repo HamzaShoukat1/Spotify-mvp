@@ -6,11 +6,11 @@ export function setupPlayer(): Promise<void> {
     if (!setupPromise) {
         setupPromise = TrackPlayer.setupPlayer()
             .then(() => TrackPlayer.updateOptions({
-                capabilities: [Capability.Play, Capability.Pause, Capability.SeekTo],
+                capabilities: [Capability.Play, Capability.Pause, Capability.SeekTo, Capability.Stop],
                 compactCapabilities: [Capability.Play, Capability.Pause],
                 progressUpdateEventInterval: 1,
                 android: {
-                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.ContinuePlayback,
+                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
                 },
             }))
             .catch((error) => {

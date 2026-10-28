@@ -1,124 +1,54 @@
-import React, { useState } from "react";
-
-import {
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-
-import { ChevronLeft, Check } from "lucide-react-native";
-
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { Check } from "lucide-react-native";
 import { router } from "expo-router";
-
+import { ArtistStepLayout } from "@/components/ArtistStepLayout";
 import { useSignup } from "../../context/SignupContext";
 
-const genderOptions = [
-  "Male",
-  "Female",
-  "Prefer not to say",
-] as const;
+const genderOptions = ["Male", "Female", "Prefer not to say"] as const;
 
 export default function Signup3() {
   const { signupData, setGender } = useSignup();
-
-  const [selectedGender, setSelectedGender] =
-    useState(signupData.gender);
+  const [selectedGender, setSelectedGender] = useState(signupData.gender);
 
   const handleNext = () => {
-    if (!selectedGender) {
-      return;
-    }
-
+    if (!selectedGender) return;
     setGender(selectedGender);
-
     router.push("/signup-4");
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#121212]">
-      <View className="flex-1 bg-[#121212]">
-        {/* Header */}
-        <View className="flex-row items-center px-4 py-3 justify-center relative">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="absolute left-4 p-2 bg-black rounded-full"
-            activeOpacity={0.7}
-          >
-            <ChevronLeft
-              size={15}
-              color="#777777"
-            />
-          </TouchableOpacity>
+    <ArtistStepLayout
+      step={3}
+      title="What's your gender?"
+      description="This helps us personalize your experience."
+      onBack={() => router.back()}
+      onNext={handleNext}
+      nextLabel="Next"
+    >
+      <View className="gap-3">
+        {genderOptions.map((gender) => {
+          const isSelected = selectedGender === gender;
 
-          <Text className="text-white text-base font-extrabold">
-            Create account
-          </Text>
-        </View>
-
-        {/* Content */}
-        <View className="flex-1 px-6 pt-8">
-          <Text className="text-white text-[20px] leading-[24px] font-bold mb-3 tracking-wide">
-            What's your gender?
-          </Text>
-
-          {/* Gender Options */}
-          <View className="gap-2">
-            {genderOptions.map((gender) => {
-              const isSelected =
-                selectedGender === gender;
-
-              return (
-                <TouchableOpacity
-                  key={gender}
-                  onPress={() =>
-                    setSelectedGender(gender)
-                  }
-                  activeOpacity={0.8}
-                  className="bg-[#777777] h-14 rounded-[5px] px-4 flex-row items-center justify-between"
-                >
-                  <Text className="text-white text-base font-semibold">
-                    {gender}
-                  </Text>
-
-                  {isSelected ? (
-                    <Check
-                      size={20}
-                      color="#FFFFFF"
-                      strokeWidth={3}
-                    />
-                  ) : null}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* Next */}
-          <View className="items-center mt-12">
+          return (
             <TouchableOpacity
-              onPress={handleNext}
-              disabled={!selectedGender}
+              key={gender}
+              onPress={() => setSelectedGender(gender)}
               activeOpacity={0.8}
-              className={`py-3 px-10 rounded-[21px] ${
-                selectedGender
-                  ? "bg-white"
-                  : "bg-[#303030]"
+              className={`h-14 flex-row items-center justify-between rounded-xl border px-4 ${
+                isSelected
+                  ? "border-[#1ED760] bg-[#142719]"
+                  : "border-[#303030] bg-[#1B1B1B]"
               }`}
             >
-              <Text
-                className={`text-base font-bold ${
-                  selectedGender
-                    ? "text-black"
-                    : ""
-                }`}
-              >
-                Next
-              </Text>
+              <Text className="text-base font-semibold text-white">{gender}</Text>
+              {isSelected ? (
+                <Check size={20} color="#1ED760" strokeWidth={3} />
+              ) : null}
             </TouchableOpacity>
-          </View>
-        </View>
+          );
+        })}
       </View>
-    </SafeAreaView>
+    </ArtistStepLayout>
   );
 }

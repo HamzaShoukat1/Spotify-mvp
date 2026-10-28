@@ -3,6 +3,7 @@ import React, {
   useContext,
   useEffect,
   useCallback,
+  useRef,
   useState,
 } from "react";
 
@@ -52,29 +53,39 @@ export function AuthProvider({
   const [user, setUser] = useState<AuthUser | null>(null);
   const [onboarding, setOnboarding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const refreshRequestId = useRef(0);
 
   const isPremium = user?.planTier === "premium";
   const planTier = user?.planTier === "premium" ? "premium" : "free";
 
   const refreshAuth = useCallback(async () => {
+    const requestId = ++refreshRequestId.current;
     try {
       const token = await getAccessToken();
+      if (requestId !== refreshRequestId.current) return;
+
       if (token) {
-        setUserToken(token);
         const currentUser = await currectUser();
-        if (currentUser) {
-          setUser(currentUser);
-          setOnboarding(Boolean(currentUser.onboarding));
-        }
+        if (requestId !== refreshRequestId.current) return;
+        if (!currentUser) throw new Error("Current user data was not returned.");
+
+        setUser(currentUser);
+        setOnboarding(Boolean(currentUser?.onboarding));
+        setUserToken(token);
       } else {
         setUserToken(null);
         setUser(null);
         setOnboarding(false);
       }
     } catch (error) {
-      console.error("Failed to refresh user auth state:", error);
+      if (requestId === refreshRequestId.current) {
+        console.error("Failed to refresh user auth state:", error);
+        setUserToken(null);
+        setUser(null);
+        setOnboarding(false);
+      }
     } finally {
-      setIsLoading(false);
+      if (requestId === refreshRequestId.current) setIsLoading(false);
     }
   }, []);
 

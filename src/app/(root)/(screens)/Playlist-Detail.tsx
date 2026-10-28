@@ -10,25 +10,26 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ArrowLeft, EllipsisVertical, Pencil, Plus, X } from "lucide-react-native";
+import { ArrowLeft, EllipsisVertical, Pencil, Plus } from "lucide-react-native";
 import {
-  useDeletePlaylist,
   usePlaylist,
   usePlaylistSongMutation,
   useRenamePlaylist,
 } from "@/hooks/use-playlist";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FormSheetModal } from "@/components/FormSheetModel";
+import type { PlaylistSong } from "@/services/playlist.service";
 
 export default function PlaylistDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { data: playlist, isLoading, isError } = usePlaylist(id);
   const removeSong = usePlaylistSongMutation(id, false);
-  const deleteMutation = useDeletePlaylist();
   const renameMutation = useRenamePlaylist();
   const [renameOpen, setRenameOpen] = useState(false);
   const [name, setName] = useState("");
+  const [songToRemove, setSongToRemove] = useState<PlaylistSong | null>(null);
+  const [removeSongError, setRemoveSongError] = useState("");
 
   const handleRenameTrigger = () => {
     setName(playlist?.name ?? "");
@@ -54,8 +55,6 @@ export default function PlaylistDetail() {
         </TouchableOpacity>
       </View>
     );
-
-  const cover = playlist.songs?.[0]?.coverPhoto?.url;
 
   return (
     <View className="flex-1 bg-[#121212]">
@@ -129,32 +128,29 @@ export default function PlaylistDetail() {
             </View>
           ) : (
             playlist.songs.map((song) => (
-
-              <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: '/(root)/(screens)/Track-View',
-                    params: { musicId: song?._id },
-                  })
-                }
-                key={song._id} className="mb-4 flex-row items-center justify-between py-1 active:opacity-70">
+              <View key={song._id} className="mb-4 flex-row items-center justify-between py-1">
                 <View className="flex-1 flex-row items-center mr-4">
-                  {song.coverPhoto?.url ? (
-                    <Image
-                      source={{ uri: song.coverPhoto.url }}
-                      className="h-12 w-12 rounded bg-[#242424]"
-                    />
-                  ) : (
-                    <View className="h-12 w-12 rounded bg-[#242424]" />
-                  )}
-                  <View className="ml-3 flex-1 justify-center">
-                    <Text numberOfLines={1} className="font-semibold text-sm text-white tracking-wide">
-                      {song.musicTitle}
-                    </Text>
-                    <Text numberOfLines={1} className="mt-0.5 text-xs font-medium text-neutral-400">
-                      {song.primaryArtistName}
-                    </Text>
-                  </View>
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center active:opacity-70"
+                    onPress={() => router.push({
+                      pathname: "/Track-View",
+                      params: { musicId: song._id },
+                    })}
+                  >
+                    {song.coverPhoto?.url ? (
+                      <Image source={{ uri: song.coverPhoto.url }} className="h-12 w-12 rounded bg-[#242424]" />
+                    ) : (
+                      <View className="h-12 w-12 rounded bg-[#242424]" />
+                    )}
+                    <View className="ml-3 flex-1 justify-center">
+                      <Text numberOfLines={1} className="font-semibold text-sm text-white tracking-wide">
+                        {song.musicTitle}
+                      </Text>
+                      <Text numberOfLines={1} className="mt-0.5 text-xs font-medium text-neutral-400">
+                        {song.primaryArtistName}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity
@@ -162,37 +158,13 @@ export default function PlaylistDetail() {
                   disabled={removeSong.isPending}
                   onPress={() => {
                     if (removeSong.isPending) return;
-
-                    Alert.alert(
-                      "Remove from Playlist?",
-                      `Are you sure you want to remove "${song.musicTitle || 'this song'}"?`,
-                      [
-                        {
-                          text: "Cancel",
-                          style: "cancel",
-                        },
-                        {
-                          text: "Remove",
-                          style: "destructive",
-                          onPress: () => {
-                            removeSong.mutate(
-                              { songId: song._id },
-                              {
-                                onError: (error) =>
-                                  Alert.alert("Could not remove song", error.message),
-                              },
-                            );
-                          },
-                        },
-                      ],
-                      { cancelable: true }
-                    );
+                    setRemoveSongError("");
+                    setSongToRemove(song);
                   }}
                 >
                   <EllipsisVertical color="#b3b3b3" size={18} />
                 </TouchableOpacity>
-
-              </TouchableOpacity>
+              </View>
             ))
           )}
         </View>
@@ -230,6 +202,49 @@ export default function PlaylistDetail() {
           <Text className="text-black text-sm font-bold tracking-wider uppercase">
             {renameMutation.isPending ? "Saving..." : "Save Changes"}
           </Text>
+        </TouchableOpacity>
+      </FormSheetModal>
+
+      <FormSheetModal
+        visible={!!songToRemove}
+        title="Remove song from playlist?"
+        onClose={() => {
+          if (removeSong.isPending) return;
+          setSongToRemove(null);
+          setRemoveSongError("");
+        }}
+      >
+        <Text className="mb-5 text-center text-sm leading-5 text-neutral-400">
+          Remove “{songToRemove?.musicTitle || "this song"}” from “{playlist.name}”?
+        </Text>
+        {removeSongError ? (
+          <Text accessibilityRole="alert" className="mb-4 text-center text-sm text-red-400">
+            {removeSongError}
+          </Text>
+        ) : null}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          disabled={removeSong.isPending}
+          onPress={() => {
+            if (!songToRemove || removeSong.isPending) return;
+            removeSong.mutate(
+              { songId: songToRemove._id },
+              {
+                onSuccess: () => {
+                  setSongToRemove(null);
+                  setRemoveSongError("");
+                },
+                onError: (error) => setRemoveSongError(error.message),
+              },
+            );
+          }}
+          className="w-full items-center justify-center rounded-full bg-red-600 py-4"
+        >
+          {removeSong.isPending ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text className="text-sm font-bold uppercase tracking-wider text-white">Remove song</Text>
+          )}
         </TouchableOpacity>
       </FormSheetModal>
     </View>

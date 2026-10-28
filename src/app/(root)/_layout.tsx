@@ -5,17 +5,17 @@ import { router } from "expo-router";
 import { useAuth } from "@/context/Auth.Context";
 
 export default function RootGroupLayout() {
-  const { userToken, onboarding, isLoading } = useAuth();
+  const { userToken, user, onboarding, isLoading } = useAuth();
 
   useEffect(() => {
     if (isLoading) return;
 
     if (!userToken) {
       router.replace("/(auth)/login");
-    } else if (!onboarding) {
+    } else if (user && !onboarding) {
       router.replace("/(onboarding)/Choose-Artist");
     }
-  }, [userToken, onboarding, isLoading]);
+  }, [userToken, user, onboarding, isLoading]);
 
   return (
     <Drawer

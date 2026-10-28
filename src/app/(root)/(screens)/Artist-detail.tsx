@@ -94,7 +94,7 @@ export default function ArtistDetail() {
                             <Pressable
                                 key={track._id}
                                 onPress={() => router.push({
-                                    pathname: '/(root)/(screens)/Track-View',
+                                    pathname: "/Track-View",
                                     params: { musicId: track._id },
                                 })}
                                 className="flex-row items-center justify-between py-3"

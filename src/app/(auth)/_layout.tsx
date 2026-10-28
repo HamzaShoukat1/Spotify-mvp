@@ -3,9 +3,9 @@ import { SignupProvider } from "../../context/SignupContext";
 import { useAuth } from "@/context/Auth.Context";
 
 export default function AuthLayout() {
-  const { userToken, onboarding, isLoading } = useAuth();
+  const { userToken, user, isLoading } = useAuth();
 
-  if (!isLoading && userToken && onboarding) {
+  if (!isLoading && userToken && user?.onboarding) {
     return <Redirect href="/(root)/(tabs)/home" />;
   }
 

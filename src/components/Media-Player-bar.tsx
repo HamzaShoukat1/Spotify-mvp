@@ -8,7 +8,7 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import { router } from 'expo-router';
 
-export const MediaPlayerBar = () => {
+export const MediaPlayerBar = ({ onPress }: { onPress?: () => void }) => {
     const activeTrack = useActiveTrack();
     const playbackState = usePlaybackState();
     const { position, duration } = useProgress(300);
@@ -27,9 +27,13 @@ export const MediaPlayerBar = () => {
     };
 
     const handlePressBar = () => {
-        router.replace({
-            pathname: '/(root)/(screens)/Track-View',
-            params: { musicId: activeTrack.id }
+        if (onPress) {
+            onPress();
+            return;
+        }
+        router.push({
+            pathname: '/Track-View',
+            params: { musicId: String(activeTrack.id) },
         });
     };
 
@@ -39,15 +43,14 @@ export const MediaPlayerBar = () => {
     const imageSource = typeof albumArt === 'string' ? { uri: albumArt } : albumArt;
 
     return (
-        <TouchableOpacity
-            activeOpacity={0.95}
-            onPress={handlePressBar}
-            className="flex-row items-center justify-between w-full h-16 px-4 relative overflow-hidden"
-            style={{
-                backgroundColor: '#10301C',
-            }}
-        >
-            <View className="flex-row items-center flex-1 mr-4">
+        <View className="relative h-16 w-full flex-row items-center justify-between overflow-hidden px-4" style={{ backgroundColor: '#10301C' }}>
+            <TouchableOpacity
+                activeOpacity={0.95}
+                onPress={handlePressBar}
+                className="mr-4 flex-1 flex-row items-center"
+                accessibilityRole="button"
+                accessibilityLabel={`Open ${songTitle} by ${artistName}`}
+            >
                 {albumArt ? (
                     <Image
                         source={imageSource}
@@ -67,7 +70,7 @@ export const MediaPlayerBar = () => {
                         <Text className="text-[#a7a7a7] font-normal text-xs">  •  {artistName}</Text>
                     </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
 
             <View className="flex-row items-center justify-end">
                 <TouchableOpacity
@@ -101,6 +104,6 @@ export const MediaPlayerBar = () => {
                     }}
                 />
             </View>
-        </TouchableOpacity>
+        </View>
     );
 };

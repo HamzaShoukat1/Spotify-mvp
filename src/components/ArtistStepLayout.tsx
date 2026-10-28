@@ -67,9 +67,9 @@ export function ArtistStepLayout({
                         >
                             <ChevronLeft size={21} color="#FFFFFF" />
                         </Pressable>
-                        <Text className="text-xs font-bold uppercase tracking-[2px] text-[#A7A7A7]">
+                        {/* <Text className="text-xs font-bold uppercase tracking-[2px] text-[#A7A7A7]">
                             Become an artist
-                        </Text>
+                        </Text> */}
                         <View className="h-10 w-10" />
                     </View>
 

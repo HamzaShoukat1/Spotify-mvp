@@ -23,12 +23,10 @@ export default function ArtistDetail() {
         return (
             <Pressable
                 className="mx-5 mb-3 flex-row items-center"
-                onPress={() =>
-                    router.push({
-                        pathname: '/(root)/(screens)/Track-View',
-                        params: { musicId: music?._id },
-                    })
-                }
+                onPress={() => music?._id && router.push({
+                    pathname: "/Track-View",
+                    params: { musicId: music._id },
+                })}
             >
                 {coverPhoto ? (
                     <Image

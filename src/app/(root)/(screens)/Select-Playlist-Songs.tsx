@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   ActivityIndicator,
@@ -17,6 +17,9 @@ import {
   usePlaylist,
   usePlaylistSongMutation,
 } from "@/hooks/use-playlist";
+import { UseSearchArtistandMusic } from "@/hooks/use-search";
+import { useDebounce } from "@/hooks/use-debounce";
+import type { PlaylistSong } from "@/services/playlist.service";
 
 export default function SelectPlaylistSongs() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,15 +31,25 @@ export default function SelectPlaylistSongs() {
 
   const [hasAddedAnySong, setHasAddedAnySong] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 400);
+  const searchTerm = debouncedSearch.trim().length >= 2 ? debouncedSearch.trim() : "";
+  const {
+    data: searchResponse,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = UseSearchArtistandMusic(searchTerm);
 
-  const filteredSongs = (songs ?? []).filter((song) => {
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return true;
-    
-    const titleMatch = song.musicTitle?.toLowerCase().includes(query);
-    const artistMatch = song.primaryArtistName?.toLowerCase().includes(query);
-    return titleMatch || artistMatch;
+  const isSearching = searchQuery.trim().length >= 2;
+  const isWaitingForSearch = isSearching && (
+    searchQuery.trim() !== debouncedSearch.trim() || isSearchLoading
+  );
+  const localFilteredSongs = (songs ?? []).filter((song) => {
+    const query = searchQuery.trim().toLowerCase();
+    return !query || song.musicTitle?.toLowerCase().includes(query) ||
+      song.primaryArtistName?.toLowerCase().includes(query);
   });
+  const searchSongs = (searchResponse?.music ?? []) as PlaylistSong[];
+  const visibleSongs = isSearching ? searchSongs : localFilteredSongs;
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]" edges={["top"]}>
@@ -88,9 +101,9 @@ export default function SelectPlaylistSongs() {
         </View>
       )}
 
-      {isLoading ? (
+      {(isLoading && !isSearching) || isWaitingForSearch ? (
         <ActivityIndicator className="mt-8" color="#1ed760" size="large" />
-      ) : isError ? (
+      ) : (isError && !isSearching) || (isSearchError && isSearching) ? (
         <Text className="mt-4 px-6 text-sm text-neutral-400">
           Could not load songs. Try again later.
         </Text>
@@ -100,15 +113,19 @@ export default function SelectPlaylistSongs() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {filteredSongs.length === 0 ? (
+          {visibleSongs.length === 0 ? (
             <View className="items-center justify-center mt-12 px-4">
-              <Text className="text-neutral-400 text-base font-semibold">No results found</Text>
+              <Text className="text-neutral-400 text-base font-semibold">
+                {searchQuery.trim().length === 1 ? "Keep typing to search" : "No results found"}
+              </Text>
               <Text className="text-neutral-500 text-xs text-center mt-1.5 leading-relaxed">
-                We couldn't find any matches for "{searchQuery}". Check the spelling or try another term.
+                {searchQuery.trim().length === 1
+                  ? "Enter at least 2 characters, or browse the full song list."
+                  : `We couldn't find any matches for "${searchQuery}". Check the spelling or try another term.`}
               </Text>
             </View>
           ) : (
-            filteredSongs.map((song) => {
+            visibleSongs.map((song) => {
               const isAdded = selected.has(song._id);
               return (
                 <View key={song._id} className="mb-4 flex-row items-center justify-between py-0.5">

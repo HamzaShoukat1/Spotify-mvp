@@ -8,10 +8,31 @@ import { RefreshControl } from 'react-native';
 import { SubscriptionBadge } from '@/components/SubscriptionBadge';
 
 export default function Home() {
-  const { data: artistsList = [], refetch: refetchartist, isRefetching: artistrefetching } = usePublicArtists();
-  const { data: Musicdetailforhome = [], refetch: refetchMusic, isRefetching: musicRefching } = useMusicDetailforhome()
-  const { data: recentSongs = [], refetch: refetchrecentsongplaying, isLoading: recentloading } = useRecentSongPlaying()
-  const { data: currentUser, isLoading: CurrentUserloading } = useCurrentUser();
+  const {
+    data: artistsList = [],
+    refetch: refetchartist,
+    isRefetching: artistrefetching,
+    isLoading: artistsLoading,
+  } = usePublicArtists();
+  const {
+    data: Musicdetailforhome = [],
+    refetch: refetchMusic,
+    isRefetching: musicRefching,
+    isLoading: musicLoading,
+  } = useMusicDetailforhome();
+  const {
+    data: recentSongs = [],
+    refetch: refetchrecentsongplaying,
+    isRefetching: recentRefetching,
+    isLoading: recentLoading,
+  } = useRecentSongPlaying();
+  const {
+    data: currentUser,
+    isLoading: currentUserLoading,
+  } = useCurrentUser();
+
+  const isHomeLoading =
+    artistsLoading || musicLoading || recentLoading || currentUserLoading;
 
   const userName = currentUser?.name?.trim() || 'User';
   const userInitial = userName.charAt(0).toUpperCase();
@@ -22,18 +43,26 @@ export default function Home() {
       refetchrecentsongplaying()
   }
 
-  const refreshing = artistrefetching || musicRefching || recentloading
+  const refreshing = artistrefetching || musicRefching || recentRefetching;
   const navigation = useNavigation()
 
   const openProfileDrawer = () => {
     navigation.getParent()?.dispatch({ type: 'OPEN_DRAWER' })
   }
 
+  if (isHomeLoading) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-black">
+        <ActivityIndicator size="large" color="#1DB954" />
+      </SafeAreaView>
+    );
+  }
+
   const renderPlaylistItem = ({ item }: any) => (
     <TouchableOpacity
       onPress={() => router.push({
-        pathname: '/(root)/(screens)/Track-View',
-        params: { musicId: item._id }
+        pathname: "/Track-View",
+        params: { musicId: item._id },
       })}
       className="items-center mr-4 w-[110px]"
     >
@@ -58,8 +87,8 @@ export default function Home() {
     return (
       <TouchableOpacity
         onPress={() => router.push({
-          pathname: "/(root)/(screens)/Track-View",
-          params: { musicId: targetId }
+          pathname: "/Track-View",
+          params: { musicId: targetId },
         })}
         className="mr-4 w-[140px]">
         <Image
@@ -129,13 +158,9 @@ export default function Home() {
               activeOpacity={0.7}
               className="w-9 h-9 rounded-full bg-[#1DB954] items-center justify-center shadow-md"
             >
-              {CurrentUserloading ? (
-                <ActivityIndicator size="small" color="#000000" />
-              ) : (
-                <Text className="text-black font-bold text-[15px] tracking-wider uppercase">
-                  {userInitial}
-                </Text>
-              )}
+              <Text className="text-black font-bold text-[15px] tracking-wider uppercase">
+                {userInitial}
+              </Text>
             </TouchableOpacity>
 
             <SubscriptionBadge />
