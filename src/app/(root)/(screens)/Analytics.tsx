@@ -184,7 +184,7 @@ export default function Analytics() {
         <View className="px-5 pt-3">
           <View className="flex-row items-center justify-between">
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={() => router.push("/Artist-hub")}
               hitSlop={12}
               className="h-10 w-10 items-center justify-center rounded-full bg-[#242424]"
             >

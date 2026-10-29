@@ -30,7 +30,7 @@ export default function Signup1() {
       step={1}
       title="What's your email?"
       description="You'll need to confirm this email later."
-      onBack={() => router.back()}
+      onBack={() => router.push("/(auth)/sign-up")}
       onNext={handleNext}
       nextLabel="Next"
     >

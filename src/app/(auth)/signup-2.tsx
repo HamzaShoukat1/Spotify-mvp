@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Text, TextInput } from "react-native";
+import { Text, TextInput, View, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { ArtistStepLayout } from "@/components/ArtistStepLayout";
 import { useSignup } from "../../context/SignupContext";
+import { Eye, EyeOff } from "lucide-react-native";
 
 export default function Signup2() {
   const { signupData, setPassword } = useSignup();
   const [password, setPasswordLocal] = useState(signupData.password);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleNext = () => {
@@ -33,22 +35,40 @@ export default function Signup2() {
       onNext={handleNext}
       nextLabel="Next"
     >
-      <TextInput
-        value={password}
-        onChangeText={(value) => {
-          setPasswordLocal(value);
-          setError("");
-        }}
-        className={`h-14 w-full max-w-[365px] rounded-md bg-[#282828] px-4 text-base text-white ${
-          error ? "border border-red-500" : ""
+      {/* Icon Wrapper Container */}
+      <View 
+        className={`h-14 w-full max-w-[365px] rounded-md bg-[#282828] flex-row items-center justify-between pr-4 ${
+          error ? "border border-red-500" : "border border-transparent"
         }`}
-        secureTextEntry
-        autoCapitalize="none"
-        autoCorrect={false}
-        autoComplete="password-new"
-        textContentType="newPassword"
-        selectionColor="#FFFFFF"
-      />
+      >
+        <TextInput
+          value={password}
+          onChangeText={(value) => {
+            setPasswordLocal(value);
+            setError("");
+          }}
+          className="flex-1 h-full px-4 text-base text-white"
+          secureTextEntry={!showPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          autoComplete="password-new"
+          textContentType="newPassword"
+          selectionColor="#FFFFFF"
+        />
+
+        <TouchableOpacity 
+          onPress={() => setShowPassword(!showPassword)}
+          activeOpacity={0.7}
+          className="p-1"
+        >
+          {showPassword ? (
+            <EyeOff size={22} color="#a7a7a7" />
+          ) : (
+            <Eye size={22} color="#a7a7a7" />
+          )}
+        </TouchableOpacity>
+      </View>
+
       {error ? <Text className="mt-2 text-sm text-red-500">{error}</Text> : null}
     </ArtistStepLayout>
   );

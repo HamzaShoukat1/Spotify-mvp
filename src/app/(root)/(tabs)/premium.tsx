@@ -58,7 +58,6 @@ function FeatureRow({ title, freeText, premiumText, isLast }: FeatureRowProps) {
 }
 
 export default function PremiumScreen() {
-  const { userToken } = useAuth();
   const {
     isPremium,
     status,
@@ -68,9 +67,14 @@ export default function PremiumScreen() {
     subscriptionId
   } = useSubscriptionStatus();
   const subscribeMutation = useSubscribeMutation();
-  const cancelMutation = useCancelSubscriptionMutation();
+  const cancelMutation = useCancelSubscriptionMutation(); 
 
-  const [selectedPlanId, setSelectedPlanId] = useState("price_premium_monthly");
+const STRIPE_PLANS = {
+  PREMIUM_MONTHLY:"price_1UV6SlBNHEQBwf0ez0xIp8k1",
+  //more
+};
+
+  const [selectedPlanId, setSelectedPlanId] = useState(STRIPE_PLANS.PREMIUM_MONTHLY);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const handleSubscribe = async () => {
@@ -210,8 +214,8 @@ export default function PremiumScreen() {
 
               <TouchableOpacity
                 activeOpacity={0.9}
-                onPress={() => setSelectedPlanId("price_premium_monthly")}
-                className={`p-5 rounded-2xl border-2 ${selectedPlanId === "price_premium_monthly"
+                onPress={() => setSelectedPlanId(STRIPE_PLANS.PREMIUM_MONTHLY)}
+                className={`p-5 rounded-2xl border-2 ${selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY
                   ? "border-[#1DB954] bg-[#1A221C]"
                   : "border-[#282828] bg-[#181818]"
                   }`}
@@ -222,9 +226,17 @@ export default function PremiumScreen() {
                     <Text className="text-white text-lg font-bold">Individual Premium</Text>
                   </View>
                   <View className="w-5 h-5 rounded-full border-2 border-[#1DB954] items-center justify-center">
-                    {selectedPlanId === "price_premium_monthly" && (
+                    <View
+                    className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
+                      selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY
+                        ? "border-[#1DB954]"
+                        : "border-[#727272]"
+                    }`}
+                  >
+                    {selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY && (
                       <View className="w-2.5 h-2.5 rounded-full bg-[#1DB954]" />
                     )}
+                  </View>
                   </View>
                 </View>
 
