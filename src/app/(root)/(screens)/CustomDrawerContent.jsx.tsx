@@ -44,7 +44,7 @@ export default function SpotifyProfileMenu() {
         </TouchableOpacity>
 
         <View className="mt-2 px-5">
-          <TouchableOpacity className="flex-row items-center py-4">
+          {/* <TouchableOpacity className="flex-row items-center py-4">
             <Plus color="#FFFFFF" size={28} strokeWidth={2} />
             <Text className="text-white text-[17px] ml-4">Add account</Text>
           </TouchableOpacity>
@@ -57,7 +57,7 @@ export default function SpotifyProfileMenu() {
           <TouchableOpacity className="flex-row items-center py-4">
             <Clock color="#FFFFFF" size={28} strokeWidth={2} />
             <Text className="text-white text-[17px] ml-4">Recents</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {!isLoading && UserDetails?.role === 'artist' && (
             <TouchableOpacity onPress={() => router.push("/(root)/(screens)/Artist-hub")} className="flex-row items-center py-4">
