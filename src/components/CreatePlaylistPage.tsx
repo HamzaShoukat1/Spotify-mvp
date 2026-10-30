@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -17,6 +17,12 @@ export default function CreatePlaylistPage() {
   const create = useCreatePlaylist();
   const router = useRouter();
 
+  useFocusEffect(
+    useCallback(() => {
+      setName("");
+    }, []),
+  );
+
   const isButtonDisabled = !name.trim() || create.isPending;
 
   const submit = () => {
@@ -27,6 +33,9 @@ export default function CreatePlaylistPage() {
         router.replace({
           pathname: "/(root)/(screens)/Playlist-Detail",
           params: { id: playlist._id },
+
+
+
         }),
       onError: (error) =>
         Alert.alert("Could not create playlist", error.message),

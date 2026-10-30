@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Heart, MoreHorizontal, Plus } from "lucide-react-native";
+import { EllipsisVertical, Heart, Plus } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useLikedSongs } from "@/hooks/use-like";
 import { useCurrentUser } from "@/hooks/use-auth";
@@ -171,9 +171,10 @@ export default function Library() {
           <View className="mb-3 mt-7 flex-row items-center justify-between">
             <Text className="text-xl font-bold text-white">Your playlists</Text>
             <TouchableOpacity
+              className="p-3"
               onPress={() => router.push("/(root)/(screens)/Create-Playlist")}
             >
-              <Plus color="#fff" size={23} />
+              <Plus color="#fff" size={20} />
             </TouchableOpacity>
           </View>
           {playlists.length === 0 ? (
@@ -225,7 +226,7 @@ export default function Library() {
                       setDeletePlaylistError("");
                     }}
                   >
-                    <MoreHorizontal color="#aaa" size={22} />
+                    <EllipsisVertical color="#aaa" size={22} />
                   </TouchableOpacity>
                 </View>
               );
