@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getMySubscriptionStatus,
   createSubscriptionSetup,
+  confirmSubscriptionPayment,
   cancelSubscription,
   type SubscriptionStatusResponse,
   type CancelSubscriptionResponse,
@@ -85,6 +86,18 @@ export function useSubscribeMutation() {
 
       if (!presentResult.success) {
         throw new Error(presentResult.error || "Payment was declined or failed");
+      }
+
+      // PaymentSheet success is not enough for the listening API: the Stripe
+      // webhook can arrive later. Confirm the subscription server-side before
+      // reporting Premium to the rest of the app.
+      let confirmation = await confirmSubscriptionPayment(setup.subscriptionId);
+      for (let attempt = 0; !confirmation.isPremium && attempt < 4; attempt += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        confirmation = await confirmSubscriptionPayment(setup.subscriptionId);
+      }
+      if (!confirmation.isPremium) {
+        throw new Error("Payment is processing. Please wait a moment and try again.");
       }
 
       return { success: true, cancelled: false };

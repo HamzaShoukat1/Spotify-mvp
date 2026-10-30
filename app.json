@@ -1,31 +1,31 @@
 {
   "expo": {
-    "name": "Spotify-mvp",
+    "name": "Spotify",
     "slug": "Spotify-mvp",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "spotifymvp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./src/assets/images/Logo.png",
+      "icon": "./src/assets/images/AppIcon.png",
       "bundleIdentifier": "com.hamza.spotifymvp"
     },
     "android": {
       "package": "com.hamza.spotifymvp",
-      "icon": "",
+      "icon": "./src/assets/images/AppIcon.png",
       "jsEngine": "hermes",
       "permissions": [
         "android.permission.READ_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./src/assets/images/Logo.png"
+        "backgroundColor": "#1DB954",
+        "foregroundImage": "./src/assets/images/AppIcon.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./src/assets/images/Logo.png"
+      "favicon": "./src/assets/images/AppIcon.png"
     },
     "plugins": [
       [
@@ -41,9 +41,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "image": "./src/assets/images/Logo.png",
-          "imageWidth": 76
+          "backgroundColor": "#1DB954",
+          "image": "./src/assets/images/AppIcon.png",
+          "imageWidth": 180
         }
       ],
       "expo-secure-store"

@@ -1,4 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { useEffect, useState } from 'react';
 import { Play, Pause } from 'lucide-react-native';
 import TrackPlayer, {
     useActiveTrack,
@@ -7,8 +8,9 @@ import TrackPlayer, {
     useProgress
 } from 'react-native-track-player';
 import { router } from 'expo-router';
+import { setupPlayer } from '@/services/player';
 
-export const MediaPlayerBar = ({ onPress }: { onPress?: () => void }) => {
+const MediaPlayerBarContent = ({ onPress }: { onPress?: () => void }) => {
     const activeTrack = useActiveTrack();
     const playbackState = usePlaybackState();
     const { position, duration } = useProgress(300);
@@ -106,4 +108,26 @@ export const MediaPlayerBar = ({ onPress }: { onPress?: () => void }) => {
             </View>
         </View>
     );
+};
+
+export const MediaPlayerBar = ({ onPress }: { onPress?: () => void }) => {
+    const [playerReady, setPlayerReady] = useState(false);
+
+    useEffect(() => {
+        let mounted = true;
+        setupPlayer()
+            .catch((error) => {
+                console.error('Failed to initialize the playback player:', error);
+            })
+            .finally(() => {
+                if (mounted) setPlayerReady(true);
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    if (!playerReady) return null;
+    return <MediaPlayerBarContent onPress={onPress} />;
 };

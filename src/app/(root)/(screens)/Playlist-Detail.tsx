@@ -61,6 +61,7 @@ export default function PlaylistDetail() {
       <SafeAreaView
         className="absolute top-0 left-0 right-0 z-50 bg-[#121212]/85 backdrop-blur-md"
         edges={["top"]}
+        
       >
         <View className="flex-row items-center justify-between px-5 py-3">
           <TouchableOpacity
@@ -78,6 +79,7 @@ export default function PlaylistDetail() {
       <ScrollView
         contentContainerStyle={{ paddingTop: 120, paddingBottom: 140 }}
         showsVerticalScrollIndicator={false}
+        
       >
         {/* Header/Hero Section */}
         <View className="items-center px-6">
@@ -174,6 +176,7 @@ export default function PlaylistDetail() {
         visible={renameOpen}
         title="Rename playlist"
         onClose={() => setRenameOpen(false)}
+        liftOnKeyboard
       >
         <TextInput
           value={name}

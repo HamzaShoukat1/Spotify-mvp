@@ -28,15 +28,22 @@ export default function RootLayout() {
             <ArtistProvider>
               <MusicProvider>
                 <ProfileProvider>
-                  <Stack screenOptions={{ headerShown: false }}>
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      // Leave the stack canvas transparent so a transparent modal
+                      // can reveal the still-mounted route underneath it.
+                      contentStyle: { backgroundColor: "transparent" },
+                    }}
+                  >
                     <Stack.Screen
                       name="Track-View"
                       options={{
-                        presentation: "card",
-                        animation: "none",
+                        presentation: "transparentModal",
+                        animation: "slide_from_bottom",
                         headerShown: false,
-                        contentStyle: { backgroundColor: "#121212" },
-                        gestureEnabled: true,
+                        contentStyle: { backgroundColor: "transparent" },
+                        gestureEnabled: false,
                       }}
                     />
                   </Stack>

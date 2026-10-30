@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Platform } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import SpotifyProfileMenu from "./(screens)/CustomDrawerContent.jsx";
 import { router } from "expo-router";
@@ -29,6 +30,9 @@ export default function RootGroupLayout() {
         overlayColor: "rgba(0, 0, 0, 0.72)",
         swipeEnabled: true,
         drawerType: "slide",
+        sceneStyle: {
+          backgroundColor: "#121212",
+        },
       }}
     />
   );

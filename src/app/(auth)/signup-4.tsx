@@ -74,15 +74,6 @@ export default function Signup4() {
 
       {error ? <Text className="mt-2 text-sm text-red-500">{error}</Text> : null}
 
-      <View className="mt-6 border-t border-[#333333] pt-5">
-        <Text className="text-sm leading-5 text-white">
-          By creating an account, you agree to Spotify's Terms of Use and
-          acknowledge the Privacy Policy.
-        </Text>
-        <Text className="mt-3 text-sm font-semibold text-[#1ED760]">
-          Terms of Use · Privacy Policy
-        </Text>
-      </View>
 
       {/* <View className="mt-7 gap-5">
         <TouchableOpacity

@@ -73,3 +73,7 @@
             <Text className="text-white font-bold text-base">Continue with Apple</Text>
           </TouchableOpacity>
         </View>
+
+
+           android:usesCleartextTraffic="true",
+   android:requestLegacyExternalStorage

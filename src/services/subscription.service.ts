@@ -36,6 +36,12 @@ export interface SubscriptionSetupResponse {
   customerId: string;
 }
 
+export interface ConfirmSubscriptionResponse {
+  isPremium: boolean;
+  status: SubscriptionDetails["status"];
+  currentPeriodEnd: string | null;
+}
+
 export interface CancelSubscriptionResponse {
   subscriptionId: string;
   status: string;
@@ -56,6 +62,15 @@ export async function createSubscriptionSetup(
   return ApiClient(`${BackendUrl}/subscription/create-subscription`, {
     method: "POST",
     body: JSON.stringify({ priceId }),
+  });
+}
+
+export async function confirmSubscriptionPayment(
+  subscriptionId: string,
+): Promise<ConfirmSubscriptionResponse> {
+  return ApiClient(`${BackendUrl}/subscription/confirm`, {
+    method: "POST",
+    body: JSON.stringify({ subscriptionId }),
   });
 }
 

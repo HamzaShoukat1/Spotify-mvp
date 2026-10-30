@@ -175,7 +175,9 @@ export default function Analytics() {
           <RefreshControl
             refreshing={isFetching && !isLoading}
             onRefresh={refetch}
-            tintColor="#1ed760"
+             tintColor="#1DB954"
+              colors={["#1DB954"]}
+              progressBackgroundColor="#282828"
           />
         }
         contentContainerStyle={{ paddingBottom: 40 }}

@@ -56,7 +56,6 @@ export default function ArtistDetail() {
 
                 {music?._id && <LikeButton musicId={music._id} size={21} />}
 
-                <MoreVertical size={20} color="#A7A7A7" />
             </Pressable>
         );
     };
@@ -107,7 +106,6 @@ export default function ArtistDetail() {
                                 <ArrowLeft size={28} color="#FFFFFF" />
                             </Pressable>
 
-                            <MoreVertical size={22} color="#A7A7A7" />
                         </View>
 
                         <Text className="text-3xl font-bold text-white">

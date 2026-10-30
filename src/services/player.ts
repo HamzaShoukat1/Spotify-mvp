@@ -5,12 +5,20 @@ let setupPromise: Promise<void> | null = null;
 export function setupPlayer(): Promise<void> {
     if (!setupPromise) {
         setupPromise = TrackPlayer.setupPlayer()
+            .catch((error) => {
+                // The native player can outlive an Expo Go JavaScript reload.
+                // In that case it is already initialized, so reuse it.
+                const message = error instanceof Error ? error.message : String(error);
+                if (!message.toLowerCase().includes('already been initialized')) {
+                    throw error;
+                }
+            })
             .then(() => TrackPlayer.updateOptions({
                 capabilities: [Capability.Play, Capability.Pause, Capability.SeekTo, Capability.Stop],
-                compactCapabilities: [Capability.Play, Capability.Pause],
+                notificationCapabilities: [Capability.Play, Capability.Pause, Capability.Stop],
                 progressUpdateEventInterval: 1,
                 android: {
-                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.PausePlayback,
                 },
             }))
             .catch((error) => {

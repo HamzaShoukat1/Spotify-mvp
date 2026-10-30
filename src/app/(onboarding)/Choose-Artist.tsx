@@ -9,7 +9,6 @@ import { usePublicArtists } from '@/hooks/useArtist';
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = (width - 48) / 3;
 
-
 export default function Artist() {
     const [selectedArtists, setSelectedArtists] = useState<string[]>([]);
     const [search, setSearch] = useState('');
@@ -29,7 +28,15 @@ export default function Artist() {
         }
     };
 
-
+    const renderPlaceholders = () => {
+        const remainder = filteredArtists.length % 3;
+        if (remainder === 0) return null;
+        
+        const placeholdersNeeded = 3 - remainder;
+        return Array.from({ length: placeholdersNeeded }).map((_, index) => (
+            <View key={`placeholder-${index}`} style={{ width: ITEM_WIDTH }} />
+        ));
+    };
 
     return (
         <SafeAreaView className="flex-1 bg-black">
@@ -61,58 +68,57 @@ export default function Artist() {
                             className="flex-1 text-black text-base p-0"
                         />
                     </View>
+                    
                     {/* Grid List of Artists */}
-                    <ScrollView
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ paddingBottom: 100 }}
-                    >
-                        <View className="flex-row flex-wrap justify-between">
-                            {isLoading ? (
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        backgroundColor: "#000000",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <ActivityIndicator size="large" color="#1DB954" />
-                                </View>
-                            ) : isError ? (
-                                <Text className="text-[#A7A7A7]">Unable to load artists.</Text>
-                            ) : filteredArtists.map((artist) => {
-                                const isSelected = selectedArtists.includes(artist._id);
-                                return (
-                                    <TouchableOpacity
-                                        key={artist._id}
-                                        style={{ width: ITEM_WIDTH }}
-                                        className="items-center mb-6"
-                                        activeOpacity={0.7}
-                                        onPress={() => toggleArtistSelection(artist._id)}
-                                    >
-                                        <View className="relative">
-                                            <Image
-                                                source={{ uri: artist.profileImage?.url}}
-                                                style={{ width: ITEM_WIDTH - 12, height: ITEM_WIDTH - 12 }}
-                                                className={`rounded-full bg-[#282828] ${isSelected ? 'border-2 border-[#1DB954]' : ''}`}
-                                            />
-                                            {isSelected && (
-                                                <View className="absolute right-0 bottom-0 bg-[#1DB954] rounded-full p-1 border-2 border-[#121212]">
-                                                    <Check color="#ffffff" size={14} />
-                                                </View>
-                                            )}
-                                        </View>
-
-                                        <Text
-                                            className={`text-xs font-semibold mt-2.5 text-center px-1 ${isSelected ? 'text-white' : 'text-[#A7A7A7]'}`}
-                                        >
-                                            {artist.name}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )
-                            })}
+                    {isLoading ? (
+                        <View className="flex-1 justify-center items-center">
+                            <ActivityIndicator size="large" color="#1DB954" />
                         </View>
-                    </ScrollView>
+                    ) : isError ? (
+                        <View className="flex-1 justify-center items-center">
+                            <Text className="text-[#A7A7A7]">Unable to load artists.</Text>
+                        </View>
+                    ) : (
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{ paddingBottom: 100 }}
+                        >
+                            <View className="flex-row flex-wrap justify-between">
+                                {filteredArtists.map((artist) => {
+                                    const isSelected = selectedArtists.includes(artist._id);
+                                    return (
+                                        <TouchableOpacity
+                                            key={artist._id}
+                                            style={{ width: ITEM_WIDTH }}
+                                            className="items-center mb-6"
+                                            activeOpacity={0.7}
+                                            onPress={() => toggleArtistSelection(artist._id)}
+                                        >
+                                            <View className="relative">
+                                                <Image
+                                                    source={{ uri: artist.profileImage?.url}}
+                                                    style={{ width: ITEM_WIDTH - 12, height: ITEM_WIDTH - 12 }}
+                                                    className={`rounded-full bg-[#282828] ${isSelected ? 'border-2 border-[#1DB954]' : ''}`}
+                                                />
+                                                {isSelected && (
+                                                    <View className="absolute right-0 bottom-0 bg-[#1DB954] rounded-full p-1 border-2 border-[#121212]">
+                                                        <Check color="#ffffff" size={14} />
+                                                    </View>
+                                                )}
+                                            </View>
+
+                                            <Text
+                                                className={`text-xs font-semibold mt-2.5 text-center px-1 ${isSelected ? 'text-white' : 'text-[#A7A7A7]'}`}
+                                            >
+                                                {artist.name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                                {renderPlaceholders()}
+                            </View>
+                        </ScrollView>
+                    )}
 
                     {selectedArtists.length >= 3 && (
                         <View className="absolute bottom-6 left-4 right-4 bg-transparent">
@@ -121,7 +127,6 @@ export default function Artist() {
                                     await finishOnboarding(selectedArtists);
                                     router.replace("/(root)/(tabs)/home");
                                 }}
-
                                 className="bg-white rounded-full py-3.5 items-center justify-center shadow-lg"
                             >
                                 <Text className="text-black font-bold text-base">
