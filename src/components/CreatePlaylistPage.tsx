@@ -22,7 +22,6 @@ export default function CreatePlaylistPage() {
       setName("");
     }, []),
   );
-
   const isButtonDisabled = !name.trim() || create.isPending;
 
   const submit = () => {
@@ -83,9 +82,8 @@ export default function CreatePlaylistPage() {
               accessibilityRole="button"
               onPress={submit}
               disabled={isButtonDisabled}
-              className={`rounded-full px-8 py-3.5 ${
-                isButtonDisabled ? "bg-[#333333]" : "bg-[#1DB954]"
-              }`}
+              className={`rounded-full px-8 py-3.5 ${isButtonDisabled ? "bg-[#333333]" : "bg-[#1DB954]"
+                }`}
             >
               <Text className="text-sm font-bold tracking-wider text-center">
                 {create.isPending ? "Creating…" : "Create"}

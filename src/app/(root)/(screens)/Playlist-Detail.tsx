@@ -18,6 +18,7 @@ import {
 } from "@/hooks/use-playlist";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FormSheetModal } from "@/components/FormSheetModel";
+import {Trash2} from "lucide-react-native"
 import type { PlaylistSong } from "@/services/playlist.service";
 
 export default function PlaylistDetail() {
@@ -164,7 +165,8 @@ export default function PlaylistDetail() {
                     setSongToRemove(song);
                   }}
                 >
-                  <EllipsisVertical color="#b3b3b3" size={18} />
+                  <Trash2 color="#FF0000" size={18} />
+
                 </TouchableOpacity>
               </View>
             ))

@@ -49,6 +49,7 @@ export default function Library() {
   const likedSongsCount = likedSongs?.length ?? 0;
   const {
     data: playlists = [],
+    isLoading: playlistfetchingloading,
     refetch: refetchPlaylists,
     isRefetching: isPlaylistsRefetching,
   } = useUserPlaylists();
@@ -64,7 +65,22 @@ export default function Library() {
     setDeletePlaylistError("");
   };
 
-  const isLoading = isUserLoading || isSongsLoading;
+  const isLoading = isUserLoading || isSongsLoading || playlistfetchingloading;
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#000000",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#1DB954" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]" edges={["top"]}>
