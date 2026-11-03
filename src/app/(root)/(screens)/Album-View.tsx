@@ -1,9 +1,9 @@
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { ChevronLeft, MoreHorizontal } from "lucide-react-native";
+import { ChevronLeft, Pause, Play, Share2 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
+import TrackPlayer, { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
 import { useAlbum } from "@/hooks/use-album";
 import { AlbumPic } from "../../../assets/images";
 import { PlayingIndicator } from "@/components/PlayingIndicator";
@@ -36,12 +36,30 @@ export default function AlbumView() {
 
   const tracks = Array.isArray(album.tracks) ? album.tracks : [];
   const coverUrl = album.albumCoverArt?.url;
-  const playingTrackId = playbackState.state === State.Playing
-    ? String(activeTrack?.id ?? "")
-    : null;
+  const activeTrackId = String(activeTrack?.id ?? "");
+  const isPlaying = playbackState.state === State.Playing;
+  const firstTrack = tracks[0];
+  const isFirstTrackActive = activeTrackId === firstTrack?._id;
 
   const openTrack = (musicId: string) => {
     router.push({ pathname: "/Track-View", params: { musicId } });
+  };
+
+  const handlePlayAlbum = async () => {
+    if (!firstTrack) return;
+    if (isFirstTrackActive) {
+      if (isPlaying) await TrackPlayer.pause();
+      else await TrackPlayer.play();
+      return;
+    }
+    openTrack(firstTrack._id);
+  };
+
+  const shareAlbum = () => {
+    Share.share({
+      title: album.albumTitle,
+      message: `${album.albumTitle} by ${album.artistName}`,
+    }).catch(() => null);
   };
 
   return (
@@ -66,8 +84,12 @@ export default function AlbumView() {
             >
               <ChevronLeft color="#fff" size={25} />
             </Pressable>
-            <Pressable accessibilityLabel="More album options" className="h-10 w-10 items-center justify-center">
-              <MoreHorizontal color="#fff" size={25} />
+            <Pressable
+              accessibilityLabel="Share album"
+              onPress={shareAlbum}
+              className="h-10 w-10 items-center justify-center rounded-full bg-black/25 active:opacity-70"
+            >
+              <Share2 color="#fff" size={20} />
             </Pressable>
           </View>
 
@@ -78,6 +100,9 @@ export default function AlbumView() {
               resizeMode="cover"
             />
             <View className="w-full pt-6">
+              <Text className="text-[11px] font-black uppercase tracking-[2px] text-[#b8eac5]">
+                Album
+              </Text>
               <Text className="text-[28px] font-black leading-8 text-white" numberOfLines={2}>
                 {album.albumTitle}
               </Text>
@@ -90,49 +115,75 @@ export default function AlbumView() {
             </View>
           </View>
 
-          <View className="mt-5 flex-row items-center justify-end px-5">
+          <View className="mt-7 flex-row items-center justify-between px-5">
+            <View>
+              <Text className="text-sm font-bold text-white">Ready when you are</Text>
+              <Text className="mt-1 text-xs text-[#b0b0b0]">Play the full album</Text>
+            </View>
+            <View className="flex-row items-center">
             {/* <Pressable
-              accessibilityLabel="Play album"
-              onPress={() => tracks[0] && openTrack(tracks[0]._id)}
+              accessibilityLabel={isFirstTrackActive && isPlaying ? "Pause album" : "Play album"}
+              onPress={handlePlayAlbum}
               disabled={tracks.length === 0}
-              className="h-14 w-14 items-center justify-center rounded-full bg-[#1ed760] active:opacity-80"
+              className="h-14 w-14 items-center justify-center rounded-full bg-[#1ed760] shadow-lg active:opacity-80"
             >
-              <Play color="#071b0d" fill="#071b0d" size={25} />
+              {isFirstTrackActive && isPlaying ? (
+                <Pause color="#071b0d" fill="#071b0d" size={23} />
+              ) : (
+                <Play color="#071b0d" fill="#071b0d" size={25} />
+              )}
             </Pressable> */}
+            </View>
           </View>
 
-          <View className="mt-3 px-5">
+          <View className="mt-8 px-5">
             {tracks.length === 0 ? (
               <Text className="py-10 text-center text-[15px] text-[#a7a7a7]">
                 No tracks have been added to this album yet.
               </Text>
             ) : (
-              tracks.map((track, index) => (
-                <Pressable
-                  key={track._id}
-                  accessibilityLabel={`Play ${track.musicTitle}`}
-                  onPress={() => openTrack(track._id)}
-                  className="flex-row items-center py-3 active:opacity-60"
-                >
-                  <View className="w-9 items-center justify-center">
-                    {playingTrackId === track._id ? (
-                      <PlayingIndicator />
-                    ) : (
-                      <Text className="text-[14px] text-[#a7a7a7]">
-                        {track.trackNumber || index + 1}
-                      </Text>
-                    )}
-                  </View>
-                  <View className="ml-3 flex-1">
-                    <Text className="text-[16px] font-semibold text-white" numberOfLines={1}>
-                      {track.musicTitle}
-                    </Text>
-                    <Text className="mt-1 text-[12px] text-[#a7a7a7]">
-                      {album.artistName}
-                    </Text>
-                  </View>
-                </Pressable>
-              ))
+              <>
+                <View className="mb-1 flex-row items-center justify-between">
+                  <Text className="text-[12px] font-black uppercase tracking-[1.5px] text-[#a7a7a7]">
+                    Tracklist
+                  </Text>
+                  <Text className="text-xs text-[#777]">{tracks.length} songs</Text>
+                </View>
+                {tracks.map((track, index) => {
+                  const isActive = activeTrackId === track._id;
+                  return (
+                    <Pressable
+                      key={track._id}
+                      accessibilityLabel={`${isActive && isPlaying ? "Pause" : "Play"} ${track.musicTitle}`}
+                      onPress={() => openTrack(track._id)}
+                      className="flex-row items-center rounded-xl py-3 active:bg-white/5"
+                    >
+                      <View className="w-8 items-center justify-center">
+                        {isActive && isPlaying ? (
+                          <PlayingIndicator />
+                        ) : (
+                          <Text className={isActive ? "text-[14px] font-bold text-[#1ed760]" : "text-[14px] text-[#a7a7a7]"}>
+                            {track.trackNumber || index + 1}
+                          </Text>
+                        )}
+                      </View>
+                      {track.coverPhoto?.url ? (
+                        <Image source={{ uri: track.coverPhoto.url }} className="ml-2 h-12 w-12 rounded-md bg-[#242424]" />
+                      ) : (
+                        <View className="ml-2 h-12 w-12 rounded-md bg-[#242424]" />
+                      )}
+                      <View className="ml-3 flex-1">
+                        <Text className={isActive ? "text-[16px] font-bold text-[#1ed760]" : "text-[16px] font-semibold text-white"} numberOfLines={1}>
+                          {track.musicTitle}
+                        </Text>
+                        <Text className="mt-1 text-[12px] text-[#a7a7a7]" numberOfLines={1}>
+                          {album.artistName}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </>
             )}
           </View>
         </ScrollView>

@@ -41,7 +41,8 @@ import TrackPlayer, {
 import { useGetMusicTrack } from "@/hooks/use-music";
 import { formatTime, setupPlayer } from "@/services/player";
 import { useAddTrackDataToAnalytics } from "@/hooks/use-analytics";
-import { completeListening, startListening } from "@/services/analytics.service";
+import { startListening } from "@/services/analytics.service";
+import { useListeningLimit } from "@/context/ListeningLimitContext";
 import { LikeButton } from "@/components/LikeButton";
 import { FormSheetModal } from "@/components/FormSheetModel";
 import { LinearGradient } from "expo-linear-gradient";
@@ -93,31 +94,38 @@ function TrackViewContent({
       }
     });
 
-  const { data: musicData, isError, isLoading } = useGetMusicTrack(musicId);
+  const { data: musicData, isError, isLoading: isMusicLoading } = useGetMusicTrack(musicId);
 
   const { mutateAsync: adduserdetailstodbforstreamtracking } =
     useAddTrackDataToAnalytics();
+  const {
+    playCount,
+    isLimitReached,
+    showUpgradeModal,
+    isLoading,
+    setLoading,
+    setListeningAccess,
+    resetTrackRegistration,
+    registerListeningAtHalf,
+    openUpgradeModal,
+    closeUpgradeModal,
+  } = useListeningLimit();
 
   const trackedMusicIdRef = useRef<string | null>(null);
   const listeningMusicIdRef = useRef<string | null>(null);
-  const listeningSessionIdRef = useRef<string | null>(null);
-  const countedListeningSessionRef = useRef<string | null>(null);
-  const limitReachedSessionRef = useRef<string | null>(null);
-  const endedSessionRef = useRef<string | null>(null);
   const limitModalShownSessionRef = useRef<string | null>(null);
   const listenedSecondsRef = useRef(0);
   const lastPlaybackPositionRef = useRef<number | null>(null);
 
-  const [showLimitModal, setShowLimitModal] = useState(false);
   const showFreeLimitModal = useCallback((sessionId?: string | null) => {
     if (sessionId && limitModalShownSessionRef.current === sessionId) return;
     if (sessionId) limitModalShownSessionRef.current = sessionId;
     TrackPlayer.pause().catch(() => null);
-    setShowLimitModal(true);
-  }, []);
+    openUpgradeModal();
+  }, [openUpgradeModal]);
 
   const closeLimitModalAndGoHome = useCallback(async () => {
-    setShowLimitModal(false);
+    closeUpgradeModal();
     try {
       await TrackPlayer.reset();
     } catch (error) {
@@ -125,19 +133,23 @@ function TrackViewContent({
       await TrackPlayer.pause().catch(() => null);
     }
     router.replace("/(root)/(tabs)/home");
-  }, []);
+  }, [closeUpgradeModal]);
 
   const activeTrack = useActiveTrack();
   const playbackState = usePlaybackState();
   const { duration, position } = useProgress(300);
 
   const isPlaying = playbackState.state === State.Playing;
-  const musicCover = musicData?.coverPhoto?.url || activeTrack?.artwork;
+  const isCurrentTrack = activeTrack?.id === musicId;
+  const trackPosition = isCurrentTrack ? position : 0;
+  const trackDuration = isCurrentTrack ? duration : 0;
+  const musicCover =
+    musicData?.coverPhoto?.url || (isCurrentTrack ? activeTrack?.artwork : undefined);
   const musicTitle =
-    musicData?.musicTitle || activeTrack?.title || "Unknown title";
+    musicData?.musicTitle || (isCurrentTrack ? activeTrack?.title : undefined) || "Unknown title";
   const artistName =
-    musicData?.primaryArtistName || activeTrack?.artist || "Unknown artist";
-  const musicUrl = musicData?.music?.url || activeTrack?.url;
+    musicData?.primaryArtistName || (isCurrentTrack ? activeTrack?.artist : undefined) || "Unknown artist";
+  const musicUrl = musicData?.music?.url || (isCurrentTrack ? activeTrack?.url : undefined);
   const artist = musicData?.artist;
   const artistImage = artist?.profileImage?.url;
 
@@ -145,11 +157,18 @@ function TrackViewContent({
     let cancelled = false;
 
     async function startTrack() {
-      if (!musicUrl || !musicId) return;
+      if (!musicUrl || !musicId) {
+        setLoading(false);
+        return;
+      }
 
-      if (activeTrack?.id === musicId) return;
+      if (activeTrack?.id === musicId) {
+        setLoading(false);
+        return;
+      }
 
       try {
+        setLoading(true);
         if (listeningMusicIdRef.current === musicId) return;
 
         await setupPlayer();
@@ -158,7 +177,13 @@ function TrackViewContent({
 
 
         const currentTrack = await TrackPlayer.getActiveTrack();
-        if (currentTrack?.id === musicId) return;
+        if (currentTrack?.id === musicId) {
+          setLoading(false);
+          return;
+        }
+
+        const listeningAccess = await startListening(musicId);
+        if (cancelled) return;
 
         await TrackPlayer.reset();
 
@@ -170,11 +195,8 @@ function TrackViewContent({
           artwork: musicCover,
         });
 
-        if (cancelled) return;
-
-        const listeningAccess = await startListening(musicId);
         listeningMusicIdRef.current = musicId;
-        listeningSessionIdRef.current = listeningAccess.sessionId;
+        setListeningAccess(listeningAccess);
 
         await TrackPlayer.play();
         await queryClient.invalidateQueries({
@@ -187,6 +209,8 @@ function TrackViewContent({
         } else {
           console.error("Failed to start track playback:", error);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -195,19 +219,26 @@ function TrackViewContent({
     return () => {
       cancelled = true;
     };
-  }, [musicId, musicUrl, musicTitle, artistName, musicCover, queryClient, showFreeLimitModal]);
+  }, [
+    artistName,
+    musicCover,
+    musicId,
+    musicTitle,
+    musicUrl,
+    queryClient,
+    setListeningAccess,
+    setLoading,
+    showFreeLimitModal,
+  ]);
 
   useEffect(() => {
     listeningMusicIdRef.current = null;
     trackedMusicIdRef.current = null;
-    listeningSessionIdRef.current = null;
-    countedListeningSessionRef.current = null;
-    limitReachedSessionRef.current = null;
-    endedSessionRef.current = null;
     limitModalShownSessionRef.current = null;
+    resetTrackRegistration();
     listenedSecondsRef.current = 0;
     lastPlaybackPositionRef.current = null;
-  }, [musicId]);
+  }, [musicId, resetTrackRegistration]);
 
   useEffect(() => {
     if (playbackState.state !== State.Playing || activeTrack?.id !== musicId) {
@@ -228,35 +259,7 @@ function TrackViewContent({
 
   useEffect(() => {
     if (playbackState.state === State.Ended) {
-      const listeningSessionId = listeningSessionIdRef.current;
-      if (listeningSessionId) {
-        endedSessionRef.current = listeningSessionId;
-
-        if (countedListeningSessionRef.current === listeningSessionId) {
-          if (limitReachedSessionRef.current === listeningSessionId) {
-            showFreeLimitModal(listeningSessionId);
-          }
-        } else {
-          countedListeningSessionRef.current = listeningSessionId;
-
-          completeListening(listeningSessionId, listenedSecondsRef.current)
-            .then((completion) => {
-              if (completion?.counted && (completion.thresholdReached || completion.remaining === 0)) {
-                limitReachedSessionRef.current = listeningSessionId;
-                showFreeLimitModal(listeningSessionId);
-              }
-            })
-            .catch((error) => {
-              const message = error instanceof Error ? error.message : String(error);
-              if (message.toLowerCase().includes("free listening limit")) {
-                limitReachedSessionRef.current = listeningSessionId;
-                showFreeLimitModal(listeningSessionId);
-              } else {
-                console.error("Listening session completion failed:", error);
-              }
-            });
-        }
-      }
+      if (isLimitReached) showFreeLimitModal(musicId);
       trackedMusicIdRef.current = null;
       listeningMusicIdRef.current = null;
       return;
@@ -265,10 +268,6 @@ function TrackViewContent({
     if (playbackState.state === State.Stopped) {
       trackedMusicIdRef.current = null;
       listeningMusicIdRef.current = null;
-      listeningSessionIdRef.current = null;
-      countedListeningSessionRef.current = null;
-      limitReachedSessionRef.current = null;
-      endedSessionRef.current = null;
       limitModalShownSessionRef.current = null;
       return;
     }
@@ -292,13 +291,40 @@ function TrackViewContent({
   }, [
     activeTrack?.id,
     adduserdetailstodbforstreamtracking,
+    isLimitReached,
     musicId,
     playbackState.state,
     position,
     showFreeLimitModal,
   ]);
 
+  useEffect(() => {
+    if (
+      playbackState.state !== State.Playing ||
+      activeTrack?.id !== musicId ||
+      !duration ||
+      position < duration / 2
+    ) {
+      return;
+    }
+
+    registerListeningAtHalf(musicId).catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!message.toLowerCase().includes("free listening limit")) {
+          console.error("Listening milestone registration failed:", error);
+        }
+      });
+  }, [
+    activeTrack?.id,
+    duration,
+    musicId,
+    playbackState.state,
+    position,
+    registerListeningAtHalf,
+  ]);
+
   const togglePlayback = async () => {
+    if (isLoading) return;
     if (isPlaying) await TrackPlayer.pause();
     else await TrackPlayer.play();
   };
@@ -319,7 +345,7 @@ function TrackViewContent({
     }
   };
 
-  if (isLoading) {
+  if (isMusicLoading) {
     return (
       <View
         style={{
@@ -435,8 +461,8 @@ function TrackViewContent({
                 <View className="mt-5">
                   <Slider
                     minimumValue={0}
-                    maximumValue={Math.max(duration, 1)}
-                    value={Math.min(position, duration || 0)}
+                    maximumValue={Math.max(trackDuration, 1)}
+                    value={Math.min(trackPosition, trackDuration || 0)}
                     minimumTrackTintColor="#ffffff"
                     maximumTrackTintColor="#5e5e5e"
                     thumbTintColor="#ffffff"
@@ -444,10 +470,10 @@ function TrackViewContent({
                   />
                   <View className="-mt-1 ml-3 mr-3 flex-row items-center justify-between">
                     <Text className="text-[11px] text-[#a7a7a7]">
-                      {formatTime(position)}
+                      {formatTime(trackPosition)}
                     </Text>
                     <Text className="text-[11px] text-[#a7a7a7]">
-                      -{formatTime(Math.max(duration - position, 0))}
+                      -{formatTime(Math.max(trackDuration - trackPosition, 0))}
                     </Text>
                   </View>
                 </View>
@@ -510,7 +536,7 @@ function TrackViewContent({
               </View>
             )}
             <FormSheetModal
-              visible={showLimitModal}
+              visible={showUpgradeModal}
               title="You've Reached Your Limit"
               onClose={closeLimitModalAndGoHome}
             >
@@ -521,7 +547,7 @@ function TrackViewContent({
               </View>
 
               <Text className="text-neutral-300 text-sm leading-6 text-center mb-5 px-1 font-medium">
-                You’ve listened to your <Text className="text-white font-bold">3 free songs</Text> for today. Upgrade to Premium to keep the music playing without interruption.
+                You’ve listened to your <Text className="text-white font-bold">{playCount} free songs</Text> for today. Upgrade to Premium to keep the music playing without interruption.
               </Text>
 
               <View className="bg-[#242424] rounded-2xl p-3.5 mb-6 gap-2 border border-white/5">
@@ -539,7 +565,7 @@ function TrackViewContent({
               <TouchableOpacity
                 activeOpacity={0.85}
                 onPress={() => {
-                  setShowLimitModal(false);
+                  closeUpgradeModal();
                   router.push("/(root)/(tabs)/premium");
                 }}
                 className="w-full bg-[#1DB954] py-4 rounded-full items-center justify-center shadow-xl shadow-[#1DB954]/40 active:scale-[0.98]"

@@ -18,8 +18,10 @@ export function SubscriptionBadge() {
       activeOpacity={0.8}
       className={`flex-row items-center self-start rounded-full px-3.5 py-1.5 shadow-sm ${label === "Premium" ? "bg-[#1ED760]" : "bg-[#303030]"}`}
     >
-      <Crown size={13} color={label === "Premium" ? "#000000" : "#A7A7A7"} fill={label === "Premium" ? "#000000" : "transparent"} />
+      {isPremium && (
+        <Crown size={13} color={label === "Premium" ? "#000000" : "#A7A7A7"} fill={label === "Premium" ? "#000000" : "transparent"} />
 
+      )}
       <Text className={`ml-1.5 text-xs font-black uppercase tracking-wider ${label === "Premium" ? "text-black" : "text-[#A7A7A7]"}`}>
         {label}
       </Text>

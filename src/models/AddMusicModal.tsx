@@ -69,6 +69,7 @@ export function AddMusicModal({
                         </View>
                     </TouchableOpacity>
                 )}
+                
                 {isArtist && (
                     <TouchableOpacity
                         activeOpacity={0.7}

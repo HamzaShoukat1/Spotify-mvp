@@ -29,6 +29,24 @@ export interface ListeningAccess {
     sessionId: string | null;
     remaining: number | null;
     dailyLimit: number | null;
+    playCount?: number | null;
+    isLimitReached?: boolean;
+}
+
+export interface ListeningRegistration {
+    counted: boolean;
+    isPremium: boolean;
+    playCount: number | null;
+    isLimitReached: boolean;
+    remaining: number | null;
+    dailyLimit: number | null;
+}
+
+export async function registerListening(musicId: string) {
+    return ApiClient(`${BackendUrl}/stream/register`, {
+        method: "POST",
+        body: JSON.stringify({ musicId }),
+    }) as Promise<ListeningRegistration>;
 }
 
 export async function startListening(musicId: string) {
@@ -36,25 +54,6 @@ export async function startListening(musicId: string) {
         method: "POST",
         body: JSON.stringify({ musicId }),
     }) as Promise<ListeningAccess>;
-}
-
-export interface ListeningCompletion {
-  counted: boolean;
-  listenCount?: number;
-  remaining?: number;
-  dailyLimit?: number;
-  thresholdReached?: boolean;
-  isPremium?: boolean;
-}
-
-export async function completeListening(
-  sessionId: string,
-  listenedSeconds: number,
-): Promise<ListeningCompletion> {
-  return ApiClient(`${BackendUrl}/stream/complete`, {
-    method: "POST",
-    body: JSON.stringify({ sessionId, listenedSeconds }),
-  });
 }
 
 export async function getAnalyticsForDashboard(range: AnalyticsRange) {

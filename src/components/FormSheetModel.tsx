@@ -16,12 +16,14 @@ export function FormSheetModal({
   onClose,
   children,
   liftOnKeyboard = false,
+  dismissible = true,
 }: {
   visible: boolean;
   title: string;
   onClose: () => void;
   children: React.ReactNode;
   liftOnKeyboard?: boolean;
+  dismissible?: boolean;
 }) {
   const keyboardLift = useRef(new Animated.Value(0)).current;
 
@@ -58,7 +60,7 @@ export function FormSheetModal({
       visible={visible}
       animationType="fade"
       transparent
-      onRequestClose={onClose}
+      onRequestClose={dismissible ? onClose : undefined}
       statusBarTranslucent
     >
       <KeyboardAvoidingView
@@ -78,15 +80,17 @@ export function FormSheetModal({
             {children}
           </View>
 
-          <TouchableOpacity
-            onPress={onClose}
-            activeOpacity={0.7}
-            className="py-3 items-center mt-3"
-          >
-            <Text className="text-[#A7A7A7] text-xs font-bold tracking-widest uppercase">
-              Cancel
-            </Text>
-          </TouchableOpacity>
+          {dismissible && (
+            <TouchableOpacity
+              onPress={onClose}
+              activeOpacity={0.7}
+              className="mt-3 items-center py-3"
+            >
+              <Text className="text-xs font-bold uppercase tracking-widest text-[#A7A7A7]">
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          )}
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>

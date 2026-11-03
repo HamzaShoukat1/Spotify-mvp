@@ -18,18 +18,23 @@ export default function AlbumTracks() {
     });
     if (result.canceled) return;
 
-    addTracks(result.assets.map((file, index) => ({
-      id: `${file.uri}-${Date.now()}-${index}`,
-      uri: file.uri,
-      fileName: file.name,
-      mimeType: file.mimeType,
-      title: "",
-    })));
+    addTracks(
+      result.assets.map((file, index) => ({
+        id: `${file.uri}-${Date.now()}-${index}`,
+        uri: file.uri,
+        fileName: file.name,
+        mimeType: file.mimeType,
+        title: "",
+      })),
+    );
     setError("");
   };
 
   const handleNext = () => {
-    if (!albumDraft.tracks.length || albumDraft.tracks.some((track) => !track.title.trim())) {
+    if (
+      !albumDraft.tracks.length ||
+      albumDraft.tracks.some((track) => !track.title.trim())
+    ) {
       setError("Add at least one audio file and a title for every track.");
       return;
     }
@@ -55,20 +60,37 @@ export default function AlbumTracks() {
       {albumDraft.tracks.length ? (
         <View className="overflow-hidden rounded-xl border border-[#282828] bg-[#181818]">
           <View className="flex-row items-center justify-between border-b border-[#303030] bg-[#202020] px-4 py-3">
-            <Text className="text-[11px] font-bold uppercase tracking-[1px] text-[#B3B3B3]">Tracklist</Text>
-            <Text className="text-xs text-[#777]">{albumDraft.tracks.length} {albumDraft.tracks.length === 1 ? "track" : "tracks"}</Text>
+            <Text className="text-[11px] font-bold uppercase tracking-[1px] text-[#B3B3B3]">
+              Tracklist
+            </Text>
+            <Text className="text-xs text-[#777]">
+              {albumDraft.tracks.length}{" "}
+              {albumDraft.tracks.length === 1 ? "track" : "tracks"}
+            </Text>
           </View>
           {albumDraft.tracks.map((track, index) => (
-            <View key={track.id} className="border-b border-[#282828] px-4 py-4 last:border-b-0">
+            <View
+              key={track.id}
+              className="border-b border-[#282828] px-4 py-4 last:border-b-0"
+            >
               <View className="flex-row items-center">
                 <View className="h-8 w-8 items-center justify-center rounded-full bg-[#1DB954]/15">
-                  <Text className="text-sm font-bold text-[#1DB954]">{index + 1}</Text>
+                  <Text className="text-sm font-bold text-[#1DB954]">
+                    {index + 1}
+                  </Text>
                 </View>
                 <View className="ml-3 flex-1">
-                  <Text className="mb-1 text-[10px] font-bold uppercase tracking-[1px] text-[#777]">Audio file</Text>
+                  <Text className="mb-1 text-[10px] font-bold uppercase tracking-[1px] text-[#777]">
+                    Audio file
+                  </Text>
                   <View className="flex-row items-center">
                     <FileMusic size={15} color="#1DB954" />
-                    <Text className="ml-2 flex-1 text-xs font-mono text-[#D9D9D9]" numberOfLines={1}>{track.fileName}</Text>
+                    <Text
+                      className="ml-2 flex-1 text-xs font-mono text-[#D9D9D9]"
+                      numberOfLines={1}
+                    >
+                      {track.fileName}
+                    </Text>
                   </View>
                 </View>
                 <TouchableOpacity
@@ -80,7 +102,9 @@ export default function AlbumTracks() {
                 </TouchableOpacity>
               </View>
               <View className="mt-4">
-                <Text className="mb-2 text-[10px] font-bold uppercase tracking-[1px] text-[#777]">Song title</Text>
+                <Text className="mb-2 text-[10px] font-bold uppercase tracking-[1px] text-[#777]">
+                  Song title
+                </Text>
                 <TextInput
                   value={track.title}
                   onChangeText={(title) => updateTrack(track.id, { title })}
@@ -93,11 +117,17 @@ export default function AlbumTracks() {
       ) : (
         <View className="items-center rounded-2xl border border-dashed border-[#3D5C45] bg-[#142719] px-6 py-12">
           <FileMusic size={34} color="#1ED760" />
-          <Text className="mt-4 text-base font-bold text-white">No tracks selected yet</Text>
-          <Text className="mt-2 text-center text-sm text-[#A7A7A7]">Select several songs from your device to build the tracklist.</Text>
+          <Text className="mt-4 text-base font-bold text-white">
+            No tracks selected yet
+          </Text>
+          <Text className="mt-2 text-center text-sm text-[#A7A7A7]">
+            Select several songs from your device to build the tracklist.
+          </Text>
         </View>
       )}
-      {error ? <Text className="mt-4 text-sm text-[#FF6B6B]">{error}</Text> : null}
+      {error ? (
+        <Text className="mt-4 text-sm text-[#FF6B6B]">{error}</Text>
+      ) : null}
     </ArtistStepLayout>
   );
 }

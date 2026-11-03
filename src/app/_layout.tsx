@@ -8,6 +8,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import { ArtistProvider } from "@/context/ArtistContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ProfileProvider } from "@/context/ProfileContext";
+import { ListeningLimitProvider } from "@/context/ListeningLimitContext";
 import { AlbumProvider } from "@/context/AlbumContext";
 import Toast from 'react-native-toast-message';
 import { toastConfig } from "@/utils";
@@ -30,6 +31,7 @@ export default function RootLayout() {
               <MusicProvider>
                 <AlbumProvider>
                   <ProfileProvider>
+                  <ListeningLimitProvider>
                   <Stack
                     screenOptions={{
                       headerShown: false,
@@ -49,6 +51,7 @@ export default function RootLayout() {
                       }}
                     />
                   </Stack>
+                  </ListeningLimitProvider>
                   </ProfileProvider>
                 </AlbumProvider>
               </MusicProvider>

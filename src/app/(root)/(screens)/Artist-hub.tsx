@@ -139,9 +139,9 @@ export default function Artisthub() {
         },
         {
             title: 'Albums',
-            subtitle: `${albums.length} ${albums.length === 1 ? 'album' : 'albums'} · Create and manage`,
+            // subtitle: `${albums.length} ${albums.length === 1 ? 'album' : 'albums'} · Create and manage`,
+            subtitle: 'Create and manage your albums',
             icon: Disc3,
-            route: "/(root)/(album)/album-metadata"
         },
         {
             title: 'Analytics',

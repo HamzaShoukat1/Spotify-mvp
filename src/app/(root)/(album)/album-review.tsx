@@ -21,12 +21,15 @@ export default function AlbumReview() {
   const publishAlbum = async () => {
     setProgress(0);
     try {
-      await publish({
+      const album = await publish({
         draft: albumDraft,
         onProgress: setProgress,
       });
       resetAlbum();
-      router.replace("/(root)/(screens)/Artist-hub");
+      router.replace({
+        pathname: "/(root)/(screens)/Album-View",
+        params: { albumId: album._id },
+      });
     } catch (error) {
       Alert.alert(
         "Unable to publish album",
@@ -112,10 +115,11 @@ export default function AlbumReview() {
         visible={uploading}
         title="Publishing album"
         onClose={() => undefined}
+        dismissible={false}
       >
-        <View className="flex-1 items-center justify-center bg-black px-8">
+        <View className="w-full items-center">
           <ActivityIndicator size="large" color="#1ED760" />
-          <Text className="mt-6 text-2xl font-black text-white">
+          <Text className="mt-5 text-center text-xl font-black text-white">
             {progress >= 99 ? "Finishing album..." : "Uploading..."}
           </Text>
           <Text className="mt-2 text-center text-sm text-[#A7A7A7]">
