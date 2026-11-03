@@ -6,6 +6,7 @@ import { useCurrentUser } from '@/hooks/use-auth';
 import { useMusicDetailforhome, useRecentSongPlaying } from '@/hooks/use-music';
 import { RefreshControl } from 'react-native';
 import { SubscriptionBadge } from '@/components/SubscriptionBadge';
+import { useAlbums } from '@/hooks/use-album';
 
 export default function Home() {
   const {
@@ -24,15 +25,15 @@ export default function Home() {
     data: recentSongs = [],
     refetch: refetchrecentsongplaying,
     isRefetching: recentRefetching,
-    isLoading: recentLoading,
   } = useRecentSongPlaying();
+  const { data: albums = [], refetch: refetchAlbums, isRefetching: albumsRefetching } = useAlbums();
   const {
     data: currentUser,
     isLoading: currentUserLoading,
   } = useCurrentUser();
 
   const isHomeLoading =
-    artistsLoading || musicLoading || recentLoading || currentUserLoading;
+    artistsLoading || musicLoading ||  currentUserLoading;
 
   const userName = currentUser?.name?.trim() || 'User';
   const userInitial = userName.charAt(0).toUpperCase();
@@ -40,10 +41,11 @@ export default function Home() {
   const onRefresh = () => {
     refetchMusic(),
       refetchartist(),
-      refetchrecentsongplaying()
+      refetchrecentsongplaying(),
+      refetchAlbums()
   }
 
-  const refreshing = artistrefetching || musicRefching || recentRefetching;
+  const refreshing = artistrefetching || musicRefching || recentRefetching || albumsRefetching;
   const navigation = useNavigation()
 
   const openProfileDrawer = () => {
@@ -133,6 +135,17 @@ export default function Home() {
     );
   };
 
+  const renderAlbum = ({ item }: any) => (
+    <TouchableOpacity
+      onPress={() => router.push({ pathname: "/(root)/(screens)/Album-View", params: { albumId: item._id } })}
+      className="mr-4 w-[150px]"
+    >
+      <Image source={{ uri: item.albumCoverArt?.url }} className="h-[150px] w-full rounded-md bg-neutral-800" resizeMode="cover" />
+      <Text numberOfLines={1} className="mt-2 text-sm font-bold text-white">{item.albumTitle}</Text>
+      <Text numberOfLines={1} className="mt-1 text-xs text-neutral-400">{item.artistName}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-[#121212]" edges={['top']}>
       <KeyboardAvoidingView
@@ -201,6 +214,15 @@ export default function Home() {
               contentContainerStyle={{ paddingHorizontal: 16, gap: 14 }}
             />
           </View>
+
+          {albums.length > 0 && (
+            <View className="mt-8">
+              <View className="px-4 pb-3">
+                <Text className="font-bold text-[22px] tracking-tight text-white">Albums</Text>
+              </View>
+              <FlatList data={albums} renderItem={renderAlbum} keyExtractor={(item) => item._id} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 14 }} />
+            </View>
+          )}
 
           <View className="mt-8">
             <View className="px-4 pb-3">

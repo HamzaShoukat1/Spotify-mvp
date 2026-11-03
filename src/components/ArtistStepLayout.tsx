@@ -58,7 +58,6 @@ export function ArtistStepLayout({
                 style={{ backgroundColor: '#0B0B0B' }}
             >
                 <View className="px-6 pt-2">
-                    {/* Header Navigation */}
                     <View className="flex-row items-center justify-between">
                         <Pressable
                             onPress={onBack}
@@ -67,13 +66,9 @@ export function ArtistStepLayout({
                         >
                             <ChevronLeft size={21} color="#FFFFFF" />
                         </Pressable>
-                        {/* <Text className="text-xs font-bold uppercase tracking-[2px] text-[#A7A7A7]">
-                            Become an artist
-                        </Text> */}
                         <View className="h-10 w-10" />
                     </View>
 
-                    {/* Segmented Progress Line with Gaps directly above Step text */}
                     <View
                         style={{
                             flexDirection: 'row',
@@ -96,7 +91,6 @@ export function ArtistStepLayout({
                         ))}
                     </View>
 
-                    {/* Step Label */}
                     <Text className="mt-3 text-[11px] font-bold uppercase tracking-[1.5px] text-[#1ED760]">
                         Step {step} of {totalSteps}
                     </Text>

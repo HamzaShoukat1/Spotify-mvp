@@ -9,7 +9,7 @@ export const toastConfig = {
         backgroundColor: '#282828', // Spotify dark gray background
         borderLeftWidth: 0,         // Remove the default left border line
         width: 'auto',              // Let it scale naturally or set a max-width
-        
+
         minWidth: '70%',
         maxWidth: '90%',
         alignSelf: 'center',
@@ -21,7 +21,7 @@ export const toastConfig = {
         shadowOpacity: 0.3,
         shadowRadius: 4.65,
       }}
-      contentContainerStyle={{ 
+      contentContainerStyle={{
         paddingHorizontal: 20,
         justifyContent: 'center',
         alignItems: 'center',       // Center text horizontally like Spotify
@@ -46,7 +46,7 @@ export const toastConfig = {
       {...props}
       style={{
         backgroundColor: '#282828', // Keeps dark theme uniform
-        borderLeftWidth: 0,         
+        borderLeftWidth: 0,
         width: 'auto',
         minWidth: '70%',
         maxWidth: '90%',
@@ -59,7 +59,7 @@ export const toastConfig = {
         shadowOpacity: 0.3,
         shadowRadius: 4.65,
       }}
-      contentContainerStyle={{ 
+      contentContainerStyle={{
         paddingHorizontal: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -81,3 +81,23 @@ export const toastConfig = {
 };
 
 
+
+
+export function formatDisplayDate(dateString: any) {
+  if (!dateString) return 'N/A';
+
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) return 'Invalid Date';
+
+  const options: any = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  };
+
+  return new Intl.DateTimeFormat('en-US', options).format(date)
+}

@@ -48,6 +48,9 @@ export function useAddTrackDataToAnalytics() {
             await queryClient.invalidateQueries({
                 queryKey: ["dashboardAnalytics"],
             });
+            await queryClient.invalidateQueries({
+                queryKey: ["recentSongPlaying"],
+            });
         },
 
         onError: (error) => {

@@ -9,6 +9,7 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import { router } from 'expo-router';
 import { setupPlayer } from '@/services/player';
+import { PlayingIndicator } from '@/components/PlayingIndicator';
 
 const MediaPlayerBarContent = ({ onPress }: { onPress?: () => void }) => {
     const activeTrack = useActiveTrack();
@@ -63,10 +64,11 @@ const MediaPlayerBarContent = ({ onPress }: { onPress?: () => void }) => {
                     <View className="w-10 h-10 rounded-md bg-[#1e1e1e]" />
                 )}
 
-                <View className="ml-3 flex-1">
+                <View className="ml-3 flex-1 flex-row items-center">
+                    {isPlaying ? <View className="mr-2"><PlayingIndicator /></View> : null}
                     <Text
                         numberOfLines={1}
-                        className="text-white font-bold text-sm tracking-wide"
+                        className="flex-1 text-white font-bold text-sm tracking-wide"
                     >
                         {songTitle}
                         <Text className="text-[#a7a7a7] font-normal text-xs">  •  {artistName}</Text>

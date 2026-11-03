@@ -57,12 +57,13 @@ export default function Login() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 80}
       >
         <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
           }}
           keyboardShouldPersistTaps="handled"
           bounces={false}
-        >
+          >
           {/* Top/Middle Section Wrapper */}
           <View className="flex-1 justify-center w-full">
             <Text className="text-white text-[24px] font-bold text-center tracking-normal mb-8">
@@ -106,7 +107,7 @@ export default function Login() {
                   onChangeText={(value) => {
                     setPassword(value);
                     setError("");
-                  }}
+                }}
                   className="flex-1 text-white h-full px-4 text-base"
                   placeholder="Password"
                   placeholderTextColor="#a7a7a7"

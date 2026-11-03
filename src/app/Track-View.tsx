@@ -45,12 +45,14 @@ import { completeListening, startListening } from "@/services/analytics.service"
 import { LikeButton } from "@/components/LikeButton";
 import { FormSheetModal } from "@/components/FormSheetModel";
 import { LinearGradient } from "expo-linear-gradient";
+import { useQueryClient } from "@tanstack/react-query";
 
 function TrackViewContent({
   musicId,
 }: {
   musicId: string;
 }) {
+  const queryClient = useQueryClient();
   const { height: screenHeight } = useWindowDimensions();
   const sheetTranslateY = useSharedValue(0);
   const isClosing = useSharedValue(false);
@@ -103,6 +105,8 @@ function TrackViewContent({
   const limitReachedSessionRef = useRef<string | null>(null);
   const endedSessionRef = useRef<string | null>(null);
   const limitModalShownSessionRef = useRef<string | null>(null);
+  const listenedSecondsRef = useRef(0);
+  const lastPlaybackPositionRef = useRef<number | null>(null);
 
   const [showLimitModal, setShowLimitModal] = useState(false);
   const showFreeLimitModal = useCallback((sessionId?: string | null) => {
@@ -111,6 +115,18 @@ function TrackViewContent({
     TrackPlayer.pause().catch(() => null);
     setShowLimitModal(true);
   }, []);
+
+  const closeLimitModalAndGoHome = useCallback(async () => {
+    setShowLimitModal(false);
+    try {
+      await TrackPlayer.reset();
+    } catch (error) {
+      console.error("Failed to stop playback after reaching the free limit:", error);
+      await TrackPlayer.pause().catch(() => null);
+    }
+    router.replace("/(root)/(tabs)/home");
+  }, []);
+
   const activeTrack = useActiveTrack();
   const playbackState = usePlaybackState();
   const { duration, position } = useProgress(300);
@@ -161,6 +177,9 @@ function TrackViewContent({
         listeningSessionIdRef.current = listeningAccess.sessionId;
 
         await TrackPlayer.play();
+        await queryClient.invalidateQueries({
+          queryKey: ["recentSongPlaying"],
+        });
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message.toLowerCase().includes("free listening limit")) {
@@ -176,7 +195,7 @@ function TrackViewContent({
     return () => {
       cancelled = true;
     };
-  }, [musicId, musicUrl, musicTitle, artistName, musicCover, showFreeLimitModal]);
+  }, [musicId, musicUrl, musicTitle, artistName, musicCover, queryClient, showFreeLimitModal]);
 
   useEffect(() => {
     listeningMusicIdRef.current = null;
@@ -186,7 +205,26 @@ function TrackViewContent({
     limitReachedSessionRef.current = null;
     endedSessionRef.current = null;
     limitModalShownSessionRef.current = null;
+    listenedSecondsRef.current = 0;
+    lastPlaybackPositionRef.current = null;
   }, [musicId]);
+
+  useEffect(() => {
+    if (playbackState.state !== State.Playing || activeTrack?.id !== musicId) {
+      lastPlaybackPositionRef.current = null;
+      return;
+    }
+
+    const previousPosition = lastPlaybackPositionRef.current;
+    if (previousPosition !== null) {
+      const progressDelta = position - previousPosition;
+      if (progressDelta > 0 && progressDelta <= 2.5) {
+        listenedSecondsRef.current += progressDelta;
+      }
+    }
+
+    lastPlaybackPositionRef.current = position;
+  }, [activeTrack?.id, musicId, playbackState.state, position]);
 
   useEffect(() => {
     if (playbackState.state === State.Ended) {
@@ -201,9 +239,9 @@ function TrackViewContent({
         } else {
           countedListeningSessionRef.current = listeningSessionId;
 
-          completeListening(listeningSessionId, true)
+          completeListening(listeningSessionId, listenedSecondsRef.current)
             .then((completion) => {
-              if (completion?.thresholdReached || completion?.remaining === 0) {
+              if (completion?.counted && (completion.thresholdReached || completion.remaining === 0)) {
                 limitReachedSessionRef.current = listeningSessionId;
                 showFreeLimitModal(listeningSessionId);
               }
@@ -233,37 +271,6 @@ function TrackViewContent({
       endedSessionRef.current = null;
       limitModalShownSessionRef.current = null;
       return;
-    }
-
-    const listeningSessionId = listeningSessionIdRef.current;
-    if (
-      listeningSessionId &&
-      countedListeningSessionRef.current !== listeningSessionId &&
-      position >= 120
-    ) {
-      countedListeningSessionRef.current = listeningSessionId;
-
-      completeListening(listeningSessionId, false)
-        .then((completion) => {
-          if (completion?.thresholdReached || completion?.remaining === 0) {
-            limitReachedSessionRef.current = listeningSessionId;
-            if (endedSessionRef.current === listeningSessionId) {
-              showFreeLimitModal(listeningSessionId);
-            }
-          }
-        })
-        .catch((error) => {
-          const message = error instanceof Error ? error.message : String(error);
-          if (message.toLowerCase().includes("free listening limit")) {
-            limitReachedSessionRef.current = listeningSessionId;
-            if (endedSessionRef.current === listeningSessionId) {
-              showFreeLimitModal(listeningSessionId);
-            }
-          } else {
-            countedListeningSessionRef.current = null;
-            console.error("Listening session completion failed:", error);
-          }
-        });
     }
 
     if (
@@ -505,7 +512,7 @@ function TrackViewContent({
             <FormSheetModal
               visible={showLimitModal}
               title="You've Reached Your Limit"
-              onClose={() => setShowLimitModal(false)}
+              onClose={closeLimitModalAndGoHome}
             >
               <View className="items-center mb-5">
                 <View className="w-16 h-16 rounded-full bg-[#1DB954]/20 items-center justify-center border border-[#1DB954]/40 shadow-lg shadow-[#1DB954]/20">

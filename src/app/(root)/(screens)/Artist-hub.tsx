@@ -31,14 +31,18 @@ import {
 } from '@/hooks/useArtist';
 
 import { useProfileContext } from '@/context/ProfileContext';
+import { useAlbumContext } from '@/context/AlbumContext';
 import { EditProfileModal } from '@/models/EditProfileModal';
+import { useAlbums } from '@/hooks/use-album';
 
 import type { UpdateArtistProfileData } from '@/services/artist.service';
 
 
 export default function Artisthub() {
     const { profile, setProfile } = useProfileContext();
-    const { data: songCount, isLoading, isError, refetch: Countrefetch, isFetching: Countrefetching } = useUploadedSongCount();
+    const { resetAlbum } = useAlbumContext();
+    const { data: songCount, refetch: Countrefetch, isFetching: Countrefetching } = useUploadedSongCount();
+    const { data: albums = [], refetch: albumsRefetch, isFetching: albumsRefetching } = useAlbums();
 
     const { data: profileQuery, refetch: artistretch, isRefetching: artistrefetching } = useArtistProfile();
     const updateProfile = useUpdateArtistProfile();
@@ -135,9 +139,9 @@ export default function Artisthub() {
         },
         {
             title: 'Albums',
-            subtitle: 'Create and manage albums',
+            subtitle: `${albums.length} ${albums.length === 1 ? 'album' : 'albums'} · Create and manage`,
             icon: Disc3,
-            route: null
+            route: "/(root)/(album)/album-metadata"
         },
         {
             title: 'Analytics',
@@ -163,10 +167,11 @@ export default function Artisthub() {
 
     const onRefresh = () => {
         Countrefetch(),
-            artistretch()
+            artistretch(),
+            albumsRefetch()
     };
 
-    const refreshing = Countrefetching || artistrefetching
+    const refreshing = Countrefetching || artistrefetching || albumsRefetching
 
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
@@ -331,7 +336,7 @@ export default function Artisthub() {
 
                                     <View className="flex-1 items-center">
                                         <Text className="text-white text-xl font-bold">
-                                            0
+                                            {albums.length}
                                         </Text>
 
                                         <Text className="text-[#A7A7A7] text-xs mt-1">
@@ -400,6 +405,9 @@ export default function Artisthub() {
                                             'Edit Profile'
                                         ) {
                                             openEditor();
+                                        } else if (item.title === 'Albums') {
+                                            resetAlbum();
+                                            router.push(item.route as any);
                                         } else if (
                                             item.route
                                         ) {

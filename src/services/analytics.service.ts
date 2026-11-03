@@ -49,11 +49,11 @@ export interface ListeningCompletion {
 
 export async function completeListening(
   sessionId: string,
-  isCompleted: boolean = false
+  listenedSeconds: number,
 ): Promise<ListeningCompletion> {
   return ApiClient(`${BackendUrl}/stream/complete`, {
     method: "POST",
-    body: JSON.stringify({ sessionId, isCompleted }),
+    body: JSON.stringify({ sessionId, listenedSeconds }),
   });
 }
 

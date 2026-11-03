@@ -18,13 +18,17 @@ export type Playlist = {
   createdAt?: string;
 };
 
-export const getUserPlaylists = () => ApiClient(`${API}/playlists/user`) as Promise<Playlist[]>;
-export const getPlaylist = (id: string) => ApiClient(`${API}/playlists/${id}`) as Promise<Playlist>;
-export const getAvailableSongs = () => ApiClient(`${API}/songs`) as Promise<PlaylistSong[]>;
-export const createPlaylist = (name: string) => ApiClient(`${API}/playlists`, {
-  method: "POST",
-  body: JSON.stringify({ name }),
-}) as Promise<Playlist>;
+export const getUserPlaylists = () =>
+  ApiClient(`${API}/playlists/user`) as Promise<Playlist[]>;
+export const getPlaylist = (id: string) =>
+  ApiClient(`${API}/playlists/${id}`) as Promise<Playlist>;
+export const getAvailableSongs = () =>
+  ApiClient(`${API}/songs`) as Promise<PlaylistSong[]>;
+export const createPlaylist = (name: string) =>
+  ApiClient(`${API}/playlists`, {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  }) as Promise<Playlist>;
 export const renamePlaylist = ({ id, name }: { id: string; name: string }) =>
   ApiClient(`${API}/playlists/${id}`, {
     method: "PATCH",
