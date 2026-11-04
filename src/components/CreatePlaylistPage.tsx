@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Mic } from "lucide-react-native";
 import { useCreatePlaylist } from "@/hooks/use-playlist";
 
 export default function CreatePlaylistPage() {
@@ -90,6 +91,20 @@ export default function CreatePlaylistPage() {
               </Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Create a playlist with your voice"
+            onPress={() => router.push("/(root)/(screens)/Voice-Agent")}
+            className="mt-10 w-full flex-row items-center rounded-2xl border border-[#1DB954] bg-[#1B1B1B] px-5 py-4"
+          >
+            <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]">
+              <Mic color="#000000" size={20} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-bold text-white">Create with your voice</Text>
+              <Text className="mt-1 text-xs text-[#A7A7A7]">Describe the mood, genre, or language</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

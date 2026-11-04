@@ -77,3 +77,11 @@
 
            android:usesCleartextTraffic="true",
    android:requestLegacyExternalStorage
+
+
+
+
+   searchSongs()
+createPlaylist()
+addSongsToPlaylist()
+<!-- playPlaylist() -->

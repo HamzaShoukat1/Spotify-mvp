@@ -46,12 +46,13 @@
           "imageWidth": 180
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": false,
-            "newArch": false
+      "newArch": false
     },
     "extra": {
       "router": {},

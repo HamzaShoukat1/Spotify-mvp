@@ -6,6 +6,7 @@ import { useCurrentUser } from '@/hooks/use-auth';
 import { useMusicDetailforhome, useRecentSongPlaying } from '@/hooks/use-music';
 import { RefreshControl } from 'react-native';
 import { SubscriptionBadge } from '@/components/SubscriptionBadge';
+import { Brain } from 'lucide-react-native';
 import { useAlbums } from '@/hooks/use-album';
 
 export default function Home() {
@@ -166,15 +167,27 @@ export default function Home() {
           }
         >
           <View className="flex-row items-center justify-between px-4 pt-3 pb-4">
-            <TouchableOpacity
-              onPress={openProfileDrawer}
-              activeOpacity={0.7}
-              className="w-9 h-9 rounded-full bg-[#1DB954] items-center justify-center shadow-md"
-            >
-              <Text className="text-black font-bold text-[15px] tracking-wider uppercase">
-                {userInitial}
-              </Text>
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-3">
+              <TouchableOpacity
+                onPress={openProfileDrawer}
+                activeOpacity={0.7}
+                className="w-9 h-9 rounded-full bg-[#1DB954] items-center justify-center shadow-md"
+              >
+                <Text className="text-black font-bold text-[15px] tracking-wider uppercase">
+                  {userInitial}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Open Music DNA"
+                onPress={() => router.push('/(root)/(screens)/Music-DNA')}
+                activeOpacity={0.8}
+                className="flex-row items-center rounded-full border border-[#1DB954] bg-[#18251B] px-3 py-2"
+              >
+                <Brain color="#1DB954" size={16} />
+                <Text className="ml-2 text-xs font-bold text-[#B9E6C6]">Music DNA</Text>
+              </TouchableOpacity>
+            </View>
 
             <SubscriptionBadge />
           </View>
