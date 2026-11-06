@@ -23,19 +23,19 @@ export function useVoiceAgent() {
         ]);
         queryClient.invalidateQueries({ queryKey: ["playlist", result.playlist._id] });
       }
-      const toastText = {
-        created: "Playlist created",
-        added: "Songs added",
-        removed: "Songs removed",
-        deleted: "Playlist deleted",
-        none: "Request completed",
-      }[result.action];
-      Toast.show({
-        type: "success",
-        text1: toastText,
-        text2: result.playlist?.name ?? result.message,
-        position: "top",
-      });
+      if (result.action === "added" || result.action === "removed" || result.action === "deleted") {
+        const toastText = result.action === "added"
+          ? "Songs added"
+          : result.action === "removed"
+            ? "Songs removed"
+            : "Playlist deleted";
+        Toast.show({
+          type: "success",
+          text1: toastText,
+          text2: result.playlist?.name ?? result.message,
+          position: "top",
+        });
+      }
     },
   });
 }
