@@ -3,6 +3,7 @@ import { Brain, RefreshCw, Sparkles } from "lucide-react-native";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMusicDNA, useRefreshMusicDNA } from "@/hooks/use-music-dna";
+import Toast from "react-native-toast-message";
 
 function ListSection({ title, items }: { title: string; items: string[] }) {
   if (!items.length) return null;
@@ -24,7 +25,24 @@ export default function MusicDNAPage() {
   const refresh = useRefreshMusicDNA();
 
   const handleRefresh = () => {
-    refresh.mutate();
+    refresh.mutate(undefined, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Music DNA refreshed",
+          text2: "Your Music DNA has been updated with your latest listening history.",
+          position: "top",
+        });
+      },
+      onError: (err) => {
+        Toast.show({
+          type: "error",
+          text1: "Refresh failed",
+          text2: err?.message || "Could not regenerate profile.",
+          position: "top",
+        });
+      }
+    });
   };
 
   if (isLoading) {

@@ -118,7 +118,7 @@ export default function AlbumView() {
           <View className="mt-7 flex-row items-center justify-between px-5">
             <View>
               <Text className="text-sm font-bold text-white">Ready when you are</Text>
-              <Text className="mt-1 text-xs text-[#b0b0b0]">Play the full album</Text>
+              {/* <Text className="mt-1 text-xs text-[#b0b0b0]">Play the full album</Text> */}
             </View>
             <View className="flex-row items-center">
             {/* <Pressable

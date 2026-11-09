@@ -6,11 +6,13 @@ import { useLikedSongs, useToggleLike } from '@/hooks/use-like';
 type LikeButtonProps = {
     musicId: string;
     size?: number;
+    isOffline: boolean
 };
 
-export function LikeButton({ musicId, size = 25 }: LikeButtonProps) {
+export function LikeButton({ musicId, size = 25, isOffline }: LikeButtonProps) {
     const { data: likedSongs } = useLikedSongs();
     const { mutate: toggleLike, isPending } = useToggleLike();
+
     const isLiked = likedSongs?.some((song) => song.music?._id === musicId) ?? false;
 
     return (
@@ -21,7 +23,21 @@ export function LikeButton({ musicId, size = 25 }: LikeButtonProps) {
             disabled={isPending}
             hitSlop={10}
             onPress={(event) => {
+
+
                 event.stopPropagation();
+                if (isOffline) {
+                    Toast.show({
+                        type: "error",
+                        text2: "Online access needed",
+                        position: "top",
+                        visibilityTime: 4000,
+
+                    });
+                    return;
+                }
+
+
                 const nextLikedState = !isLiked;
 
                 toggleLike({ musicId, isLiked: !isLiked });

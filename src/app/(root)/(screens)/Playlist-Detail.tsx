@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ArrowLeft, EllipsisVertical, Pencil, Plus } from "lucide-react-native";
+import { ArrowLeft, Pencil, Plus } from "lucide-react-native";
 import {
   usePlaylist,
   usePlaylistSongMutation,
@@ -18,7 +18,7 @@ import {
 } from "@/hooks/use-playlist";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FormSheetModal } from "@/components/FormSheetModel";
-import {Trash2} from "lucide-react-native"
+import { Trash2 } from "lucide-react-native"
 import type { PlaylistSong } from "@/services/playlist.service";
 
 export default function PlaylistDetail() {
@@ -62,7 +62,7 @@ export default function PlaylistDetail() {
       <SafeAreaView
         className="absolute top-0 left-0 right-0 z-50 bg-[#121212]/85 backdrop-blur-md"
         edges={["top"]}
-        
+
       >
         <View className="flex-row items-center justify-between px-5 py-3">
           <TouchableOpacity
@@ -80,7 +80,7 @@ export default function PlaylistDetail() {
       <ScrollView
         contentContainerStyle={{ paddingTop: 120, paddingBottom: 140 }}
         showsVerticalScrollIndicator={false}
-        
+
       >
         {/* Header/Hero Section */}
         <View className="items-center px-6">

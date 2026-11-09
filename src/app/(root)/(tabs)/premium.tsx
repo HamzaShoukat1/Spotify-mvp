@@ -17,14 +17,14 @@ import {
   ShieldCheck,
 } from "lucide-react-native";
 import Toast from "react-native-toast-message";
-import { router } from "expo-router";
-import { useAuth } from "@/context/Auth.Context";
 import {
   useSubscriptionStatus,
   useSubscribeMutation,
   useCancelSubscriptionMutation,
 } from "@/hooks/useSubscription";
 import { FormSheetModal } from "@/components/FormSheetModel";
+import { useNetwork } from "@/context/NetworkContext";
+import { OfflineStateView } from "@/components/OfflineStateView";
 
 interface FeatureRowProps {
   title: string;
@@ -58,13 +58,13 @@ function FeatureRow({ title, freeText, premiumText, isLast }: FeatureRowProps) {
 }
 
 export default function PremiumScreen() {
+  const { isOffline } = useNetwork();
   const {
     isPremium,
     status,
     currentPeriodEnd,
     cancelAtPeriodEnd,
     isLoading: isStatusLoading,
-    subscriptionId
   } = useSubscriptionStatus();
   const subscribeMutation = useSubscribeMutation();
   const cancelMutation = useCancelSubscriptionMutation(); 
@@ -126,6 +126,15 @@ const STRIPE_PLANS = {
       day: "numeric",
     })
     : null;
+
+  if (isOffline) {
+    return (
+      <OfflineStateView
+        title="Premium is unavailable offline"
+        description="Connect to the internet to manage your subscription, upgrade, or review premium benefits."
+      />
+    );
+  }
 
   return (
     <View className="flex-1 bg-[#121212]">
@@ -206,6 +215,17 @@ const STRIPE_PLANS = {
               freeText="3 tracks/day"
               premiumText="Unlimited"
             />
+            <FeatureRow
+              title="Offline Downloads"
+              freeText="Not available"
+              premiumText="Included"
+            />
+            <FeatureRow
+              title="Offline Playback"
+              freeText="Online only"
+              premiumText="Listen anywhere"
+              isLast
+            />
           </View>
 
           {!isPremium && (
@@ -254,6 +274,18 @@ const STRIPE_PLANS = {
                     <Check size={14} color="#1DB954" />
                     <Text className="text-neutral-200 text-xs">
                       Unlimited Songs Listening
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center gap-2">
+                    <Check size={14} color="#1DB954" />
+                    <Text className="text-neutral-200 text-xs">
+                      Download Songs for Offline Playback
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center gap-2">
+                    <Check size={14} color="#1DB954" />
+                    <Text className="text-neutral-200 text-xs">
+                      Listen Anywhere Without Internet
                     </Text>
                   </View>
                 </View>
@@ -329,6 +361,10 @@ const STRIPE_PLANS = {
           <View className="flex-row items-center gap-2.5">
             <View className="w-2 h-2 rounded-full bg-red-400" />
             <Text className="text-neutral-300 text-xs font-medium">Daily song limit (capped at 3 songs)</Text>
+          </View>
+          <View className="flex-row items-center gap-2.5">
+            <View className="w-2 h-2 rounded-full bg-red-400" />
+            <Text className="text-neutral-300 text-xs font-medium">Loss of offline downloads and offline playback</Text>
           </View>
         </View>
 

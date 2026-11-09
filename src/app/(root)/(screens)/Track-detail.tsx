@@ -1,106 +1,119 @@
-import { View, Text, KeyboardAvoidingView, Platform, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React from 'react'
-import { Heart, User, Share2, ListPlus, SquarePlay, Radio, GalleryThumbnails, UserSearch, Users, Moon } from 'lucide-react-native'
-import { AlbumPic } from '../../../assets/images/index';
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router';
+// import { View, Text, KeyboardAvoidingView, Platform, Image, TouchableOpacity, ScrollView } from 'react-native'
+// import { Heart, User, Share2, ListPlus, SquarePlay, Radio, GalleryThumbnails, UserSearch, Users, Moon } from 'lucide-react-native'
+// import { AlbumPic } from '../../../assets/images/index';
+// import { SafeAreaView } from 'react-native-safe-area-context'
+// import { router, useLocalSearchParams } from 'expo-router';
+// import { DownloadButton } from '@/components/DownloadButton';
 
-export default function AlbumControl() {
-    return (
-        <SafeAreaView className="flex-1 bg-[#121212]">
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1 w-full"
-            >
+// export default function AlbumControl() {
+//     const params = useLocalSearchParams<{ musicId?: string; title?: string; artist?: string }>();
+//     const musicId = params.musicId;
+//     const title = params.title || "1(Remastered)";
+//     const artist = params.artist || "The Beatles";
+//     return (
+//         <SafeAreaView className="flex-1 bg-[#121212]">
+//             <KeyboardAvoidingView
+//                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+//                 className="flex-1 w-full"
+//             >
                
-                    <ScrollView 
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ alignItems: 'center',}}
-                    >
+//                     <ScrollView 
+//                         showsVerticalScrollIndicator={false}
+//                         contentContainerStyle={{ alignItems: 'center',}}
+//                     >
 
-                        <View className="shadow-2xl w-full flex items-center  shadow-black ">
-                            <Image 
-                                source={AlbumPic} 
-                                className="  rounded-sm w-full max-w-[164px]"
-                                resizeMode="contain"
-                            />
-                        </View>
+//                         <View className="shadow-2xl w-full flex items-center  shadow-black ">
+//                             <Image 
+//                                 source={AlbumPic} 
+//                                 className="  rounded-sm w-full max-w-[164px]"
+//                                 resizeMode="contain"
+//                             />
+//                         </View>
 
-                        {/* Title and Artist Info */}
-                        <View className="items-center mb-10 px-6 ">
-                            <Text className="text-white text-2xl font-bold text-center tracking-wide">
-                                1(Remastered)
-                            </Text>
-                            <Text className="text-[#b3b3b3] text-sm mt-1 text-center font-medium">
-                                The Beatles
-                            </Text>
-                        </View>
+//                         {/* Title and Artist Info */}
+//                         <View className="items-center mb-10 px-6 ">
+//                             <Text className="text-white text-2xl font-bold text-center tracking-wide">
+//                                 1(Remastered)
+//                             </Text>
+//                             <Text className="text-[#b3b3b3] text-sm mt-1 text-center font-medium">
+//                                 The Beatles
+//                             </Text>
+//                         </View>
 
-                        {/* Action Menu List */}
-                        <View className="w-full flex gap-6  px-8 ">
+//                         {/* Action Menu List */}
+//                         <View className="w-full flex gap-6  px-8 ">
                             
-                            <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <Heart strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Like</Text>
-                            </TouchableOpacity>
+//                             <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <Heart strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Like</Text>
+//                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center gap-3  py-1">
-                                <User strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">View artist</Text>
-                            </TouchableOpacity>
+//                             {musicId ? (
+//                                 <View className="flex-row items-center justify-between py-1">
+//                                     <View className="flex-row items-center gap-3">
+//                                         <DownloadButton musicId={musicId} title={title} artist={artist} size={22} />
+//                                         <Text className="text-white text-base font-semibold">Download song</Text>
+//                                     </View>
+//                                 </View>
+//                             ) : null}
 
-                            <TouchableOpacity onPress={()=> router.push("/(root)/(screens)/Song-Share")} className="flex-row items-center gap-3 py-1">
-                                <Share2 strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Share</Text>
-                            </TouchableOpacity>
+//                             <TouchableOpacity className="flex-row items-center gap-3  py-1">
+//                                 <User strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">View artist</Text>
+//                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <Heart strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Like all songs</Text>
-                            </TouchableOpacity>
+//                             <TouchableOpacity onPress={()=> router.push("/(root)/(screens)/Song-Share")} className="flex-row items-center gap-3 py-1">
+//                                 <Share2 strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Share</Text>
+//                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <ListPlus strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Add to playlist</Text>
-                            </TouchableOpacity>
+//                             <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <Heart strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Like all songs</Text>
+//                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <SquarePlay strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Add to queue</Text>
-                            </TouchableOpacity>
+//                             <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <ListPlus strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Add to playlist</Text>
+//                             </TouchableOpacity>
 
-                            <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <Radio strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Go to radio</Text>
-                            </TouchableOpacity>
-                              <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <GalleryThumbnails strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">View album</Text>
-                            </TouchableOpacity>
-                             <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <UserSearch strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">View artist</Text>
-                            </TouchableOpacity>
-                                <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <Users strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Song credits</Text>
-                            </TouchableOpacity>
-                                <TouchableOpacity className="flex-row items-center gap-3 py-1">
-                                <Moon strokeWidth={1.5} size={22} color="#B3B3B3" />
-                                <Text className="text-white text-base font-semibold">Sleep timer</Text>
-                            </TouchableOpacity>
+//                             <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <SquarePlay strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Add to queue</Text>
+//                             </TouchableOpacity>
 
-                        </View>
+//                             <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <Radio strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Go to radio</Text>
+//                             </TouchableOpacity>
+//                               <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <GalleryThumbnails strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">View album</Text>
+//                             </TouchableOpacity>
+//                              <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <UserSearch strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">View artist</Text>
+//                             </TouchableOpacity>
+//                                 <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <Users strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Song credits</Text>
+//                             </TouchableOpacity>
+//                                 <TouchableOpacity className="flex-row items-center gap-3 py-1">
+//                                 <Moon strokeWidth={1.5} size={22} color="#B3B3B3" />
+//                                 <Text className="text-white text-base font-semibold">Sleep timer</Text>
+//                             </TouchableOpacity>
 
-                        {/* Close Footer Action */}
-                        <TouchableOpacity onPress={()=> router.back()} className=" py-6 w-full items-center">
-                            <Text className="text-white text-base  font-semibold tracking-wider">
-                                Close
-                            </Text>
-                        </TouchableOpacity>
+//                         </View>
 
-                    </ScrollView>
-                </KeyboardAvoidingView>
-            </SafeAreaView>
-        )
-}
+//                         {/* Close Footer Action */}
+//                         <TouchableOpacity onPress={()=> router.back()} className=" py-6 w-full items-center">
+//                             <Text className="text-white text-base  font-semibold tracking-wider">
+//                                 Close
+//                             </Text>
+//                         </TouchableOpacity>
+
+//                     </ScrollView>
+//                 </KeyboardAvoidingView>
+//             </SafeAreaView>
+//         )
+// }

@@ -18,7 +18,7 @@ export function setupPlayer(): Promise<void> {
                 notificationCapabilities: [Capability.Play, Capability.Pause, Capability.Stop],
                 progressUpdateEventInterval: 1,
                 android: {
-                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.PausePlayback,
+                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
                 },
             }))
             .catch((error) => {

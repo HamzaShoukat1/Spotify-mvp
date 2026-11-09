@@ -1,4 +1,4 @@
-import  { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
     View,
     Text,
@@ -19,7 +19,7 @@ import { UseSearchArtistandMusic } from '@/hooks/use-search';
 interface SearchItem {
     _id: string;
     name: string;
-    type: 'artist' | 'music';
+    type: 'artist' | 'music' | 'album' | 'playlist'
     imageUrl?: string;
 }
 
@@ -47,8 +47,18 @@ export default function SearchBar() {
             type: 'music',
             imageUrl: track.coverPhoto?.url?.trim()
         }));
-
-        return [...artistsList, ...musicList];
+        const albumList: SearchItem[] = (payload?.albums || []).map((track: any) => ({
+            _id: track._id,
+            name: track.albumTitle,
+            type: 'album',
+            imageUrl: track.albumCoverArt?.url?.trim()
+        }));
+        const playlist: SearchItem[] = (payload?.playlist || []).map((track: any) => ({
+            _id: track._id,
+            name: track.name,
+            type: 'playlist',
+        }));
+        return [...artistsList, ...musicList, ...albumList, ...playlist];
     }, [apiResponse]);
 
     const isTypingOrLoading = search.trim().length > 0 && (isSearchLoading || search !== debouncedSearch);
@@ -69,6 +79,20 @@ export default function SearchBar() {
                 pathname: "/Track-View",
                 params: { musicId: item._id },
             });
+        }
+        else if (item.type === "album") {
+            router.push({
+                pathname: "/Album-View",
+                params: { albumId: item._id }
+
+            })
+        }
+        else if (item.type === "playlist") {
+            router.push({
+                pathname: "/Playlist-Detail",
+                params: { id: item._id }
+
+            })
         }
     };
 
@@ -140,7 +164,7 @@ export default function SearchBar() {
                             Play what you love
                         </Text>
                         <Text className="text-[#b3b3b3] text-sm text-center">
-                            Search for artists, songs, playlists, and more.
+                            Search for artists, songs, albums, playlist and more.
                         </Text>
                     </View>
                 ) : isTypingOrLoading ? (

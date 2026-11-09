@@ -11,32 +11,42 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Brain, EllipsisVertical, Heart, Plus } from "lucide-react-native";
+import { ArrowDownCircle, Brain, EllipsisVertical, Heart, Plus } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useLikedSongs } from "@/hooks/use-like";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { useDeletePlaylist, useUserPlaylists } from "@/hooks/use-playlist";
+import { useDownloadedSongs } from "@/hooks/use-downloads";
 import { FormSheetModal } from "@/components/FormSheetModel";
 import type { Playlist } from "@/services/playlist.service";
+import { useNetwork } from "@/context/NetworkContext";
+import { OfflineStateView } from "@/components/OfflineStateView";
 
 const LIBRARY_ITEMS = [
   {
     id: "1",
     title: "Liked Songs",
     customIcon: "heart",
-    route: "UserlikedArtistdetails",
+    route: "/(root)/(screens)/UserlikedArtistdetails",
+  },
+  {
+    id: "downloaded",
+    title: "Downloaded",
+    customIcon: "download",
+    route: "/(root)/(screens)/Downloaded-Songs",
   },
   {
     id: "music-dna",
     title: "Music DNA",
     customIcon: "dna",
-    route: "Music-DNA",
+    route: "/(root)/(screens)/Music-DNA",
   },
 ];
 
-const FILTER_TAGS = ["Artists"];
+// const FILTER_TAGS = ["Artists"];
 
 export default function Library() {
+  const { isOffline } = useNetwork();
   const {
     data: UserDetails,
     isLoading: isUserLoading,
@@ -53,6 +63,7 @@ export default function Library() {
     isRefetching: isSongsRefetching,
   } = useLikedSongs();
   const likedSongsCount = likedSongs?.length ?? 0;
+  const { count: downloadedSongsCount } = useDownloadedSongs();
   const {
     data: playlists = [],
     isLoading: playlistfetchingloading,
@@ -70,6 +81,15 @@ export default function Library() {
     setShowDeleteConfirmation(false);
     setDeletePlaylistError("");
   };
+
+  if (isOffline) {
+    return (
+      <OfflineStateView
+        title="Your library is offline"
+        description="Connect to the internet to see your cloud playlists and liked songs, or listen to your downloaded music."
+      />
+    );
+  }
 
   const isLoading = isUserLoading || isSongsLoading || playlistfetchingloading;
 
@@ -118,7 +138,7 @@ export default function Library() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
           >
-            {FILTER_TAGS.map((tag, index) => (
+            {/* {FILTER_TAGS.map((tag, index) => (
               <TouchableOpacity
                 key={index}
                 className="bg-[#2a2a2a] px-4 py-2 rounded-full"
@@ -128,7 +148,7 @@ export default function Library() {
                   {tag}
                 </Text>
               </TouchableOpacity>
-            ))}
+            ))} */}
           </ScrollView>
         </View>
 
@@ -168,6 +188,10 @@ export default function Library() {
                   <View className="w-[64px] h-[64px] rounded bg-gradient-to-br from-[#450e74] to-[#5b3bb4] items-center justify-center bg-[#3c2bc1]">
                     <Heart color="#ffffff" size={24} fill="#ffffff" />
                   </View>
+                ) : item.customIcon === "download" ? (
+                  <View className="w-[64px] h-[64px] rounded bg-[#10301C] items-center justify-center border border-[#1DB954]/30">
+                    <ArrowDownCircle color="#1DB954" size={26} />
+                  </View>
                 ) : item.customIcon === "dna" ? (
                   <View className="w-[64px] h-[64px] rounded bg-[#1DB954] items-center justify-center">
                     <Brain color="#000000" size={26} />
@@ -188,6 +212,8 @@ export default function Library() {
                   <Text className="text-[#a7a7a7] text-[13px] font-medium">
                     {item.id === "1"
                       ? `${isLoading ? "—" : `${likedSongsCount} ${likedSongsCount === 1 ? "song" : "songs"}`}`
+                      : item.id === "downloaded"
+                      ? `${downloadedSongsCount} ${downloadedSongsCount === 1 ? "song" : "songs"}`
                       : ""}
                   </Text>
                 </View>

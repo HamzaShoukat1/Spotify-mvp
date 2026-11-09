@@ -7,10 +7,28 @@ import { MotiView } from 'moti';
 import { Image } from 'react-native';
 import { Logo } from "../../../assets/images/index"
 import { MediaPlayerBar } from '@/components/Media-Player-bar';
+import Toast from 'react-native-toast-message';
+import { useNetwork } from '@/context/NetworkContext';
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isTrackViewOpen = usePathname().endsWith('/Track-View');
+  const { isOffline } = useNetwork();
+
+
+  const handleCreatePress = () => {
+    if (isOffline) {
+      Toast.show({
+        type: "error",
+        text1: "Online access needed",
+        position: "top",
+        visibilityTime: 4000,
+      });
+      return;
+    }
+
+    setIsModalOpen(!isModalOpen);
+  };
 
   return (
     <>
@@ -30,7 +48,7 @@ export default function TabLayout() {
             backgroundColor: '#121212',
           },
           tabBarActiveTintColor: '#FFFFFF',
-          tabBarInactiveTintColor: '#737373', 
+          tabBarInactiveTintColor: '#737373',
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '600',
@@ -77,11 +95,11 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => (
               <Image
                 source={Logo}
-                style={{ 
-                  width: size - 2, 
-                  height: size - 2, 
-                  resizeMode: 'contain', 
-                  tintColor: color 
+                style={{
+                  width: size - 2,
+                  height: size - 2,
+                  resizeMode: 'contain',
+                  tintColor: color
                 }}
               />
             ),
@@ -100,7 +118,7 @@ export default function TabLayout() {
             tabBarButton: () => (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setIsModalOpen(!isModalOpen)}
+                onPress={handleCreatePress} 
                 className="flex-1 items-center justify-center pt-1"
               >
                 <MotiView

@@ -8,8 +8,11 @@ import { RefreshControl } from 'react-native';
 import { SubscriptionBadge } from '@/components/SubscriptionBadge';
 import { Brain } from 'lucide-react-native';
 import { useAlbums } from '@/hooks/use-album';
+import { useNetwork } from '@/context/NetworkContext';
+import { OfflineStateView } from '@/components/OfflineStateView';
 
 export default function Home() {
+  const { isOffline } = useNetwork();
   const {
     data: artistsList = [],
     refetch: refetchartist,
@@ -51,6 +54,15 @@ export default function Home() {
 
   const openProfileDrawer = () => {
     navigation.getParent()?.dispatch({ type: 'OPEN_DRAWER' })
+  }
+
+  if (isOffline) {
+    return (
+      <OfflineStateView
+        title="You're offline"
+        description="Listen to your downloaded songs or connect to Wi-Fi / cellular to browse online music."
+      />
+    );
   }
 
   if (isHomeLoading) {

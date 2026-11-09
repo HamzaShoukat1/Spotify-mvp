@@ -1,5 +1,6 @@
 import { ChangeUsername, confirmEmailChange, createUser, currectUser, loginUser, LogoutUser, requestCurrentEmailOtp, requestNewEmailOtp, verifyCurrentEmailOtp } from "@/services/auth.service";
 import { clearTokens, saveTokens } from "@/storage/secureStorage";
+import { clearAccountDownloads } from "@/storage/download-storage";
 import { useAuth } from "@/context/Auth.Context";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import TrackPlayer from "react-native-track-player";
@@ -54,6 +55,7 @@ export function useLogoutMutation() {
         onSuccess: async () => {
             queryClient.clear();
             await TrackPlayer.reset().catch(() => null);
+            await clearAccountDownloads().catch(() => null);
             const success = await clearTokens();
             if (success) {
                 await refreshAuth();
@@ -62,6 +64,7 @@ export function useLogoutMutation() {
         onError: (err: any) => {
             console.error('Server logout request failed:', err?.message || err);
             queryClient.clear();
+            clearAccountDownloads().catch(() => null);
             clearTokens().then(() => refreshAuth());
         },
     });

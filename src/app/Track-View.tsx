@@ -44,9 +44,14 @@ import { useAddTrackDataToAnalytics } from "@/hooks/use-analytics";
 import { startListening } from "@/services/analytics.service";
 import { useListeningLimit } from "@/context/ListeningLimitContext";
 import { LikeButton } from "@/components/LikeButton";
+import { DownloadButton } from "@/components/DownloadButton";
+import { useSongDownload, useOfflineEntitlement } from "@/hooks/use-downloads";
 import { FormSheetModal } from "@/components/FormSheetModel";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNetwork } from "@/context/NetworkContext";
+import Toast from "react-native-toast-message";
+import { WifiOff } from "lucide-react-native";
 
 function TrackViewContent({
   musicId,
@@ -54,9 +59,11 @@ function TrackViewContent({
   musicId: string;
 }) {
   const queryClient = useQueryClient();
+  const { isOffline } = useNetwork();
   const { height: screenHeight } = useWindowDimensions();
   const sheetTranslateY = useSharedValue(0);
   const isClosing = useSharedValue(false);
+
   useFocusEffect(
     useCallback(() => {
       cancelAnimation(sheetTranslateY);
@@ -64,10 +71,12 @@ function TrackViewContent({
       isClosing.value = false;
     }, [isClosing, sheetTranslateY]),
   );
+
   const dismissPlayer = () => router.back();
   const sheetStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: sheetTranslateY.value }],
   }));
+
   const dragHandleGesture = Gesture.Pan()
     .activeOffsetY(8)
     .failOffsetX([-12, 12])
@@ -135,6 +144,9 @@ function TrackViewContent({
     router.replace("/(root)/(tabs)/home");
   }, [closeUpgradeModal]);
 
+  const { record: downloadRecord, isDownloaded } = useSongDownload(musicId);
+  const { checkCanPlayOffline } = useOfflineEntitlement();
+
   const activeTrack = useActiveTrack();
   const playbackState = usePlaybackState();
   const { duration, position } = useProgress(300);
@@ -143,13 +155,17 @@ function TrackViewContent({
   const isCurrentTrack = activeTrack?.id === musicId;
   const trackPosition = isCurrentTrack ? position : 0;
   const trackDuration = isCurrentTrack ? duration : 0;
+
   const musicCover =
-    musicData?.coverPhoto?.url || (isCurrentTrack ? activeTrack?.artwork : undefined);
+    musicData?.coverPhoto?.url || downloadRecord?.coverPhoto || (isCurrentTrack ? activeTrack?.artwork : undefined);
   const musicTitle =
-    musicData?.musicTitle || (isCurrentTrack ? activeTrack?.title : undefined) || "Unknown title";
+    musicData?.musicTitle || downloadRecord?.title || (isCurrentTrack ? activeTrack?.title : undefined) || "Unknown title";
   const artistName =
-    musicData?.primaryArtistName || (isCurrentTrack ? activeTrack?.artist : undefined) || "Unknown artist";
-  const musicUrl = musicData?.music?.url || (isCurrentTrack ? activeTrack?.url : undefined);
+    musicData?.primaryArtistName || downloadRecord?.artist || (isCurrentTrack ? activeTrack?.artist : undefined) || "Unknown artist";
+  const musicUrl =
+    isDownloaded && downloadRecord?.localUri
+      ? downloadRecord.localUri
+      : musicData?.music?.url || (isCurrentTrack ? activeTrack?.url : undefined);
   const artist = musicData?.artist;
   const artistImage = artist?.profileImage?.url;
 
@@ -175,10 +191,39 @@ function TrackViewContent({
 
         if (cancelled) return;
 
-
         const currentTrack = await TrackPlayer.getActiveTrack();
         if (currentTrack?.id === musicId) {
           setLoading(false);
+          return;
+        }
+
+        if (isDownloaded && downloadRecord?.localUri) {
+          if (isOffline) {
+            const canPlay = await checkCanPlayOffline();
+            if (!canPlay) {
+              setLoading(false);
+              Toast.show({
+                type: "error",
+                text1: "Offline access expired",
+                text2: "Connect to the internet to verify your Premium subscription.",
+                position: "top",
+                visibilityTime: 4000,
+              });
+              return;
+            }
+          }
+
+          await TrackPlayer.reset();
+          await TrackPlayer.add({
+            id: musicId,
+            url: downloadRecord.localUri,
+            title: musicTitle,
+            artist: artistName,
+            artwork: musicCover,
+          });
+
+          listeningMusicIdRef.current = musicId;
+          await TrackPlayer.play();
           return;
         }
 
@@ -206,6 +251,13 @@ function TrackViewContent({
         const message = error instanceof Error ? error.message : String(error);
         if (message.toLowerCase().includes("free listening limit")) {
           showFreeLimitModal();
+        } else if (isOffline) {
+          Toast.show({
+            type: "error",
+            text1: "You're offline",
+            text2: "This song isn't downloaded. Connect to the internet or play downloaded songs.",
+            position: "top",
+          });
         } else {
           console.error("Failed to start track playback:", error);
         }
@@ -220,7 +272,12 @@ function TrackViewContent({
       cancelled = true;
     };
   }, [
+    activeTrack?.id,
     artistName,
+    checkCanPlayOffline,
+    downloadRecord?.localUri,
+    isDownloaded,
+    isOffline,
     musicCover,
     musicId,
     musicTitle,
@@ -273,6 +330,7 @@ function TrackViewContent({
     }
 
     if (
+      isDownloaded ||
       !musicId ||
       activeTrack?.id !== musicId ||
       playbackState.state !== State.Playing ||
@@ -300,6 +358,7 @@ function TrackViewContent({
 
   useEffect(() => {
     if (
+      isDownloaded ||
       playbackState.state !== State.Playing ||
       activeTrack?.id !== musicId ||
       !duration ||
@@ -309,14 +368,15 @@ function TrackViewContent({
     }
 
     registerListeningAtHalf(musicId).catch((error) => {
-        const message = error instanceof Error ? error.message : String(error);
-        if (!message.toLowerCase().includes("free listening limit")) {
-          console.error("Listening milestone registration failed:", error);
-        }
-      });
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.toLowerCase().includes("free listening limit")) {
+        console.error("Listening milestone registration failed:", error);
+      }
+    });
   }, [
     activeTrack?.id,
     duration,
+    isDownloaded,
     musicId,
     playbackState.state,
     position,
@@ -345,7 +405,7 @@ function TrackViewContent({
     }
   };
 
-  if (isMusicLoading) {
+  if (isMusicLoading && !isDownloaded) {
     return (
       <View
         style={{
@@ -360,19 +420,42 @@ function TrackViewContent({
     );
   }
 
-
-  if (isError) {
+  if (isError && !isDownloaded) {
     return (
       <View className="flex-1 justify-center px-6" style={{ backgroundColor: "transparent" }}>
-        <View className="items-center rounded-2xl bg-[#121212] p-6">
-          <Text className="text-center text-white">
-            Song data could not be loaded.
+        <View className="items-center rounded-2xl bg-[#121212] p-6 border border-white/10">
+          <View className="w-16 h-16 rounded-full bg-[#181818] items-center justify-center mb-4">
+            <WifiOff size={28} color="#B3B3B3" />
+          </View>
+          <Text className="text-center text-white text-lg font-bold mb-1">
+            {isOffline ? "You're offline" : "Song could not be loaded"}
           </Text>
+          <Text className="text-center text-[#A7A7A7] text-xs leading-5 mb-5 px-3">
+            {isOffline
+              ? "This song hasn't been downloaded for offline playback. Head over to your downloaded songs to listen offline."
+              : "Something went wrong while loading this song."}
+          </Text>
+
+          {isOffline && (
+            <TouchableOpacity
+              onPress={() => {
+                router.back();
+                router.push("/(root)/(screens)/Downloaded-Songs");
+              }}
+              activeOpacity={0.85}
+              className="w-full bg-[#1DB954] py-3.5 rounded-full items-center justify-center mb-3"
+            >
+              <Text className="font-extrabold text-black text-xs uppercase tracking-wider">
+                Go to Downloaded Songs
+              </Text>
+            </TouchableOpacity>
+          )}
+
           <Pressable
             onPress={() => router.back()}
-            className="mt-5 rounded-full bg-white px-5 py-3"
+            className="rounded-full bg-white/10 px-6 py-2.5"
           >
-            <Text className="font-semibold text-black">Go back</Text>
+            <Text className="font-semibold text-white text-xs">Go back</Text>
           </Pressable>
         </View>
       </View>
@@ -429,15 +512,17 @@ function TrackViewContent({
                   <View className="w-6" />
                 </View>
 
+                {/* Fixed Artwork Container to prevent small image layout flickering */}
                 <View className="mt-7 items-center w-full">
-                  {musicCover ? (
-                    <Image
-                      source={{ uri: String(musicCover) }}
-                      className="aspect-square w-full max-w-[390px] rounded-md"
-                    />
-                  ) : (
-                    <View className="aspect-square w-full max-w-[390px] rounded-md bg-[#282828]" />
-                  )}
+                  <View className="aspect-square w-full max-w-[390px] rounded-md bg-[#282828] overflow-hidden">
+                    {musicCover ? (
+                      <Image
+                        source={{ uri: String(musicCover) }}
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="cover"
+                      />
+                    ) : null}
+                  </View>
                 </View>
 
                 <View className="mt-8 flex-row items-center justify-between">
@@ -455,7 +540,17 @@ function TrackViewContent({
                       {artistName}
                     </Text>
                   </View>
-                  <LikeButton musicId={musicId} />
+                  <View className="flex-row items-center gap-4">
+                    <DownloadButton
+                      musicId={musicId}
+                      title={musicTitle}
+                      artist={artistName}
+                      coverPhoto={musicCover ?? ""}
+                      duration={trackDuration}
+                      size={24}
+                    />
+                    <LikeButton musicId={musicId} isOffline={isOffline} />
+                  </View>
                 </View>
 
                 <View className="mt-5">
@@ -511,7 +606,8 @@ function TrackViewContent({
                   {artistImage ? (
                     <Image
                       source={{ uri: artistImage }}
-                      className="h-[260px] w-full object-cover"
+                      style={{ width: "100%", height: 260 }}
+                      resizeMode="cover"
                     />
                   ) : (
                     <View className="h-[260px] w-full items-center justify-center bg-[#0B1D12]">
@@ -556,12 +652,15 @@ function TrackViewContent({
                   <Text className="text-neutral-200 text-xs font-semibold">Unlimited song plays</Text>
                 </View>
                 <View className="flex-row items-center gap-2.5">
-                  {/* <Check size={15} color="#1DB954" strokeWidth={3} /> */}
-                  {/* <Text className="text-neutral-200 text-xs font-semibold">Ad-free high definition audio</Text> */}
+                  <Check size={15} color="#1DB954" strokeWidth={3} />
+                  <Text className="text-neutral-200 text-xs font-semibold">Download songs for offline listening</Text>
+                </View>
+                <View className="flex-row items-center gap-2.5">
+                  <Check size={15} color="#1DB954" strokeWidth={3} />
+                  <Text className="text-neutral-200 text-xs font-semibold">Play downloaded songs anywhere without an internet connection</Text>
                 </View>
               </View>
 
-              {/* Spotify Primary Green Action Button */}
               <TouchableOpacity
                 activeOpacity={0.85}
                 onPress={() => {
@@ -579,8 +678,6 @@ function TrackViewContent({
         </SafeAreaView>
       </Animated.View>
     </View>
-
-
   );
 }
 

@@ -10,6 +10,7 @@ import { MusicProvider } from "@/context/MusicContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 import { ListeningLimitProvider } from "@/context/ListeningLimitContext";
 import { AlbumProvider } from "@/context/AlbumContext";
+import { NetworkProvider } from "@/context/NetworkContext";
 import Toast from 'react-native-toast-message';
 import { toastConfig } from "@/utils";
 
@@ -25,6 +26,7 @@ export default function RootLayout() {
         merchantIdentifier="merchant.com.spotify.mvp"
         urlScheme="spotifymvp"
       >
+        <NetworkProvider>
         <AuthProvider>
           <QueryProvider>
             <ArtistProvider>
@@ -35,8 +37,6 @@ export default function RootLayout() {
                   <Stack
                     screenOptions={{
                       headerShown: false,
-                      // Leave the stack canvas transparent so a transparent modal
-                      // can reveal the still-mounted route underneath it.
                       contentStyle: { backgroundColor: "transparent" },
                     }}
                   >
@@ -59,6 +59,7 @@ export default function RootLayout() {
           </QueryProvider>
         </AuthProvider>
         <Toast config={toastConfig} visibilityTime={2000} autoHide={true} />
+        </NetworkProvider>
       </StripeProvider>
     </GestureHandlerRootView>
 
