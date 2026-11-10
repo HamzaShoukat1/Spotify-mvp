@@ -12,11 +12,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Mic } from "lucide-react-native";
 import { useCreatePlaylist } from "@/hooks/use-playlist";
+import { useAuth } from "@/context/Auth.Context";
+import Toast from "react-native-toast-message";
 
 export default function CreatePlaylistPage() {
   const [name, setName] = useState("");
   const create = useCreatePlaylist();
   const router = useRouter();
+  const { isPremium } = useAuth();
 
   useFocusEffect(
     useCallback(() => {
@@ -41,6 +44,21 @@ export default function CreatePlaylistPage() {
         Alert.alert("Could not create playlist", error.message),
     });
   };
+  const handlePress = () => {
+    if (!isPremium) {
+      Toast.show({
+        type: "error",
+        position: "top",
+        visibilityTime: 2000,
+        text1: "Premium Feature",
+        text2: "Upgrade your account to access this feature.",
+      });
+      return;
+    }
+
+    router.push('/(root)/(screens)/Voice-Agent');
+  };
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]" edges={["top", "bottom"]}>
@@ -94,7 +112,8 @@ export default function CreatePlaylistPage() {
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Create a playlist with your voice"
-            onPress={() => router.push("/(root)/(screens)/Voice-Agent")}
+            // onPress={() => router.push("/(root)/(screens)/Voice-Agent")}
+            onPress={handlePress}
             className="mt-10 w-full flex-row items-center rounded-2xl border border-[#1DB954] bg-[#1B1B1B] px-5 py-4"
           >
             <View className="mr-4 h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]">

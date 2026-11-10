@@ -53,3 +53,9 @@ export async function deleteDownloadOnServer(musicId: string): Promise<void> {
     method: "DELETE",
   });
 }
+export async function deleteAllDownloadOnServer(): Promise<void> {
+  return ApiClient(`${BackendUrl}/downloads/all`, {
+    method: "DELETE",
+  });
+}
+

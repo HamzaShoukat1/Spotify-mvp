@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   downloadManager,
   DownloadProgress,
@@ -12,8 +12,9 @@ import {
   getStoredOfflineEntitlement,
   saveOfflineEntitlement,
   isOfflinePlaybackAllowed,
+  clearAccountDownloads
 } from "../storage/download-storage";
-import { getOfflineEntitlement } from "../services/download.service";
+import { getOfflineEntitlement, deleteAllDownloadOnServer } from "../services/download.service";
 import { useAuth } from "../context/Auth.Context";
 
 export const DOWNLOADS_QUERY_KEY = ["downloads", "list"] as const;
@@ -125,6 +126,9 @@ export function useSongDownload(musicId: string | null | undefined) {
     if (!musicId) return;
     await downloadManager.removeDownload(musicId);
   }, [musicId]);
+  // const removeAllDownloads = useCallback(async () => {
+  //   await downloadManager.clearAllDownloads();
+  // }, []);
 
   const retryDownload = useCallback(async () => {
     if (!musicId) return;
@@ -149,7 +153,29 @@ export function useSongDownload(musicId: string | null | undefined) {
     resumeDownload,
     cancelDownload,
     removeDownload,
+    // removeAllDownloads,
     retryDownload,
+  };
+}
+
+export function useRemoveAllDownloads() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: deleteAllDownloadOnServer,
+    onSuccess: async () => {
+      await clearAccountDownloads();
+      queryClient.invalidateQueries({ queryKey: ["downloads"] });
+    },
+    onError: (error) => {
+      console.error("Failed to remove downloads:", error);
+    }
+  });
+
+  return {
+    removeAllAsync: mutation.mutateAsync,
+    isDeleting: mutation.isPending,
+    error: mutation.error,
   };
 }
 

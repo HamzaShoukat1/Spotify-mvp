@@ -21,7 +21,8 @@ export const NetworkProvider: React.FC<{ children: React.ReactNode }> = ({
   const [netState, setNetState] = useState<{
     isConnected: boolean | null;
     isInternetReachable: boolean | null;
-  }>({
+  }>({ 
+    
     isConnected: true,
     isInternetReachable: true,
   });

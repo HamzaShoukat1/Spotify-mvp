@@ -44,15 +44,15 @@ export default function SpotifyProfileMenu() {
         </TouchableOpacity>
 
         <View className="mt-2 px-5">
-          <TouchableOpacity className="flex-row items-center py-4">
+          {/* <TouchableOpacity className="flex-row items-center py-4">
             <Plus color="#FFFFFF" size={28} strokeWidth={2} />
             <Text className="text-white text-[17px] ml-4">Add account</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
-          <TouchableOpacity className="flex-row items-center py-4">
+          {/* <TouchableOpacity className="flex-row items-center py-4">
             <BarChart2 color="#FFFFFF" size={28} strokeWidth={2} />
             <Text className="text-white text-[17px] ml-4">Listening stats</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* <TouchableOpacity className="flex-row items-center py-4">
             <Clock color="#FFFFFF" size={28} strokeWidth={2} />

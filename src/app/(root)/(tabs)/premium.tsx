@@ -48,7 +48,7 @@ function FeatureRow({ title, freeText, premiumText, isLast }: FeatureRowProps) {
       <View className="flex-1 items-center justify-center">
         <View className="flex-row items-center gap-1">
           <Check size={13} color="#1DB954" strokeWidth={3} />
-          <Text className="text-[#1DB954] text-xs font-bold text-center">
+          <Text className="text-[#1DB954] text-xs  font-bold text-center">
             {premiumText}
           </Text>
         </View>
@@ -152,7 +152,7 @@ const STRIPE_PLANS = {
             end={{ x: 0.5, y: 1 }}
             className="items-center px-5 mt-20 pb-7 rounded-b-[28px]"
           >
-            <View className="flex-1 justify-center items-center p-4">
+            <View className=" justify-center items-center p-4">
               <Text className="text-3xl mt-8 font-extrabold text-white text-center mb-2.5 tracking-tight">
                 Listen without limits.
               </Text>
@@ -191,7 +191,9 @@ const STRIPE_PLANS = {
                   Daily Limit Warning (Free Tier)
                 </Text>
                 <Text className="text-[#D4C7A3] text-xs leading-4">
+                  {/* Free tier users are capped at 3 tracks per day. Upgrade now to stream continuously with zero roadblocks. */}
                   Free tier users are capped at 3 tracks per day. Upgrade now to stream continuously with zero roadblocks.
+                  More features like offline downloads and ai features are also available with premium.
                 </Text>
               </View>
             </View>
@@ -220,12 +222,20 @@ const STRIPE_PLANS = {
               freeText="Not available"
               premiumText="Included"
             />
+        
             <FeatureRow
               title="Offline Playback"
               freeText="Online only"
               premiumText="Listen anywhere"
               isLast
             />
+                      <FeatureRow
+              title="Ai Features"
+              freeText="Not available"
+              premiumText="Included"
+              isLast
+            />
+       
           </View>
 
           {!isPremium && (

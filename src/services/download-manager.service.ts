@@ -2,6 +2,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import {
   authorizeDownload,
   confirmDownloadCompletion,
+  deleteAllDownloadOnServer,
   deleteDownloadOnServer,
 } from "./download.service";
 import {
@@ -14,6 +15,7 @@ import {
   updateDownloadStatus,
   upsertDownloadRecord,
   verifyFileExists,
+  clearAccountDownloads
 } from "../storage/download-storage";
 
 export interface DownloadProgress {
@@ -322,8 +324,16 @@ class DownloadManager {
 
     this.progressMap.delete(musicId);
 
-    // Read the existing record so we can keep real title/artist in the notification
     const existing = await getDownloadRecord(musicId);
+
+    if (existing?.localUri) {
+      try {
+        await FileSystem.deleteAsync(existing.localUri, { idempotent: true });
+      } catch (error) {
+        console.error(`[DownloadManager] Failed to delete file for ${musicId}:`, error);
+      }
+    }
+
     await removeDownloadRecord(musicId);
 
     const record: LocalDownloadRecord = {
@@ -341,6 +351,9 @@ class DownloadManager {
     };
     this.notifyStatus(record);
   }
+
+
+
 
   public async retryDownload(musicId: string): Promise<void> {
     const record = await getDownloadRecord(musicId);

@@ -17,18 +17,21 @@ import {
   CheckCircle2,
   Trash2,
   WifiOff,
-  Play,
-  Pause,
   Search,
   X,
   HardDrive,
   Music2,
+  FolderX,
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import TrackPlayer, { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
-import { useDownloadedSongs, useOfflineEntitlement } from "@/hooks/use-downloads";
-import { downloadManager } from "@/services/download-manager.service";
+import {
+  useDownloadedSongs,
+  useOfflineEntitlement,
+  useRemoveAllDownloads,
+  useSongDownload,
+} from "@/hooks/use-downloads";
 import type { LocalDownloadRecord } from "@/storage/download-storage";
 import { useNetwork } from "@/context/NetworkContext";
 import { PlayingIndicator } from "@/components/PlayingIndicator";
@@ -51,6 +54,7 @@ function formatDuration(seconds?: number): string {
 
 export default function DownloadedSongs() {
   const { downloadedSongs, isLoading, count } = useDownloadedSongs();
+  const { removeAllAsync, isDeleting: isDeletingAll } = useRemoveAllDownloads();
   const { isOffline } = useNetwork();
   useOfflineEntitlement();
 
@@ -61,6 +65,9 @@ export default function DownloadedSongs() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [songToRemove, setSongToRemove] = useState<LocalDownloadRecord | null>(null);
+  const [showRemoveAllModal, setShowRemoveAllModal] = useState(false);
+
+  const { removeDownload } = useSongDownload(songToRemove?.musicId ?? "");
 
   const totalBytes = useMemo(
     () => downloadedSongs.reduce((acc, item) => acc + (item.fileSize || 0), 0),
@@ -83,29 +90,22 @@ export default function DownloadedSongs() {
     });
   };
 
-  const handlePlayFirstOrToggle = async () => {
-    if (downloadedSongs.length === 0) return;
-
-    const firstSong = downloadedSongs[0];
-    const isFirstActive = activeTrackId === firstSong.musicId;
-
-    if (isFirstActive) {
-      if (isPlaying) await TrackPlayer.pause();
-      else await TrackPlayer.play();
-      return;
-    }
-
-    handlePlaySong(firstSong.musicId);
-  };
-
   const confirmRemoveSong = async () => {
     if (!songToRemove) return;
-    const id = songToRemove.musicId;
-    setSongToRemove(null);
     try {
-      await downloadManager.removeDownload(id);
+      await removeDownload();
+      setSongToRemove(null);
     } catch (err: any) {
       Alert.alert("Error", err?.message || "Could not delete download");
+    }
+  };
+
+  const confirmRemoveAllSongs = async () => {
+    try {
+      await removeAllAsync();
+      setShowRemoveAllModal(false);
+    } catch (err: any) {
+      Alert.alert("Error", err?.message || "Could not remove all downloads");
     }
   };
 
@@ -219,18 +219,32 @@ export default function DownloadedSongs() {
               Downloaded Songs
             </Text>
             <Text className="text-[11px] text-[#A7A7A7]">
-              {count} {count === 1 ? "song" : "songs"} • {formatFileSize(totalBytes)}
+              {count} {count === 1 ? "song" : "songs"}
+              {totalBytes > 0 ? ` • ${formatFileSize(totalBytes)}` : ""}
             </Text>
           </View>
 
-          {isOffline && (
-            <View className="flex-row items-center bg-[#1B2B1F]/80 border border-[#1DB954]/40 px-2.5 py-1 rounded-full">
-              <WifiOff size={11} color="#1DB954" />
-              <Text className="text-[#1DB954] text-[10px] font-extrabold ml-1.5 uppercase tracking-wider">
-                Offline
-              </Text>
-            </View>
-          )}
+          <View className="flex-row items-center gap-2">
+            {isOffline && (
+              <View className="flex-row items-center bg-[#1B2B1F]/80 border border-[#1DB954]/40 px-2.5 py-1 rounded-full">
+                <WifiOff size={11} color="#1DB954" />
+                <Text className="text-[#1DB954] text-[10px] font-extrabold ml-1.5 uppercase tracking-wider">
+                  Offline
+                </Text>
+              </View>
+            )}
+
+            {count > 0 && (
+              <TouchableOpacity
+                onPress={() => setShowRemoveAllModal(true)}
+                className="p-2 rounded-full active:bg-white/10"
+                hitSlop={8}
+                accessibilityLabel="Remove all downloads"
+              >
+                <FolderX size={20} color="#FF0000" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </SafeAreaView>
 
@@ -257,7 +271,7 @@ export default function DownloadedSongs() {
           className="z-10"
           ListHeaderComponent={
             <View>
-              {/* Search Filter Bar (Top Positioned) */}
+              {/* Search Filter Bar */}
               <View className="px-5 pt-2 pb-3">
                 <View className="flex-row items-center bg-[#242424]/90 rounded-xl px-3.5 py-2.5 border border-white/10 shadow-sm">
                   <Search size={16} color="#888888" />
@@ -298,27 +312,6 @@ export default function DownloadedSongs() {
                 <Text className="text-3xl font-black text-white tracking-tight mb-1">
                   Downloaded
                 </Text>
-                {/* <Text className="text-xs text-[#B3B3B3] mb-5 leading-4">
-                  Play your saved music anytime, even in Airplane mode.
-                </Text> */}
-
-                <View className="flex-row items-center justify-between pr-1">
-                  {/* Play Button */}
-                  {/* <TouchableOpacity
-                    onPress={handlePlayFirstOrToggle}
-                    activeOpacity={0.85}
-                    className="w-14 h-14 rounded-full bg-[#1DB954] items-center justify-center active:scale-95 shadow-lg shadow-[#1DB954]/30"
-                    accessibilityLabel={isPlaying ? "Pause" : "Play"}
-                  >
-                    {isPlaying ? (
-                      <Pause size={24} color="#000000" fill="#000000" />
-                    ) : (
-                      <View className="ml-0.5">
-                        <Play size={24} color="#000000" fill="#000000" />
-                      </View>
-                    )}
-                  </TouchableOpacity> */}
-                </View>
               </View>
             </View>
           }
@@ -337,7 +330,7 @@ export default function DownloadedSongs() {
         />
       )}
 
-      {/* Remove Song Confirmation Sheet */}
+      {/* Remove Single Song Confirmation Sheet */}
       <FormSheetModal
         visible={!!songToRemove}
         title="Remove Download"
@@ -373,7 +366,50 @@ export default function DownloadedSongs() {
           onPress={() => setSongToRemove(null)}
           activeOpacity={0.7}
           className="w-full py-3 items-center justify-center rounded-full"
-        />
+        >
+        </TouchableOpacity>
+      </FormSheetModal>
+
+      {/* Remove All Downloads Confirmation Sheet */}
+      <FormSheetModal
+        visible={showRemoveAllModal}
+        title="Remove All Downloads"
+        onClose={() => setShowRemoveAllModal(false)}
+      >
+        <View className="items-center mb-4">
+          <View className="w-14 h-14 rounded-full bg-red-500/15 border border-red-500/30 items-center justify-center mb-3">
+            <Trash2 size={24} color="#EF4444" />
+          </View>
+          <Text className="text-white text-base font-bold text-center">
+            Remove All Downloads?
+          </Text>
+        </View>
+
+        <Text className="text-[#A7A7A7] text-xs text-center mb-5 leading-5 px-3">
+          This will remove all {count} downloaded {count === 1 ? "song" : "songs"} from your device storage. They will no longer be available for offline listening.
+        </Text>
+
+        <TouchableOpacity
+          onPress={confirmRemoveAllSongs}
+          disabled={isDeletingAll}
+          activeOpacity={0.85}
+          className="w-full bg-[#EF4444] py-3.5 rounded-full items-center justify-center mb-2.5"
+        >
+          {isDeletingAll ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text className="text-white font-extrabold text-xs uppercase tracking-wider">
+              Remove All Downloads
+            </Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setShowRemoveAllModal(false)}
+          activeOpacity={0.7}
+          className="w-full py-3 items-center justify-center rounded-full"
+        >
+        </TouchableOpacity>
       </FormSheetModal>
     </View>
   );

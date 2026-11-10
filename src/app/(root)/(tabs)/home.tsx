@@ -10,9 +10,13 @@ import { Brain } from 'lucide-react-native';
 import { useAlbums } from '@/hooks/use-album';
 import { useNetwork } from '@/context/NetworkContext';
 import { OfflineStateView } from '@/components/OfflineStateView';
+import { useAuth } from '@/context/Auth.Context';
+import Toast from 'react-native-toast-message';
 
 export default function Home() {
   const { isOffline } = useNetwork();
+  const { isPremium } = useAuth();
+
   const {
     data: artistsList = [],
     refetch: refetchartist,
@@ -37,7 +41,7 @@ export default function Home() {
   } = useCurrentUser();
 
   const isHomeLoading =
-    artistsLoading || musicLoading ||  currentUserLoading;
+    artistsLoading || musicLoading || currentUserLoading;
 
   const userName = currentUser?.name?.trim() || 'User';
   const userInitial = userName.charAt(0).toUpperCase();
@@ -158,6 +162,20 @@ export default function Home() {
       <Text numberOfLines={1} className="mt-1 text-xs text-neutral-400">{item.artistName}</Text>
     </TouchableOpacity>
   );
+  const handlePress = () => {
+    if (!isPremium) {
+      Toast.show({
+        type: "error",
+        position: "top",
+        visibilityTime: 2000,
+        text1: "Premium Feature",
+        text2: "Upgrade your account to access this feature.",
+      });
+      return;
+    }
+
+    router.push('/(root)/(screens)/Music-DNA');
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#121212]" edges={['top']}>
@@ -192,7 +210,7 @@ export default function Home() {
               <TouchableOpacity
                 accessibilityRole="button"
                 accessibilityLabel="Open Music DNA"
-                onPress={() => router.push('/(root)/(screens)/Music-DNA')}
+                onPress={handlePress}
                 activeOpacity={0.8}
                 className="flex-row items-center rounded-full border border-[#1DB954] bg-[#18251B] px-3 py-2"
               >

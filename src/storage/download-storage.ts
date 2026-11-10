@@ -200,7 +200,6 @@ export async function reconcileDownloads(): Promise<void> {
     if (record.downloadStatus === "completed") {
       const exists = await verifyFileExists(record.localUri);
       if (!exists) {
-        // Physical file disappeared; create a corrected record object (do not mutate cache directly)
         const fixed: LocalDownloadRecord = {
           ...record,
           downloadStatus: "failed",
@@ -279,7 +278,6 @@ export async function clearAccountDownloads(): Promise<void> {
       await FileSystem.deleteAsync(ENTITLEMENT_FILE, { idempotent: true });
     }
 
-    // Reset flag so the next login re-initialises cleanly
     isInitialized = false;
   } catch (error) {
     console.error("[DownloadStorage] Failed to clear account downloads:", error);
