@@ -5,7 +5,6 @@ import {
     Platform,
     TouchableOpacity,
     ScrollView,
-    ImageBackground,
     Image,
     RefreshControl,
 } from 'react-native';
@@ -226,27 +225,26 @@ export default function Artisthub() {
                             {/* Cover Photo */}
 
                             {artist.coverImage.url ? (
-                                <ImageBackground
-                                    source={{
-                                        uri: artist.coverImage.url,
-                                    }}
-                                    resizeMode="cover"
-                                    className="h-52 w-full"
-                                    imageStyle={{
-                                        borderTopLeftRadius: 24,
-                                        borderTopRightRadius: 24,
-                                    }}
-                                >
-                                    <View className="flex-1 bg-black/30" />
-                                </ImageBackground>
+                                <View className="h-52 w-full overflow-hidden rounded-t-[24px] relative">
+                                    <Image
+                                        source={{
+                                            uri: artist.coverImage.url,
+                                        }}
+                                        resizeMode="cover"
+                                        className="absolute inset-0 h-full w-full"
+                                    />
+                                    {/* Dark overlay layered on top of the image */}
+                                    <View className="absolute inset-0 bg-black/30" />
+                                </View>
                             ) : (
-                                <View className="h-52 w-full items-center justify-center bg-[#292929]">
+                                <View className="h-52 w-full items-center justify-center bg-[#292929] rounded-t-[24px]">
                                     <ImagePlus
                                         size={38}
                                         color="#666666"
                                     />
                                 </View>
                             )}
+
 
                             {/* Artist Information */}
 

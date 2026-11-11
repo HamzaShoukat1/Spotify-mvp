@@ -1,5 +1,5 @@
 import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Image } from 'react-native';
-import { apple, facebook, google, Logo, signupbg } from '../../assets/images/index';
+import {  signupbg } from '../../assets/images/index';
 import { router } from 'expo-router';
 
 export default function Signup() {

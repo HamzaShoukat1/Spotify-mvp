@@ -13,7 +13,6 @@
     "android": {
       "package": "com.hamza.spotifymvp",
       "icon": "./src/assets/images/AppIcon.png",
-      "jsEngine": "hermes",
       "permissions": [
         "android.permission.READ_EXTERNAL_STORAGE"
       ],
@@ -47,12 +46,11 @@
         }
       ],
       "expo-secure-store",
-      "expo-audio"
+      "expo-audio",
+      "expo-asset"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": false,
-      "newArch": false
+      "typedRoutes": true
     },
     "extra": {
       "router": {},

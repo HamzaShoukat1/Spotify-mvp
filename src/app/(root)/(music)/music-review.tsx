@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { router } from "expo-router";
 import { Alert, Text, View } from "react-native";
 import { Check, FileImage, FileMusic, Globe2, Mic2, Music2 } from "lucide-react-native";

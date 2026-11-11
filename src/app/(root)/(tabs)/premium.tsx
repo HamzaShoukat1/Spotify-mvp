@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  StatusBar,
+  StatusBar
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -67,12 +67,12 @@ export default function PremiumScreen() {
     isLoading: isStatusLoading,
   } = useSubscriptionStatus();
   const subscribeMutation = useSubscribeMutation();
-  const cancelMutation = useCancelSubscriptionMutation(); 
+  const cancelMutation = useCancelSubscriptionMutation();
 
-const STRIPE_PLANS = {
-  PREMIUM_MONTHLY:"price_1UV6SlBNHEQBwf0ez0xIp8k1",
-  //more
-};
+  const STRIPE_PLANS = {
+    PREMIUM_MONTHLY: "price_1UV6SlBNHEQBwf0ez0xIp8k1",
+    //more
+  };
 
   const [selectedPlanId, setSelectedPlanId] = useState(STRIPE_PLANS.PREMIUM_MONTHLY);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -138,7 +138,9 @@ const STRIPE_PLANS = {
 
   return (
     <View className="flex-1 bg-[#121212]">
-      <StatusBar barStyle="light-content" backgroundColor="#121212" />
+      <StatusBar {...({ barStyle: "light-content", backgroundColor: "#121212" } as any)} />
+
+
       <SafeAreaView edges={["top"]} className="flex-1">
         <ScrollView
           className="flex-1"
@@ -222,20 +224,20 @@ const STRIPE_PLANS = {
               freeText="Not available"
               premiumText="Included"
             />
-        
+
             <FeatureRow
               title="Offline Playback"
               freeText="Online only"
               premiumText="Listen anywhere"
               isLast
             />
-                      <FeatureRow
+            <FeatureRow
               title="Ai Features"
               freeText="Not available"
               premiumText="Included"
               isLast
             />
-       
+
           </View>
 
           {!isPremium && (
@@ -257,16 +259,15 @@ const STRIPE_PLANS = {
                   </View>
                   <View className="w-5 h-5 rounded-full border-2 border-[#1DB954] items-center justify-center">
                     <View
-                    className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
-                      selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY
-                        ? "border-[#1DB954]"
-                        : "border-[#727272]"
-                    }`}
-                  >
-                    {selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY && (
-                      <View className="w-2.5 h-2.5 rounded-full bg-[#1DB954]" />
-                    )}
-                  </View>
+                      className={`w-5 h-5 rounded-full border-2 items-center justify-center ${selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY
+                          ? "border-[#1DB954]"
+                          : "border-[#727272]"
+                        }`}
+                    >
+                      {selectedPlanId === STRIPE_PLANS.PREMIUM_MONTHLY && (
+                        <View className="w-2.5 h-2.5 rounded-full bg-[#1DB954]" />
+                      )}
+                    </View>
                   </View>
                 </View>
 

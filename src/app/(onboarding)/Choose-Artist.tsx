@@ -2,7 +2,7 @@ import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, Dimensions,
 import { useMemo, useState } from 'react'
 import { ChevronLeft, Search, Check } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, router } from 'expo-router';
+import {  router } from 'expo-router';
 import { useAuth } from '@/context/Auth.Context';
 import { usePublicArtists } from '@/hooks/useArtist';
 

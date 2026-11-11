@@ -130,7 +130,7 @@ export default function TabLayout() {
                   transition={{
                     type: 'timing',
                     duration: 250,
-                  }}
+                  } as any}
                   className="w-10 h-10 items-center justify-center rounded-full"
                 >
                   {isModalOpen ? (

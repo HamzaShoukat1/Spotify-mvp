@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Check } from "lucide-react-native";
+import { Text, TextInput, } from "react-native";
 import { router } from "expo-router";
 import { ArtistStepLayout } from "@/components/ArtistStepLayout";
 import { useSignup } from "../../context/SignupContext";
@@ -11,8 +10,7 @@ export default function Signup4() {
   const { signupData, setName, resetSignup } = useSignup();
   const [name, setNameLocal] = useState(signupData.name || "");
   const [error, setError] = useState("");
-  const [newsOffers, setNewsOffers] = useState(false);
-  const [shareData, setShareData] = useState(false);
+
 
   const handleCreateAccount = () => {
     const trimmedName = name.trim();

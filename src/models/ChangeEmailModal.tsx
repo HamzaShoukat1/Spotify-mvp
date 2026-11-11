@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MutableRefObject } from "react";
+import { useEffect, useRef, useState, type MutableRefObject , type ComponentRef } from "react";
 import {
     ActivityIndicator,
     KeyboardAvoidingView,
@@ -38,7 +38,9 @@ export function ChangeEmailModal({
     const [newEmail, setNewEmail] = useState("");
     const [verificationToken, setVerificationToken] = useState("");
     const [error, setError] = useState("");
-    const inputs = useRef<Array<TextInput | null>>([]);
+    const inputs = useRef<Array<ComponentRef<typeof TextInput> | null>>([]); 
+
+
     const hasRequestedInitialOtp = useRef(false);
     const otp = otpDigits.join("");
 
@@ -50,14 +52,15 @@ export function ChangeEmailModal({
         });
     }, []);
 
-    useEffect(() => {
+     useEffect(() => {
         setOtpDigits(Array(6).fill(""));
         setError("");
         const timer = setTimeout(() => {
-            inputs.current[0]?.focus();
+            (inputs.current[0] as any)?.focus();
         }, 100);
         return () => clearTimeout(timer);
     }, [step]);
+
 
     const isPending =
         requestCurrentOtp.isPending ||
@@ -212,7 +215,7 @@ export function ChangeEmailModal({
                         </Text>
                         <OtpBoxes
                             otp={otp}
-                            inputs={inputs}
+                            inputs={inputs as any}
                             onChange={handleOtpChange}
                             onKeyPress={handleOtpKeyPress}
                         />
@@ -267,7 +270,7 @@ export function ChangeEmailModal({
                         </Text>
                         <OtpBoxes
                             otp={otp}
-                            inputs={inputs}
+                            inputs={inputs as any}
                             onChange={handleOtpChange}
                             onKeyPress={handleOtpKeyPress}
                         />
@@ -314,7 +317,7 @@ function OtpBoxes({
                 <TextInput
                     key={index}
                     ref={(input) => {
-                        inputs.current[index] = input;
+                        inputs.current[index] = input as any;
                     }}
                     value={otp[index] || ""}
                     onChangeText={(value) => onChange(value, index)}

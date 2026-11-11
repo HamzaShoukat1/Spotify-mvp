@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import {  useCallback } from "react";
 import { useStripe, PaymentSheetError } from "@stripe/stripe-react-native";
 
 export interface InitPaymentSheetParams {

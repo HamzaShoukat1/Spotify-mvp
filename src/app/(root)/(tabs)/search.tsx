@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -10,7 +9,7 @@ import {
   Image 
 } from 'react-native';
 import { TopGenre, Album } from "../../../assets/images";
-import { Search, X, Clock, Sparkles } from 'lucide-react-native';
+import { Search} from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useNetwork } from '@/context/NetworkContext';
@@ -50,12 +49,6 @@ export default function SearchScreen() {
     });
   };
 
-  const handleRecentPress = (query: string) => {
-    router.push({
-      pathname: '/(root)/(screens)/search-bar',
-      params: { query }
-    });
-  };
 
   
 

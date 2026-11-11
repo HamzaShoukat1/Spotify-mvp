@@ -1,9 +1,9 @@
 import { ActivityIndicator, Image, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { ChevronLeft, Pause, Play, Share2 } from "lucide-react-native";
+import { ChevronLeft,  Share2 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TrackPlayer, { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
+import  { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
 import { useAlbum } from "@/hooks/use-album";
 import { AlbumPic } from "../../../assets/images";
 import { PlayingIndicator } from "@/components/PlayingIndicator";
@@ -38,22 +38,22 @@ export default function AlbumView() {
   const coverUrl = album.albumCoverArt?.url;
   const activeTrackId = String(activeTrack?.id ?? "");
   const isPlaying = playbackState.state === State.Playing;
-  const firstTrack = tracks[0];
-  const isFirstTrackActive = activeTrackId === firstTrack?._id;
+  // const firstTrack = tracks[0];
+  // const isFirstTrackActive = activeTrackId === firstTrack?._id;
 
   const openTrack = (musicId: string) => {
     router.push({ pathname: "/Track-View", params: { musicId } });
   };
 
-  const handlePlayAlbum = async () => {
-    if (!firstTrack) return;
-    if (isFirstTrackActive) {
-      if (isPlaying) await TrackPlayer.pause();
-      else await TrackPlayer.play();
-      return;
-    }
-    openTrack(firstTrack._id);
-  };
+  // const handlePlayAlbum = async () => {
+  //   if (!firstTrack) return;
+  //   if (isFirstTrackActive) {
+  //     if (isPlaying) await TrackPlayer.pause();
+  //     else await TrackPlayer.play();
+  //     return;
+  //   }
+  //   openTrack(firstTrack._id);
+  // };
 
   const shareAlbum = () => {
     Share.share({

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import { router } from 'expo-router';
-import { ArrowLeft, MoreVertical } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LikeButton } from '@/components/LikeButton';
 import { useLikedSongs } from '@/hooks/use-like';
@@ -54,7 +54,7 @@ export default function ArtistDetail() {
                     </Text>
                 </View>
 
-                {music?._id && <LikeButton musicId={music._id} size={21} />}
+                {music?._id && <LikeButton musicId={music._id} size={21} isOffline={true} />}
 
             </Pressable>
         );

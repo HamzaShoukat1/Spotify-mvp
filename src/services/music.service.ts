@@ -27,9 +27,6 @@ export interface TrackArtist {
     coverImage?: CloudinaryImage;
 }
 
-type user = {
-    _id: string
-}
 export interface MusicTrack {
     _id: string;
     musicTitle: string;

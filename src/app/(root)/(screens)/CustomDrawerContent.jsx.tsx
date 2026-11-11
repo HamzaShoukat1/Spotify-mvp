@@ -1,5 +1,5 @@
 // import { BecameArtistModel } from '@/models/BecameArtistModel'
-import { Plus, BarChart2, Clock, Settings, Music, Palette } from 'lucide-react-native'
+import {  Settings, Music, Palette } from 'lucide-react-native'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { useCurrentUser } from '@/hooks/use-auth'
 import {router} from "expo-router"

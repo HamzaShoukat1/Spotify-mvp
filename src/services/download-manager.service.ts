@@ -2,7 +2,6 @@ import * as FileSystem from "expo-file-system/legacy";
 import {
   authorizeDownload,
   confirmDownloadCompletion,
-  deleteAllDownloadOnServer,
   deleteDownloadOnServer,
 } from "./download.service";
 import {
@@ -15,7 +14,6 @@ import {
   updateDownloadStatus,
   upsertDownloadRecord,
   verifyFileExists,
-  clearAccountDownloads
 } from "../storage/download-storage";
 
 export interface DownloadProgress {

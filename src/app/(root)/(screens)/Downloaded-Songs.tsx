@@ -25,7 +25,7 @@ import {
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import TrackPlayer, { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
+import  { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
 import {
   useDownloadedSongs,
   useOfflineEntitlement,
@@ -325,7 +325,7 @@ export default function DownloadedSongs() {
                   Couldn't find any downloaded song matching "{searchQuery}".
                 </Text>
               </View>
-            ) : null
+            ) : undefined
           }
         />
       )}

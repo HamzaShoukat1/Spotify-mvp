@@ -1,4 +1,3 @@
-import React from 'react';
 import { BaseToast, ErrorToast } from 'react-native-toast-message';
 
 export const toastConfig = {

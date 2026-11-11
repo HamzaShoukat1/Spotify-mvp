@@ -9,12 +9,12 @@ import * as MediaLibrary from 'expo-media-library/legacy';
 
 export default function MusicAudio() {
   const { musicDraft, updateMusic } = useMusicContext();
-  const [status, requestPermission] = MediaLibrary.usePermissions()
+  const [status] = MediaLibrary.usePermissions()
   const [error, setError] = useState("");
 
   const chooseAudio = async () => {
     if (status && !status.granted) {
-      const permissionResponse = await requestPermission()
+      // const permissionResponse = await requestPermission()
       // if (!permissionResponse.granted) {
       //   setError("Permission to access files was denied.");
       //   return;
