@@ -2,19 +2,23 @@ import { AddMusicModal } from '@/models/AddMusicModal';
 import { Tabs, usePathname } from 'expo-router';
 import { Home, Library, Search, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, Image, Platform } from 'react-native';
 import { MotiView } from 'moti';
-import { Image } from 'react-native';
-import { Logo } from "../../../assets/images/index"
+import { Logo } from "../../../assets/images/index";
 import { MediaPlayerBar } from '@/components/Media-Player-bar';
 import Toast from 'react-native-toast-message';
 import { useNetwork } from '@/context/NetworkContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; // Import this
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isTrackViewOpen = usePathname().endsWith('/Track-View');
   const { isOffline } = useNetwork();
-
+  
+  const insets = useSafeAreaInsets();
+  
+  const baseHeight = 60;
+  const totalTabBarHeight = baseHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom * 0.5);
 
   const handleCreatePress = () => {
     if (isOffline) {
@@ -26,7 +30,6 @@ export default function TabLayout() {
       });
       return;
     }
-
     setIsModalOpen(!isModalOpen);
   };
 
@@ -40,9 +43,9 @@ export default function TabLayout() {
             borderTopWidth: 0,
             elevation: 0,
             shadowOpacity: 0,
-            height: 65,
-            paddingBottom: 8,
-            paddingTop: 10,
+            // Dynamic safe adaptive sizing:
+            height: totalTabBarHeight,
+            paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
           },
           sceneStyle: {
             backgroundColor: '#121212',
@@ -119,7 +122,8 @@ export default function TabLayout() {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={handleCreatePress} 
-                className="flex-1 items-center justify-center pt-1"
+                className="flex-1 items-center justify-center"
+                style={{ paddingTop: Platform.OS === 'ios' ? 0 : 4 }}
               >
                 <MotiView
                   animate={{
@@ -146,13 +150,19 @@ export default function TabLayout() {
       </Tabs>
 
       {!isTrackViewOpen && (
-        <View className="absolute bottom-[65px] left-0 right-0 z-[50]">
+        <View 
+          className="absolute left-0 right-0 z-[50]"
+          style={{ bottom: totalTabBarHeight }}
+        >
           <MediaPlayerBar />
         </View>
       )}
 
       {isModalOpen && (
-        <View className="absolute inset-x-0 bottom-[65px] top-0 z-[70]">
+        <View 
+          className="absolute inset-x-0 top-0 z-[70]"
+          style={{ bottom: totalTabBarHeight }}
+        >
           <AddMusicModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </View>
       )}
