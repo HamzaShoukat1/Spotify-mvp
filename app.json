@@ -11,6 +11,7 @@
       "bundleIdentifier": "com.hamza.spotifymvp"
     },
     "android": {
+   
       "package": "com.hamza.spotifymvp",
       "icon": "./src/assets/images/AppIcon.png",
       "permissions": [
@@ -47,7 +48,16 @@
       ],
       "expo-secure-store",
       "expo-audio",
-      "expo-asset"
+      "expo-asset",
+      [
+  "expo-build-properties",
+  {
+    "android": {
+      "enableMinifyInReleaseBuilds": true,
+      "extraProguardRules": "-dontwarn com.stripe.android.pushProvisioning.**"
+    }
+  }
+]
     ],
     "experiments": {
       "typedRoutes": true
