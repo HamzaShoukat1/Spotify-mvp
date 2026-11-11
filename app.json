@@ -6,12 +6,12 @@
     "orientation": "portrait",
     "scheme": "spotifymvp",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
     "ios": {
       "icon": "./src/assets/images/AppIcon.png",
       "bundleIdentifier": "com.hamza.spotifymvp"
     },
     "android": {
-   
       "package": "com.hamza.spotifymvp",
       "icon": "./src/assets/images/AppIcon.png",
       "permissions": [
@@ -22,10 +22,6 @@
         "foregroundImage": "./src/assets/images/AppIcon.png"
       },
       "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./src/assets/images/AppIcon.png"
     },
     "plugins": [
       [
@@ -50,14 +46,14 @@
       "expo-audio",
       "expo-asset",
       [
-  "expo-build-properties",
-  {
-    "android": {
-      "enableMinifyInReleaseBuilds": true,
-      "extraProguardRules": "-dontwarn com.stripe.android.pushProvisioning.**"
-    }
-  }
-]
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "extraProguardRules": "-dontwarn com.stripe.android.pushProvisioning.**"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
