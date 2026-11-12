@@ -14,7 +14,7 @@ import { NetworkProvider } from "@/context/NetworkContext";
 import Toast from 'react-native-toast-message';
 import { toastConfig } from "@/utils";
 
-const STRIPE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+const STRIPE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_51UTL1QBNHEQBwf0e5WeCdA95lbaQ2UG3iqapkBnTe5OBPpKRqsjN8aLWl1YfGbbh6IEu1qn2YDdEopx4PTfkZy4W007kUHSwSz";
 
 export const unstable_settings = { anchor: "(root)" };
 
