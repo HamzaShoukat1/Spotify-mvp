@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowDownCircle, Brain, EllipsisVertical, Heart, Plus } from "lucide-react-native";
+import { ArrowDownCircle, EllipsisVertical, Heart, Plus } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useLikedSongs } from "@/hooks/use-like";
 import { useCurrentUser } from "@/hooks/use-auth";
@@ -35,12 +35,7 @@ const LIBRARY_ITEMS = [
     customIcon: "download",
     route: "/(root)/(screens)/Downloaded-Songs",
   },
-  {
-    id: "music-dna",
-    title: "Music DNA",
-    customIcon: "dna",
-    route: "/(root)/(screens)/Music-DNA",
-  },
+ 
 ];
 
 // const FILTER_TAGS = ["Artists"];
@@ -192,11 +187,7 @@ export default function Library() {
                   <View className="w-[64px] h-[64px] rounded bg-[#10301C] items-center justify-center border border-[#1DB954]/30">
                     <ArrowDownCircle color="#1DB954" size={26} />
                   </View>
-                ) : item.customIcon === "dna" ? (
-                  <View className="w-[64px] h-[64px] rounded bg-[#1DB954] items-center justify-center">
-                    <Brain color="#000000" size={26} />
-                  </View>
-                ) : (
+                ) :(
                   <View className="w-[64px] h-[64px] bg-[#282828] items-center justify-center rounded">
                     <Heart color="#a7a7a7" size={22} />
                   </View>

@@ -8,29 +8,35 @@ import { Logo } from "../../../assets/images/index";
 import { MediaPlayerBar } from '@/components/Media-Player-bar';
 import Toast from 'react-native-toast-message';
 import { useNetwork } from '@/context/NetworkContext';
-import { useSafeAreaInsets } from 'react-native-safe-area-context'; // Import this
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isTrackViewOpen = usePathname().endsWith('/Track-View');
+
+  const pathname = usePathname();
+  const isTrackViewOpen = pathname.endsWith('/Track-View');
+
   const { isOffline } = useNetwork();
-  
   const insets = useSafeAreaInsets();
-  
-  const baseHeight = 60;
-  const totalTabBarHeight = baseHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom * 0.5);
+
+  const BASE_TAB_HEIGHT = 60;
+
+  const bottomInset = Platform.OS === 'ios' ? insets.bottom : Math.max(insets.bottom, 0);
+
+  const totalTabBarHeight = BASE_TAB_HEIGHT + bottomInset;
 
   const handleCreatePress = () => {
     if (isOffline) {
       Toast.show({
-        type: "error",
-        text1: "Online access needed",
-        position: "top",
+        type: 'error',
+        text1: 'Online access needed',
+        position: 'top',
         visibilityTime: 4000,
       });
       return;
     }
-    setIsModalOpen(!isModalOpen);
+
+    setIsModalOpen((prev) => !prev);
   };
 
   return (
@@ -38,31 +44,43 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
+
           tabBarStyle: {
             backgroundColor: '#000000',
             borderTopWidth: 0,
             elevation: 0,
             shadowOpacity: 0,
-            // Dynamic safe adaptive sizing:
             height: totalTabBarHeight,
-            paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
+            paddingTop: 4,
+            paddingBottom: bottomInset,
           },
+
           sceneStyle: {
             backgroundColor: '#121212',
           },
+
           tabBarActiveTintColor: '#FFFFFF',
           tabBarInactiveTintColor: '#737373',
+
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '600',
             marginTop: 2,
             letterSpacing: -0.2,
           },
+
+          tabBarItemStyle: {
+            height: BASE_TAB_HEIGHT,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
         }}
       >
         <Tabs.Screen
           name="home"
-          listeners={{ tabPress: () => setIsModalOpen(false) }}
+          listeners={{
+            tabPress: () => setIsModalOpen(false),
+          }}
           options={{
             title: 'Home',
             tabBarIcon: ({ color, size }) => (
@@ -70,9 +88,12 @@ export default function TabLayout() {
             ),
           }}
         />
+
         <Tabs.Screen
           name="search"
-          listeners={{ tabPress: () => setIsModalOpen(false) }}
+          listeners={{
+            tabPress: () => setIsModalOpen(false),
+          }}
           options={{
             title: 'Search',
             tabBarIcon: ({ color, size }) => (
@@ -80,9 +101,12 @@ export default function TabLayout() {
             ),
           }}
         />
+
         <Tabs.Screen
           name="library"
-          listeners={{ tabPress: () => setIsModalOpen(false) }}
+          listeners={{
+            tabPress: () => setIsModalOpen(false),
+          }}
           options={{
             title: 'Your Library',
             tabBarIcon: ({ color, size }) => (
@@ -90,9 +114,12 @@ export default function TabLayout() {
             ),
           }}
         />
+
         <Tabs.Screen
           name="premium"
-          listeners={{ tabPress: () => setIsModalOpen(false) }}
+          listeners={{
+            tabPress: () => setIsModalOpen(false),
+          }}
           options={{
             title: 'Premium',
             tabBarIcon: ({ color, size }) => (
@@ -102,34 +129,34 @@ export default function TabLayout() {
                   width: size - 2,
                   height: size - 2,
                   resizeMode: 'contain',
-                  tintColor: color
+                  tintColor: color,
                 }}
               />
             ),
           }}
         />
+
         <Tabs.Screen
           name="create"
           options={{
             title: 'Create',
-            tabBarIcon: ({ size }) =>
-              isModalOpen ? (
-                <X color="#000000" size={size - 1} strokeWidth={2.5} />
-              ) : (
-                <Plus color="#FFFFFF" size={size - 1} strokeWidth={2.5} />
-              ),
+
             tabBarButton: () => (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={handleCreatePress} 
+                onPress={handleCreatePress}
                 className="flex-1 items-center justify-center"
-                style={{ paddingTop: Platform.OS === 'ios' ? 0 : 4 }}
+                style={{
+                  height: BASE_TAB_HEIGHT,
+                }}
               >
                 <MotiView
                   animate={{
                     backgroundColor: isModalOpen ? '#FFFFFF' : 'transparent',
                     borderRadius: isModalOpen ? 9999 : 0,
-                    transform: [{ rotate: isModalOpen ? '90deg' : '0deg' }],
+                    transform: [
+                      { rotate: isModalOpen ? '90deg' : '0deg' },
+                    ],
                   }}
                   transition={{
                     type: 'timing',
@@ -138,9 +165,17 @@ export default function TabLayout() {
                   className="w-10 h-10 items-center justify-center rounded-full"
                 >
                   {isModalOpen ? (
-                    <X color="#000000" size={20} strokeWidth={2.8} />
+                    <X
+                      color="#000000"
+                      size={20}
+                      strokeWidth={2.8}
+                    />
                   ) : (
-                    <Plus color="#B3B3B3" size={22} strokeWidth={2.2} />
+                    <Plus
+                      color="#B3B3B3"
+                      size={22}
+                      strokeWidth={2.2}
+                    />
                   )}
                 </MotiView>
               </TouchableOpacity>
@@ -150,20 +185,27 @@ export default function TabLayout() {
       </Tabs>
 
       {!isTrackViewOpen && (
-        <View 
+        <View
           className="absolute left-0 right-0 z-[50]"
-          style={{ bottom: totalTabBarHeight }}
+          style={{
+            bottom: totalTabBarHeight,
+          }}
         >
           <MediaPlayerBar />
         </View>
       )}
 
       {isModalOpen && (
-        <View 
+        <View
           className="absolute inset-x-0 top-0 z-[70]"
-          style={{ bottom: totalTabBarHeight }}
+          style={{
+            bottom: totalTabBarHeight,
+          }}
         >
-          <AddMusicModal visible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+          <AddMusicModal
+            visible={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
         </View>
       )}
     </>

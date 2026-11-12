@@ -39,3 +39,33 @@ export function formatTime(seconds: number): string {
     const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
     return `${minutes}:${remainingSeconds}`;
 }
+
+
+
+export type QueueTrack = {
+    id: string;
+    url: string;
+    title: string;
+    artist: string;
+    artwork?: string;
+};
+
+export async function playTrackQueue(tracks: QueueTrack[]) {
+    if (!tracks.length) return;
+
+    await setupPlayer();
+
+    await TrackPlayer.reset();
+
+    await TrackPlayer.add(
+        tracks.map((track) => ({
+            id: track.id,
+            url: track.url,
+            title: track.title,
+            artist: track.artist,
+            artwork: track.artwork,
+        }))
+    );
+
+    await TrackPlayer.play();
+}

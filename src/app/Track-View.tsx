@@ -393,7 +393,11 @@ function TrackViewContent({
     try {
       await TrackPlayer.skipToNext();
     } catch (error) {
-      console.error("Failed to skip to next track:", error);
+      // console.error("Failed to skip to next track:", error);
+        Toast.show({
+      type: "info",
+      text1: "No next song available",
+    });
     }
   };
 
@@ -402,6 +406,10 @@ function TrackViewContent({
       await TrackPlayer.skipToPrevious();
     } catch (error) {
       console.error("Failed to skip to previous track:", error);
+        Toast.show({
+      type: "info",
+      text1: "No previous song available",
+    });
     }
   };
 

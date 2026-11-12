@@ -124,7 +124,44 @@ export default function Home() {
       </TouchableOpacity>
     )
   }
+// const renderMusic = ({ item, index }: any) => {
+//   const imageUrl = item.coverPhoto?.url;
+//   const targetId = item._id;
 
+//   const handleSongPress = () => {
+//     const queueIds = Musicdetailforhome
+//       .slice(index)
+//       .map((song: any) => song._id);
+
+//     router.push({
+//       pathname: "/Track-View",
+//       params: {
+//         musicId: targetId,
+//         queueIds: JSON.stringify(queueIds),
+//       },
+//     });
+//   };
+
+//   return (
+//     <TouchableOpacity
+//       onPress={handleSongPress}
+//       className="mr-4 w-[140px]"
+//     >
+//       <Image
+//         source={{ uri: imageUrl }}
+//         className="w-full max-w-[154px] h-[154px] bg-neutral-800 rounded-none"
+//         resizeMode="cover"
+//       />
+
+//       <Text
+//         numberOfLines={2}
+//         className="text-neutral-400 text-xs font-semibold mt-2 w-full"
+//       >
+//         {item.musicTitle}
+//       </Text>
+//     </TouchableOpacity>
+//   );
+// };
   const renderArtists = ({ item }: any) => {
     const imageUrl = item.profileImage?.url
     const targetId = item._id
