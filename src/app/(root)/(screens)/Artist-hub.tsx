@@ -26,14 +26,13 @@ import { useEffect, useState } from 'react';
 import {
     useArtistProfile,
     useUpdateArtistProfile,
-    useUploadedAlbumCount,
     useUploadedSongCount,
 } from '@/hooks/useArtist';
 
 import { useProfileContext } from '@/context/ProfileContext';
 import { useAlbumContext } from '@/context/AlbumContext';
 import { EditProfileModal } from '@/models/EditProfileModal';
-import { useAlbums } from '@/hooks/use-album';
+import { useUploadedAlbumCount } from '@/hooks/use-album';
 
 import type { UpdateArtistProfileData } from '@/services/artist.service';
 
@@ -41,8 +40,8 @@ import type { UpdateArtistProfileData } from '@/services/artist.service';
 export default function Artisthub() {
     const { profile, setProfile } = useProfileContext();
     const { resetAlbum } = useAlbumContext();
-    const { data: songCount, refetch: Countrefetch, isFetching: Countrefetching } = useUploadedSongCount();
-    const { data: albumCount, refetch: albumsRefetch, isFetching: albumsRefetching } = useUploadedAlbumCount();
+    const { data: songCount, refetch: Countrefetch, isFetching: Countrefetching } = useUploadedSongCount(profile?._id);
+    const { data: albumCount, refetch: albumsRefetch, isFetching: albumsRefetching } = useUploadedAlbumCount(profile?._id);
     // const { data: albums = [], refetch: albumsRefetch, isFetching: albumsRefetching } = useAlbums();
 
     const { data: profileQuery, refetch: artistretch, isRefetching: artistrefetching } = useArtistProfile();
@@ -324,7 +323,7 @@ export default function Artisthub() {
                                 <View className="flex-row mt-6 border-t border-[#2A2A2A] pt-5">
                                     <View className="flex-1 items-center">
                                         <Text className="text-white text-xl font-bold">
-                                            {songCount}
+                                            {songCount ?? 0}
                                         </Text>
 
                                         <Text className="text-[#A7A7A7] text-xs mt-1">
@@ -336,7 +335,7 @@ export default function Artisthub() {
 
                                     <View className="flex-1 items-center">
                                         <Text className="text-white text-xl font-bold">
-                                            {albumCount}
+                                            {albumCount ?? 0}
                                         </Text>
 
                                         <Text className="text-[#A7A7A7] text-xs mt-1">

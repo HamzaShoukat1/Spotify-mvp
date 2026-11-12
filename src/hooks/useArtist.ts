@@ -3,7 +3,6 @@ import {
     getArtistdetailforpubluc,
     getArtistProfile,
     getPublicArtists,
-    getUploadedAlbumCount,
     getUploadedSongCount,
     updateArtistProfile,
 } from '@/services/artist.service';
@@ -61,17 +60,12 @@ export function usePublicArtists() {
 }
 
 
-export function useUploadedSongCount() {
+
+export function useUploadedSongCount(userId?: string) {
     return useQuery({
-        queryKey: ['uploadedSongCount'],
+        queryKey: ['uploadedSongCount', userId],
         queryFn: getUploadedSongCount,
+        enabled: !!userId,
     });
 }
 
-export function useUploadedAlbumCount() {
-    return useQuery({
-        queryKey: ['uploadedAlbumCount'],
-        queryFn: getUploadedAlbumCount
-
-    });
-}   

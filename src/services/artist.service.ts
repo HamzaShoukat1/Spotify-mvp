@@ -31,6 +31,7 @@ export type ArtistMusic = {
 }[];
 
 export interface CreatedArtist extends Omit<ArtistData, "profileImage" | "coverImage"> {
+    _id: string;
     profileImage: CloudinaryImage;
     coverImage: CloudinaryImage;
 }

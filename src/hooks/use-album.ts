@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createAlbum, getAlbum, getAlbums } from "@/services/album.service";
+import { getUploadedAlbumCount } from "@/services/artist.service";
 
 export function useCreateAlbum() {
   const queryClient = useQueryClient();
@@ -17,5 +18,13 @@ export function useAlbum(albumId?: string) {
       return getAlbum(albumId);
     },
     enabled: !!albumId,
+  });
+}
+
+export function useUploadedAlbumCount(userId?: string) {
+  return useQuery({
+    queryKey: ['uploadedAlbumCount', userId],
+    queryFn: getUploadedAlbumCount,
+    enabled: !!userId, 
   });
 }
