@@ -3,6 +3,7 @@ import {
     getArtistdetailforpubluc,
     getArtistProfile,
     getPublicArtists,
+    getUploadedAlbumCount,
     getUploadedSongCount,
     updateArtistProfile,
 } from '@/services/artist.service';
@@ -66,3 +67,11 @@ export function useUploadedSongCount() {
         queryFn: getUploadedSongCount,
     });
 }
+
+export function useUploadedAlbumCount() {
+    return useQuery({
+        queryKey: ['uploadedAlbumCount'],
+        queryFn: getUploadedAlbumCount
+
+    });
+}   

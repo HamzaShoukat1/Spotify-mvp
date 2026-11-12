@@ -26,6 +26,7 @@ import { useEffect, useState } from 'react';
 import {
     useArtistProfile,
     useUpdateArtistProfile,
+    useUploadedAlbumCount,
     useUploadedSongCount,
 } from '@/hooks/useArtist';
 
@@ -41,7 +42,8 @@ export default function Artisthub() {
     const { profile, setProfile } = useProfileContext();
     const { resetAlbum } = useAlbumContext();
     const { data: songCount, refetch: Countrefetch, isFetching: Countrefetching } = useUploadedSongCount();
-    const { data: albums = [], refetch: albumsRefetch, isFetching: albumsRefetching } = useAlbums();
+    const { data: albumCount, refetch: albumsRefetch, isFetching: albumsRefetching } = useUploadedAlbumCount();
+    // const { data: albums = [], refetch: albumsRefetch, isFetching: albumsRefetching } = useAlbums();
 
     const { data: profileQuery, refetch: artistretch, isRefetching: artistrefetching } = useArtistProfile();
     const updateProfile = useUpdateArtistProfile();
@@ -334,7 +336,7 @@ export default function Artisthub() {
 
                                     <View className="flex-1 items-center">
                                         <Text className="text-white text-xl font-bold">
-                                            {albums.length}
+                                            {albumCount}
                                         </Text>
 
                                         <Text className="text-[#A7A7A7] text-xs mt-1">

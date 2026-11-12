@@ -123,7 +123,11 @@ export async function getUploadedSongCount() {
         method: "GET",
     });
 }
-
+export async function getUploadedAlbumCount() {
+    return ApiClient(`${BackendUrl}/artist/getuploadedalbumnumber`, {
+        method: "GET",
+    });
+}
 
 export async function getPublicArtists(): Promise<publicArtist[]> {
     return ApiClient(`${BackendUrl}/artist/public`, {
