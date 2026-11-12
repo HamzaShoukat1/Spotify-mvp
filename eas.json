@@ -14,7 +14,8 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_BACKEND_URL": "https://spotify-backened.vercel.app"
+        "EXPO_PUBLIC_BACKEND_URL":"https://spotify-backened.vercel.app",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY":"pk_test_51UTL1QBNHEQBwf0e5WeCdA95lbaQ2UG3iqapkBnTe5OBPpKRqsjN8aLWl1YfGbbh6IEu1qn2YDdEopx4PTfkZy4W007kUHSwSz"
       }
     },
     "production": {
