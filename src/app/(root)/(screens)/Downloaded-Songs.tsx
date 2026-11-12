@@ -29,7 +29,6 @@ import  { State, useActiveTrack, usePlaybackState } from "react-native-track-pla
 import {
   useDownloadedSongs,
   useOfflineEntitlement,
-  useRemoveAllDownloads,
   useSongDownload,
 } from "@/hooks/use-downloads";
 import type { LocalDownloadRecord } from "@/storage/download-storage";
@@ -54,7 +53,7 @@ function formatDuration(seconds?: number): string {
 
 export default function DownloadedSongs() {
   const { downloadedSongs, isLoading, count } = useDownloadedSongs();
-  const { removeAllAsync, isDeleting: isDeletingAll } = useRemoveAllDownloads();
+  // const { removeAllAsync, isDeleting: isDeletingAll } = useRemoveAllDownloads();
   const { isOffline } = useNetwork();
   useOfflineEntitlement();
 
@@ -100,14 +99,7 @@ export default function DownloadedSongs() {
     }
   };
 
-  const confirmRemoveAllSongs = async () => {
-    try {
-      await removeAllAsync();
-      setShowRemoveAllModal(false);
-    } catch (err: any) {
-      Alert.alert("Error", err?.message || "Could not remove all downloads");
-    }
-  };
+
 
   const renderItem = ({ item, index }: { item: LocalDownloadRecord; index: number }) => {
     const isActive = activeTrackId === item.musicId;
@@ -389,20 +381,7 @@ export default function DownloadedSongs() {
           This will remove all {count} downloaded {count === 1 ? "song" : "songs"} from your device storage. They will no longer be available for offline listening.
         </Text>
 
-        <TouchableOpacity
-          onPress={confirmRemoveAllSongs}
-          disabled={isDeletingAll}
-          activeOpacity={0.85}
-          className="w-full bg-[#EF4444] py-3.5 rounded-full items-center justify-center mb-2.5"
-        >
-          {isDeletingAll ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
-            <Text className="text-white font-extrabold text-xs uppercase tracking-wider">
-              Remove All Downloads
-            </Text>
-          )}
-        </TouchableOpacity>
+      
 
         <TouchableOpacity
           onPress={() => setShowRemoveAllModal(false)}
