@@ -12,9 +12,8 @@ import {
   getStoredOfflineEntitlement,
   saveOfflineEntitlement,
   isOfflinePlaybackAllowed,
-  clearAccountDownloads
 } from "../storage/download-storage";
-import { getOfflineEntitlement, deleteAllDownloadOnServer } from "../services/download.service";
+import { getOfflineEntitlement } from "../services/download.service";
 import { useAuth } from "../context/Auth.Context";
 
 export const DOWNLOADS_QUERY_KEY = ["downloads", "list"] as const;
@@ -158,26 +157,7 @@ export function useSongDownload(musicId: string | null | undefined) {
   };
 }
 
-export function useRemoveAllDownloads() {
-  const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: deleteAllDownloadOnServer,
-    onSuccess: async () => {
-      await clearAccountDownloads();
-      queryClient.invalidateQueries({ queryKey: ["downloads"] });
-    },
-    onError: (error) => {
-      console.error("Failed to remove downloads:", error);
-    }
-  });
-
-  return {
-    removeAllAsync: mutation.mutateAsync,
-    isDeleting: mutation.isPending,
-    error: mutation.error,
-  };
-}
 
 export function useOfflineEntitlement() {
   const { user } = useAuth();
@@ -213,9 +193,8 @@ export function useOfflineEntitlement() {
       }
     },
     enabled: Boolean(userId),
-    staleTime: 1000 * 60 * 60, // 1 hour
-    retry: 1,
-  });
+    retry: 1
+  })
 
   const checkCanPlayOffline = useCallback(async () => {
     return isOfflinePlaybackAllowed(userId);

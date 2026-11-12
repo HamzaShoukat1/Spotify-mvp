@@ -2,7 +2,7 @@ import { getAccessToken } from "@/storage/secureStorage";
 import { ApiClient } from "@/api/ApiClient";
 import type { AlbumDraft } from "@/context/AlbumContext";
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000";
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "https://vercel.app";
 
 export type AlbumSummary = {
   _id: string;

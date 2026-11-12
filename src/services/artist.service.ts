@@ -1,4 +1,4 @@
-const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000"
+const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "https://vercel.app"
 
 // const BackendUrl = "http://192.168.100.159:9000"
 

@@ -1,7 +1,7 @@
 import { ApiClient } from "@/api/ApiClient";
 
 const BackendUrl =
-  process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000";
+  process.env.EXPO_PUBLIC_BACKEND_URL || "https://vercel.app";
 
 export interface SubscriptionDetails {
   id: string;

@@ -1,6 +1,6 @@
 import { ApiClient } from "@/api/ApiClient";
 
-const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "http://192.168.100.247:9000";
+const BackendUrl = process.env.EXPO_PUBLIC_BACKEND_URL || "https://vercel.app";
 const API = `${BackendUrl}/api/ai`;
 
 export type MusicDNAProfile = {
