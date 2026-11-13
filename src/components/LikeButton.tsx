@@ -6,7 +6,7 @@ import { useLikedSongs, useToggleLike } from '@/hooks/use-like';
 type LikeButtonProps = {
     musicId: string;
     size?: number;
-    isOffline: boolean
+    isOffline?: boolean
 };
 
 export function LikeButton({ musicId, size = 25, isOffline }: LikeButtonProps) {

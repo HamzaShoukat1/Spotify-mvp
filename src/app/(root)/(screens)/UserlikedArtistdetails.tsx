@@ -54,7 +54,7 @@ export default function ArtistDetail() {
                     </Text>
                 </View>
 
-                {music?._id && <LikeButton musicId={music._id} size={21} isOffline={true} />}
+                {music?._id && <LikeButton musicId={music._id} size={21}  />}
 
             </Pressable>
         );

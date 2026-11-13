@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, TextInput, } from "react-native";
+import { Text, TextInput } from "react-native";
 import { router } from "expo-router";
 import { ArtistStepLayout } from "@/components/ArtistStepLayout";
 import { useSignup } from "../../context/SignupContext";
@@ -11,11 +11,21 @@ export default function Signup4() {
   const [name, setNameLocal] = useState(signupData.name || "");
   const [error, setError] = useState("");
 
+  const handleNameChange = (value: string) => {
+    const sanitizedValue = value.replace(/[^a-zA-Z\u00C0-\u024F\s'-]/g, "");
+    setNameLocal(sanitizedValue);
+    setError("");
+  };
 
   const handleCreateAccount = () => {
     const trimmedName = name.trim();
     if (!trimmedName) {
       setError("Please enter your name.");
+      return;
+    }
+
+    if (!/^[a-zA-Z\u00C0-\u024F\s'-]+$/.test(trimmedName)) {
+      setError("Name can only contain letters, spaces, hyphens, and apostrophes.");
       return;
     }
 
@@ -56,10 +66,7 @@ export default function Signup4() {
     >
       <TextInput
         value={name}
-        onChangeText={(value) => {
-          setNameLocal(value);
-          setError("");
-        }}
+        onChangeText={handleNameChange}
         className="h-14 w-full rounded-xl border border-[#303030] bg-[#282828] px-4 text-base text-white"
         placeholder="Your name"
         placeholderTextColor="#A3A3A3"
@@ -71,44 +78,6 @@ export default function Signup4() {
       />
 
       {error ? <Text className="mt-2 text-sm text-red-500">{error}</Text> : null}
-
-
-      {/* <View className="mt-7 gap-5">
-        <TouchableOpacity
-          onPress={() => setNewsOffers((value) => !value)}
-          activeOpacity={0.8}
-          className="flex-row items-center"
-        >
-          <View
-            className={`mr-3 h-6 w-6 items-center justify-center rounded-full border ${
-              newsOffers ? "border-[#1ED760] bg-[#1ED760]" : "border-[#777777]"
-            }`}
-          >
-            {newsOffers ? <Check size={15} color="#000000" strokeWidth={3} /> : null}
-          </View>
-          <Text className="flex-1 text-sm leading-5 text-white">
-            Send me news and offers from Spotify.
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setShareData((value) => !value)}
-          activeOpacity={0.8}
-          className="flex-row items-center"
-        >
-          <View
-            className={`mr-3 h-6 w-6 items-center justify-center rounded-full border ${
-              shareData ? "border-[#1ED760] bg-[#1ED760]" : "border-[#777777]"
-            }`}
-          >
-            {shareData ? <Check size={15} color="#000000" strokeWidth={3} /> : null}
-          </View>
-          <Text className="flex-1 text-sm leading-5 text-white">
-            Share my registration data with Spotify's content providers for
-            marketing purposes.
-          </Text>
-        </TouchableOpacity>
-      </View> */}
     </ArtistStepLayout>
   );
 }

@@ -1,7 +1,7 @@
 import { AddMusicModal } from '@/models/AddMusicModal';
 import { Tabs, usePathname } from 'expo-router';
 import { Home, Library, Search, Plus, X } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TouchableOpacity, View, Image, Platform } from 'react-native';
 import { MotiView } from 'moti';
 import { Logo } from "../../../assets/images/index";
@@ -9,9 +9,11 @@ import { MediaPlayerBar } from '@/components/Media-Player-bar';
 import Toast from 'react-native-toast-message';
 import { useNetwork } from '@/context/NetworkContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import TrackPlayer, { useActiveTrack } from 'react-native-track-player';
 
 export default function TabLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const pathname = usePathname();
   const isTrackViewOpen = pathname.endsWith('/Track-View');
@@ -38,6 +40,47 @@ export default function TabLayout() {
 
     setIsModalOpen((prev) => !prev);
   };
+  const activeTrack = useActiveTrack();
+
+  // Check whether the active song is stored locally.
+  const isLocalTrack =
+    typeof activeTrack?.url === 'string' &&
+    (
+      /^(file|content):\/\//i.test(activeTrack.url) ||
+      activeTrack.url.startsWith('/')
+    );
+
+  useEffect(() => {
+    if (!isOffline) return;
+
+    let cancelled = false;
+
+    const stopOnlineMusic = async () => {
+      try {
+        const track = await TrackPlayer.getActiveTrack();
+
+        if (cancelled || !track) return;
+
+        const url = typeof track.url === 'string' ? track.url : '';
+
+        const isDownloadedTrack =
+          /^(file|content):\/\//i.test(url) ||
+          url.startsWith('/');
+
+        if (!isDownloadedTrack) {
+          await TrackPlayer.reset();
+        }
+      } catch (error) {
+        console.error('Error stopping online playback:', error);
+      }
+    };
+
+    stopOnlineMusic();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOffline]);
 
   return (
     <>
@@ -184,13 +227,13 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      {!isTrackViewOpen && (
+      {!isTrackViewOpen && (!isOffline || isLocalTrack) && (
         <View
           className="absolute left-0 right-0 z-[50]"
           style={{
             bottom: totalTabBarHeight,
           }}
-        >
+        >{ }
           <MediaPlayerBar />
         </View>
       )}

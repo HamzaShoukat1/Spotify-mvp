@@ -45,7 +45,7 @@ export default function MusicDetails() {
       <TextInput
         value={musicName}
         onChangeText={(value) => {
-          setMusicName(value);
+          setMusicName(value.replace(/[^a-zA-Z0-9 _.-]/g, ""));
           setError("");
         }}
         placeholder="Enter song title"

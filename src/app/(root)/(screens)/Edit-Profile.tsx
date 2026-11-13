@@ -36,7 +36,9 @@ export default function EditProfile() {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const HandleUsernameChange = (newUserName: string) => {
-    mutate(newUserName, {
+    const sanitizedUserName = newUserName.replace(/[^a-zA-Z0-9 _.-]/g, "");
+
+    mutate(sanitizedUserName, {
       onSuccess: () => {
         setIsModalOpen(false);
 

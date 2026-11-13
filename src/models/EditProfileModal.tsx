@@ -73,7 +73,7 @@ export function EditProfileModal({
         });
     };
 
-    const updateField = (
+   const updateField = (
         field: keyof UpdateArtistProfileData,
         value: string
     ) => {
@@ -81,9 +81,14 @@ export function EditProfileModal({
             return;
         }
 
+        const sanitizedValue =
+            field === 'name'
+                ? value.replace(/[^a-zA-Z0-9 _.-]/g, '')
+                : value;
+
         setForm({
             ...form,
-            [field]: value,
+            [field]: sanitizedValue,
         });
     };
 

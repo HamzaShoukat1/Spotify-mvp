@@ -75,7 +75,7 @@ export default function CreatePlaylistPage() {
           <TextInput
             accessibilityLabel="Playlist name"
             value={name}
-            onChangeText={setName}
+            onChangeText={(value) => setName(value.replace(/[^a-zA-Z0-9 _.-]/g, ""))}
             autoFocus
             maxLength={20}
             placeholder="My Playlist"

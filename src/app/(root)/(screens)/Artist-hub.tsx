@@ -12,7 +12,6 @@ import {
 import {
     ChevronLeft,
     Music2,
-    Disc3,
     BarChart3,
     UserRound,
     ChevronRight,
@@ -125,24 +124,25 @@ export default function Artisthub() {
     };
 
     const menuItems = [
-        {
-            title: 'Overview',
-            subtitle: 'Your artist dashboard',
-            icon: BarChart3,
-            route: null,
-        },
-        {
-            title: 'Music',
-            subtitle: 'Manage your songs',
-            icon: Music2,
-            route: null,
-        },
-        {
-            title: 'Albums',
-            // subtitle: `${albums.length} ${albums.length === 1 ? 'album' : 'albums'} · Create and manage`,
-            subtitle: 'Create and manage your albums',
-            icon: Disc3,
-        },
+        // {
+        //     title: 'Overview',
+        //     subtitle: 'Your artist dashboard',
+        //     icon: BarChart3,
+        //     route: null,
+        // },
+        // {
+        //     title: 'Music',
+        //     subtitle: 'Manage your songs',
+        //     icon: Music2,
+        //     route: null,
+        // },
+        // {
+        //     title: 'Albums',
+        //     // subtitle: `${albums.length} ${albums.length === 1 ? 'album' : 'albums'} · Create and manage`,
+        //     subtitle: 'Create and manage your albums',
+        //     icon: Disc3,
+        //     route:null
+        // },
         {
             title: 'Analytics',
             subtitle: 'See how your music performs',

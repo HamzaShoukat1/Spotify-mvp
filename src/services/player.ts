@@ -1,71 +1,69 @@
-import TrackPlayer, { Capability, AppKilledPlaybackBehavior } from 'react-native-track-player';
+import TrackPlayer, {
+  Capability,
+  AppKilledPlaybackBehavior,
+} from "react-native-track-player";
 
 let setupPromise: Promise<void> | null = null;
 
 export function setupPlayer(): Promise<void> {
-    if (!setupPromise) {
-        setupPromise = TrackPlayer.setupPlayer()
-            .catch((error) => {
-                // The native player can outlive an Expo Go JavaScript reload.
-                // In that case it is already initialized, so reuse it.
-                const message = error instanceof Error ? error.message : String(error);
-                if (!message.toLowerCase().includes('already been initialized')) {
-                    throw error;
-                }
-            })
-            .then(() => TrackPlayer.updateOptions({
-                capabilities: [Capability.Play, Capability.Pause, Capability.SeekTo, Capability.Stop],
-                notificationCapabilities: [Capability.Play, Capability.Pause, Capability.Stop],
-                progressUpdateEventInterval: 1,
-                android: {
-                    appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-                },
-            }))
-            .catch((error) => {
-                setupPromise = null;
-                throw error;
-            });
+  // Reuse the same initialization promise across concurrent calls.
+  if (setupPromise) {
+    return setupPromise;
+  }
+
+  setupPromise = initializePlayer();
+
+  return setupPromise;
+}
+
+async function initializePlayer(): Promise<void> {
+  try {
+    try {
+      await TrackPlayer.setupPlayer();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+
+      if (!message.toLowerCase().includes("already been initialized")) {
+        throw error;
+      }
     }
 
-    return setupPromise;
+    await TrackPlayer.updateOptions({
+      capabilities: [
+        Capability.Play,
+        Capability.Pause,
+        Capability.SeekTo,
+        Capability.Stop,
+      ],
+
+      notificationCapabilities: [
+        Capability.Play,
+        Capability.Pause,
+        Capability.Stop,
+      ],
+
+      progressUpdateEventInterval: 1,
+
+      android: {
+        appKilledPlaybackBehavior:
+          AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+      },
+    });
+  } catch (error) {
+    setupPromise = null;
+    throw error;
+  }
 }
 
 export function formatTime(seconds: number): string {
-    if (!Number.isFinite(seconds) || seconds < 0) {
-        return '0:00';
-    }
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return "0:00";
+  }
 
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
-    return `${minutes}:${remainingSeconds}`;
-}
+  const totalSeconds = Math.floor(seconds);
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = String(totalSeconds % 60).padStart(2, "0");
 
-
-
-export type QueueTrack = {
-    id: string;
-    url: string;
-    title: string;
-    artist: string;
-    artwork?: string;
-};
-
-export async function playTrackQueue(tracks: QueueTrack[]) {
-    if (!tracks.length) return;
-
-    await setupPlayer();
-
-    await TrackPlayer.reset();
-
-    await TrackPlayer.add(
-        tracks.map((track) => ({
-            id: track.id,
-            url: track.url,
-            title: track.title,
-            artist: track.artist,
-            artwork: track.artwork,
-        }))
-    );
-
-    await TrackPlayer.play();
+  return `${minutes}:${remainingSeconds}`;
 }

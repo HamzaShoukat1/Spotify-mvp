@@ -21,11 +21,10 @@ import {
   X,
   HardDrive,
   Music2,
-  FolderX,
 } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import  { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
+import { State, useActiveTrack, usePlaybackState } from "react-native-track-player";
 import {
   useDownloadedSongs,
   useOfflineEntitlement,
@@ -53,7 +52,6 @@ function formatDuration(seconds?: number): string {
 
 export default function DownloadedSongs() {
   const { downloadedSongs, isLoading, count } = useDownloadedSongs();
-  // const { removeAllAsync, isDeleting: isDeletingAll } = useRemoveAllDownloads();
   const { isOffline } = useNetwork();
   useOfflineEntitlement();
 
@@ -64,7 +62,6 @@ export default function DownloadedSongs() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [songToRemove, setSongToRemove] = useState<LocalDownloadRecord | null>(null);
-  const [showRemoveAllModal, setShowRemoveAllModal] = useState(false);
 
   const { removeDownload } = useSongDownload(songToRemove?.musicId ?? "");
 
@@ -226,16 +223,6 @@ export default function DownloadedSongs() {
               </View>
             )}
 
-            {count > 0 && (
-              <TouchableOpacity
-                onPress={() => setShowRemoveAllModal(true)}
-                className="p-2 rounded-full active:bg-white/10"
-                hitSlop={8}
-                accessibilityLabel="Remove all downloads"
-              >
-                <FolderX size={20} color="#FF0000" />
-              </TouchableOpacity>
-            )}
           </View>
         </View>
       </SafeAreaView>
@@ -265,14 +252,20 @@ export default function DownloadedSongs() {
             <View>
               {/* Search Filter Bar */}
               <View className="px-5 pt-2 pb-3">
-                <View className="flex-row items-center bg-[#242424]/90 rounded-xl px-3.5 py-2.5 border border-white/10 shadow-sm">
+                <View className="flex-row items-center bg-[#242424]/90 rounded-xl px-3.5 h-12 border border-white/10 shadow-sm">
                   <Search size={16} color="#888888" />
                   <TextInput
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                     placeholder="Find in downloaded songs"
                     placeholderTextColor="#777777"
-                    className="flex-1 text-white text-xs ml-2 py-0 m-0"
+                    className="flex-1 text-white text-xs ml-2 m-0 p-0"
+                    style={{
+                      height: 36,
+                      fontSize: 12,
+                      includeFontPadding: false,
+                      textAlignVertical: 'center',
+                    }}
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
@@ -362,34 +355,7 @@ export default function DownloadedSongs() {
         </TouchableOpacity>
       </FormSheetModal>
 
-      {/* Remove All Downloads Confirmation Sheet */}
-      <FormSheetModal
-        visible={showRemoveAllModal}
-        title="Remove All Downloads"
-        onClose={() => setShowRemoveAllModal(false)}
-      >
-        <View className="items-center mb-4">
-          <View className="w-14 h-14 rounded-full bg-red-500/15 border border-red-500/30 items-center justify-center mb-3">
-            <Trash2 size={24} color="#EF4444" />
-          </View>
-          <Text className="text-white text-base font-bold text-center">
-            Remove All Downloads?
-          </Text>
-        </View>
 
-        <Text className="text-[#A7A7A7] text-xs text-center mb-5 leading-5 px-3">
-          This will remove all {count} downloaded {count === 1 ? "song" : "songs"} from your device storage. They will no longer be available for offline listening.
-        </Text>
-
-      
-
-        <TouchableOpacity
-          onPress={() => setShowRemoveAllModal(false)}
-          activeOpacity={0.7}
-          className="w-full py-3 items-center justify-center rounded-full"
-        >
-        </TouchableOpacity>
-      </FormSheetModal>
     </View>
   );
 }

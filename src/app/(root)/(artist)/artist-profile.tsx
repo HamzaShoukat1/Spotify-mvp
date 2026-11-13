@@ -36,7 +36,7 @@ export default function ArtistProfile() {
       <TextInput
         value={name}
         onChangeText={(value) => {
-          setName(value);
+          setName(value.replace(/[^a-zA-Z0-9 _.-]/g, ""));
           setError("");
         }}
         placeholder="Your artist name"

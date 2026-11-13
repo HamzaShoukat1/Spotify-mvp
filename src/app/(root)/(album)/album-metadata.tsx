@@ -42,7 +42,7 @@ export default function AlbumMetadata() {
       </Text>
       <TextInput
         value={albumDraft.albumTitle}
-        onChangeText={(albumTitle) => updateAlbum({ albumTitle })}
+        onChangeText={(albumTitle) => updateAlbum({ albumTitle: albumTitle.replace(/[^a-zA-Z0-9 _.-]/g, "") })}
         placeholder="e.g. Midnight Signals"
         placeholderTextColor="#777"
         className="mb-5 h-14 rounded-xl border border-[#303030] bg-[#1B1B1B] px-4 text-base text-white"
