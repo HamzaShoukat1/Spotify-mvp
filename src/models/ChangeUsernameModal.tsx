@@ -83,7 +83,9 @@ export function ChangeUserNameModal({
                     >
                         <TextInput
                             value={username}
-                            onChangeText={setUsername}
+                            onChangeText={(value) =>
+                                setUsername(value.replace(/[^a-zA-Z0-9 _.-]/g, ''))
+                            }
                             placeholder="Enter new username"
                             placeholderTextColor="#727272"
                             autoFocus
